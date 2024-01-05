@@ -1,0 +1,31 @@
+[package]
+name = "satex-layer"
+version.workspace = true
+edition.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+satex-core = { path = "../satex-core" }
+satex-service = { path = "../satex-service" }
+satex-discovery = { path = "../satex-discovery" }
+hyper = { workspace = true }
+bytes = { workspace = true }
+tracing = { workspace = true }
+futures = { workspace = true }
+hyper-tls = { workspace = true }
+http-serde = { workspace = true }
+leaky-bucket = { workspace = true }
+http-body-util = { workspace = true }
+pin-project-lite = { workspace = true }
+tower = { workspace = true, features = ["limit"] }
+serde = { workspace = true, features = ["derive"] }
+hyper-util = { workspace = true, features = ["client"] }
+tower-http = { workspace = true, features = [
+    "limit",
+    "set-header",
+    "trace",
+    "add-extension",
+    "cors",
+] }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }

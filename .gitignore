@@ -1,0 +1,8 @@
+/target
+
+# IDEA
+/.idea
+
+# Cargo lock
+/**/Cargo.lock
+!/Cargo.lock

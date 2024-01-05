@@ -1,0 +1,20 @@
+server:
+  port: 9000
+
+tracing:
+  max_level: debug
+
+router:
+  routes:
+    - id: shortcut
+      matchers:
+        - Header=type,shortcut
+      service: Static=examples/resources
+
+    - id: complete
+      matchers:
+        - kind: Header
+          args:
+            name: type
+            value: complete
+      service: Static=examples/resources

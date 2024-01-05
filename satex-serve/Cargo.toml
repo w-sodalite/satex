@@ -1,0 +1,22 @@
+[package]
+name = "satex-serve"
+version.workspace = true
+edition.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+satex-core = { path = "../satex-core" }
+satex-layer = { path = "../satex-layer" }
+satex-matcher = { path = "../satex-matcher" }
+satex-service = { path = "../satex-service" }
+hyper = { workspace = true }
+bytes = { workspace = true }
+tower = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+futures-util = { workspace = true }
+pin-project-lite = { workspace = true }
+tracing-subscriber = { workspace = true }
+hyper-util = { workspace = true, features = ["server-auto"] }
+tower-http = { workspace = true, features = ["add-extension"] }

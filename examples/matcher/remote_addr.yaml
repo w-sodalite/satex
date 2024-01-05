@@ -1,0 +1,20 @@
+server:
+  port: 9000
+
+tracing:
+  max_level: debug
+
+router:
+  routes:
+    - id: shortcut
+      matchers:
+        - RemoteAddr=127.0.0.0/8
+      service: Static=examples/resources
+
+    - id: complete
+      matchers:
+        - kind: RemoteAddr
+          args: 
+            sources: 
+              - 127.0.0.1/8
+      service: Static=examples/resources

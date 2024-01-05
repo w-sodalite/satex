@@ -1,0 +1,60 @@
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+resolver = "2"
+members = [
+    "satex-core",
+    "satex-serve",
+    "satex-layer",
+    "satex-matcher",
+    "satex-service",
+    "satex-discovery",
+]
+
+[workspace.dependencies]
+url = { version = "2.5" }
+rand = { version = "0.8" }
+hyper = { version = "1.0" }
+bytes = { version = "1.5" }
+tower = { version = "0.4" }
+serde = { version = "1.0" }
+tokio = { version = "1.34" }
+regex = { version = "1.10" }
+anyhow = { version = "1.0" }
+chrono = { version = "0.4" }
+tracing = { version = "0.1" }
+futures = { version = "0.3" }
+qstring = { version = "0.7" }
+hyper-tls = { version = "0.6" }
+serde_yaml = { version = "0.9" }
+hyper-util = { version = "0.1" }
+tower-http = { version = "0.5" }
+http-serde = { version = "2.0" }
+async-trait = { version = "0.1" }
+lazy_static = { version = "1.4" }
+sync_wrapper = { version = "0.1" }
+futures-util = { version = "0.3" }
+concat-idents = { version = "1.1" }
+http-body-util = { version = "0.1" }
+leaky-bucket = { version = "1.0.1" }
+pin-project-lite = { version = "0.2" }
+tracing-subscriber = { version = "0.3" }
+serde-this-or-that = { version = "0.4" }
+
+[package]
+name = "satex"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+satex-core = { path = "satex-core" }
+satex-serve = { path = "satex-serve" }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+
+[profile.release]
+opt-level = "z"
+panic = "abort"
+lto = true
+strip = true

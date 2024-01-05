@@ -1,0 +1,20 @@
+[package]
+name = "satex-service"
+version.workspace = true
+edition.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+satex-core = { path = "../satex-core" }
+satex-discovery = { path = "../satex-discovery" }
+serde = { workspace = true }
+tower = { workspace = true }
+hyper = { workspace = true }
+bytes = { workspace = true }
+tracing = { workspace = true }
+hyper-tls = { workspace = true }
+futures-util = { workspace = true }
+tokio = { workspace = true, features = ["fs"] }
+tower-http = { workspace = true, features = ["fs"] }
+hyper-util = { workspace = true, features = ["client", "http1", "http2"] }
