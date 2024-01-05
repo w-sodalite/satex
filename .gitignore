@@ -1,7 +1,10 @@
-/target
+/target/
 
 # IDEA
-/.idea
+/.idea/
+
+# VSCode
+/.vscode/
 
 # Cargo lock
 /**/Cargo.lock
