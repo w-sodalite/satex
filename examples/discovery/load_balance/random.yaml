@@ -1,0 +1,21 @@
+server:
+  port: 9000
+
+tracing:
+  max_level: debug
+
+discovery:
+  - kind: Builtin
+    args:
+      server: server1
+      uris:
+        - 127.0.0.1:9000
+        - 127.0.0.1:9001
+        - 127.0.0.1:9002
+      interval: 10
+      lb: Random
+
+router:
+  routes:
+    - id: proxy
+      service: Proxy=http://server1

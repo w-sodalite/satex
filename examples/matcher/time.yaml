@@ -1,0 +1,20 @@
+server:
+  port: 9000
+
+tracing:
+  max_level: debug
+
+router:
+  routes:
+    - id: time-shortcut
+      matchers:
+        - Time=After,2024-01-05 00:00:00
+      service: Static=examples/resources
+
+    - id: time-complete
+      matchers:
+        - kind: Time
+          args:
+            mode: Before
+            time: "2024-12-31 23:59:59"
+      service: Static=examples/resources

@@ -1,0 +1,26 @@
+server:
+  port: 9000
+
+tracing:
+  max_level: debug
+
+router:
+  routes:
+    - id: set-request-header
+      matchers:
+        - Path=@/a
+      layers:
+        - PathStrip=1
+        - SetRequestHeader=k1,v1
+      service: Static=examples/resources
+
+    - id: set-response-header
+      matchers:
+        - Path=@/b
+      layers:
+        - PathStrip=1
+        - kind: SetResponseHeader
+          args:
+            name: k1
+            value: v1
+      service: Static=examples/resources

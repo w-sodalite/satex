@@ -1,0 +1,16 @@
+server:
+  port: 9000
+
+tracing:
+  max_level: debug
+
+router:
+  routes:
+    - id: static-shortcut
+      service: Static=examples/resources
+
+    - id: static-complete
+      service: 
+        kind: Static
+        args:
+          directory: examples/resources

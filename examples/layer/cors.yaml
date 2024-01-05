@@ -1,0 +1,32 @@
+server:
+  port: 9000
+
+tracing:
+  max_level: debug
+
+router:
+  routes:
+    - id: cors-shortcut
+      layers:
+        # 快捷配置不支持配置参数
+        - Cors
+      service: Static=examples/resources
+
+    - id: cors-complete
+      layers:
+        - kind: Cors
+          args:
+            allow_credentials: true
+            # allow_headers: '*'
+            allow_methods:
+              - GET
+              - POST
+            allow_origin:
+              - 127.0.0.1
+            allow_private_network: true
+            expose_headers:
+              - k1
+            max_age: 0
+            vary:
+              - k2
+      service: Static=examples/resources

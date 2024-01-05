@@ -6,15 +6,15 @@ tracing:
 
 router:
   routes:
-    - id: header-shortcut
+    - id: method-shortcut
       matchers:
-        - Header=k1,v1
+        - Method=GET
       service: Static=examples/resources
 
-    - id: header-complete
+    - id: method-complete
       matchers:
-        - kind: Header
+        - kind: Method
           args:
-            name: k2
-            value: v2
+            methods: 
+              - POST
       service: Static=examples/resources

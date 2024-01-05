@@ -6,15 +6,15 @@ tracing:
 
 router:
   routes:
-    - id: header-shortcut
+    - id: host-shortcut
       matchers:
-        - Header=k1,v1
+        - Host=127.0.0.1/8
       service: Static=examples/resources
 
-    - id: header-complete
+    - id: host-complete
       matchers:
-        - kind: Header
+        - kind: Host
           args:
-            name: k2
-            value: v2
+            patterns: 
+              - 127.0.0.1
       service: Static=examples/resources

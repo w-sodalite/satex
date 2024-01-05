@@ -1,0 +1,29 @@
+server:
+  port: 9000
+
+tracing:
+  max_level: debug
+
+router:
+  routes:
+    - id: rate-limit-shortcut
+      matchers:
+        - Path=/a
+      layers:
+        - PathStrip=1
+        - RateLimit=Break,1,1,10
+      service: Static=examples/resources
+
+    - id: rate-limit-complete
+      matchers:
+        - Path=/b
+      layers:
+        - PathStrip=1
+        - kind: RateLimit
+          args:
+            policy: Await
+            max: 1
+            refill: 1
+            interval: 10
+            fair: false
+      service: Static=examples/resources

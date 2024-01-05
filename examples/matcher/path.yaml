@@ -6,15 +6,16 @@ tracing:
 
 router:
   routes:
-    - id: header-shortcut
+    - id: path-shortcut
       matchers:
-        - Header=k1,v1
+        # 使用@表示使用前缀匹配
+        - Path=@/a
       service: Static=examples/resources
 
-    - id: header-complete
+    - id: path-complete
       matchers:
-        - kind: Header
+        - kind: Path
           args:
-            name: k2
-            value: v2
+            patterns: 
+              - "/b/(.)*"
       service: Static=examples/resources

@@ -6,15 +6,18 @@ tracing:
 
 router:
   routes:
-    - id: shortcut
+    - id: remote-addr-shortcut
       matchers:
-        - RemoteAddr=127.0.0.0/8
+        # 最后的参数true/false分别对应Accept/Reject
+        - RemoteAddr=127.0.0.0/8,true
       service: Static=examples/resources
 
-    - id: complete
+    - id: remote-addr-complete
       matchers:
         - kind: RemoteAddr
-          args: 
-            sources: 
+          args:
+            sources:
               - 127.0.0.1/8
+            # Accept/Reject
+            policy: Accept
       service: Static=examples/resources

@@ -1,0 +1,21 @@
+server:
+  port: 9000
+
+tracing:
+  max_level: debug
+
+router:
+  routes:
+    - id: static
+      layers:
+        - SetPath=/index.html
+      service: Static=examples/resources
+
+    - id: proxy-shortcut
+      service: Proxy=http://127.0.0.1:9000/static
+
+    - id: echo-complete
+      service: 
+        kind: Proxy
+        args:
+          uri: http://127.0.0.1:9000/static

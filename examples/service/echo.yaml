@@ -1,0 +1,14 @@
+server:
+  port: 9000
+
+tracing:
+  max_level: debug
+
+router:
+  routes:
+    - id: echo-shortcut
+      service: Echo
+
+    - id: echo-complete
+      service: 
+        kind: Echo
