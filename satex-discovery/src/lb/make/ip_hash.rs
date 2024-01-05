@@ -41,10 +41,10 @@ impl IpHashLoadBalance {
 
     fn start_clean(tables: WeakTable, timeout: Duration, interval: Duration) {
         ///
-        /// Get all expired ip collection
+        /// 获取所有的已经过期的节点
         ///
         #[inline]
-        async fn get_expire_ips(tables: &ArcTable, timeout: Duration) -> HashSet<IpAddr> {
+        async fn get_expired_ips(tables: &ArcTable, timeout: Duration) -> HashSet<IpAddr> {
             tables
                 .read()
                 .await
@@ -56,10 +56,10 @@ impl IpHashLoadBalance {
         }
 
         ///
-        /// Remove all expired node collection
+        /// 删除所有的已经过期的节点
         ///
         #[inline]
-        async fn remove_expire_ips(tables: &ArcTable, ips: HashSet<IpAddr>) {
+        async fn remove_expired_ips(tables: &ArcTable, ips: HashSet<IpAddr>) {
             if !ips.is_empty() {
                 let mut tables = tables.write().await;
                 debug!("IpHash remove expired cache: {:?}", ips);
@@ -69,13 +69,14 @@ impl IpHashLoadBalance {
             }
         }
 
+        // 启动定时清理任务
         spawn(async move {
             while let Some(tables) = tables.upgrade() {
                 // get all expired ip collection
-                let ips = get_expire_ips(&tables, timeout).await;
+                let ips = get_expired_ips(&tables, timeout).await;
 
                 // remove all expired ip
-                remove_expire_ips(&tables, ips).await;
+                remove_expired_ips(&tables, ips).await;
 
                 // sleep interval
                 sleep(interval).await;
