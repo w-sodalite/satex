@@ -18,6 +18,7 @@ pub mod path_strip;
 pub mod rate_limit;
 pub mod request_body_limit;
 pub mod set_header;
+pub mod set_path;
 pub mod set_status;
 
 make! {

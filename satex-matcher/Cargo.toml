@@ -9,6 +9,7 @@ edition.workspace = true
 satex-core = { path = "../satex-core" }
 regex = { workspace = true }
 hyper = { workspace = true }
+cookie = { workspace = true }
 chrono = { workspace = true }
 qstring = { workspace = true }
 serde = { workspace = true, features = ["derive"] }

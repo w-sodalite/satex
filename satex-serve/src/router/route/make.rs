@@ -43,7 +43,7 @@ impl<'a> MakeRoute<'a> {
         } = self;
         service = layers
             .iter()
-            .fold(service, |service, layer| layer.layer(service));
+            .rfold(service, |service, layer| layer.layer(service));
         Ok(Route::new(self.id, matchers, service))
     }
 }

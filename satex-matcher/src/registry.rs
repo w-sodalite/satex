@@ -3,8 +3,7 @@ use satex_core::registry;
 use crate::make::header::MakeHeaderMatcher;
 use crate::make::host::MakeHostMatcher;
 use crate::make::method::MakeMethodMatcher;
-use crate::make::path_regex::MakePathRegexMatcher;
-use crate::make::path_starts_with::MakePathStartsWithMatcher;
+use crate::make::path::MakePathMatcher;
 use crate::make::query::MakeQueryMatcher;
 use crate::make::remote_addr::MakeRemoteAddrMatcher;
 use crate::make::time::MakeTimeMatcher;
@@ -16,12 +15,11 @@ registry!(
     [
         MakeTimeMatcher,
         MakeHostMatcher,
+        MakePathMatcher,
         MakeQueryMatcher,
         MakeMethodMatcher,
         MakeHeaderMatcher,
-        MakePathRegexMatcher,
         MakeRemoteAddrMatcher,
-        MakePathStartsWithMatcher
     ]
 );
 

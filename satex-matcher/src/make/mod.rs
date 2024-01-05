@@ -2,11 +2,11 @@ use satex_core::make;
 
 use crate::{NamedRouteMatcher, RouteMatcher};
 
+pub mod cookie;
 pub mod header;
 pub mod host;
 pub mod method;
-pub mod path_regex;
-pub mod path_starts_with;
+pub mod path;
 pub mod query;
 pub mod remote_addr;
 pub mod time;

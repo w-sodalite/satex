@@ -7,7 +7,11 @@ use crate::config::args::{Args, Complete, Shortcut};
 #[serde(untagged)]
 pub enum Metadata {
     Shortcut(String),
-    Complete { kind: String, args: Value },
+    Complete {
+        kind: String,
+        #[serde(default)]
+        args: Value,
+    },
 }
 
 impl Metadata {

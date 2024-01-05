@@ -1,7 +1,7 @@
 use hyper::Request;
-use regex::Regex;
 
 pub use make::MakeQueryMatcher;
+use regex::Regex;
 use satex_core::http::Body;
 use satex_core::Error;
 
