@@ -977,7 +977,6 @@ dependencies = [
  "bytes",
  "futures",
  "http-body-util",
- "http-serde",
  "hyper",
  "hyper-tls",
  "hyper-util",
