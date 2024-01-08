@@ -17,6 +17,8 @@ mod test {
         net::{Ipv4Addr, SocketAddr, SocketAddrV4},
     };
 
+    use bytes::Buf;
+    use http_body_util::BodyExt;
     use hyper::{Request, Response};
     use satex_core::{
         config::args::{Args, Shortcut},
@@ -52,6 +54,10 @@ mod test {
         let mut service = layer.layer(service);
         let response = service.call(request).await.unwrap();
         let body = response.into_body();
-        println!("{:?}", body);
+        let collected = body.collect().await.unwrap();
+        let buf = collected.aggregate();
+        let data = String::from_utf8(buf.chunk().to_vec()).unwrap();
+        let flag = data.parse::<bool>().unwrap();
+        assert!(flag)
     }
 }
