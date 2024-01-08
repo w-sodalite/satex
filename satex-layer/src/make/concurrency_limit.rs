@@ -3,9 +3,9 @@ use tower::limit::ConcurrencyLimitLayer;
 use satex_core::config::args::Args;
 use satex_core::Error;
 
-use crate::{MakeRouteServiceLayer, __layer};
+use crate::{MakeRouteServiceLayer, __make_layer};
 
-__layer! {
+__make_layer! {
     ConcurrencyLimit,
     #[serde(deserialize_with = "satex_core::serde::tot::as_u64")]
     max: u64,

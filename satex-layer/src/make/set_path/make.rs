@@ -1,10 +1,10 @@
 use satex_core::{config::args::Args, Error};
 
-use crate::{MakeRouteServiceLayer, __layer};
+use crate::{MakeRouteServiceLayer, __make_layer};
 
 use super::layer::SetPathLayer;
 
-__layer! {
+__make_layer! {
     SetPath,
     path:String
 }

@@ -7,7 +7,7 @@ use satex_core::endpoint::Endpoint;
 use satex_core::{satex_error, Error};
 
 use crate::lb::{Context, LoadBalance, MakeLoadBalance};
-use crate::{__load_balance, valid_endpoints};
+use crate::{__make_load_balance, valid_endpoints};
 
 pub struct WeightLoadBalance {
     ratios: Vec<usize>,
@@ -45,7 +45,7 @@ impl LoadBalance for WeightLoadBalance {
     }
 }
 
-__load_balance!(Weight);
+__make_load_balance!(Weight);
 
 fn make(args: Args) -> Result<WeightLoadBalance, Error> {
     match args {

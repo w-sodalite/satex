@@ -5,9 +5,9 @@ use satex_core::Error;
 
 use crate::make::rate_limit::layer::RateLimitLayer;
 use crate::make::rate_limit::Policy;
-use crate::{MakeRouteServiceLayer, __layer};
+use crate::{MakeRouteServiceLayer, __make_layer};
 
-__layer! {
+__make_layer! {
     RateLimit,
 
     policy: Policy,

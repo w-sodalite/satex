@@ -2,9 +2,9 @@ use satex_core::config::args::Args;
 use satex_core::Error;
 
 use crate::make::keep_host_header::layer::KeepHostHeaderLayer;
-use crate::{MakeRouteServiceLayer, __layer};
+use crate::{MakeRouteServiceLayer, __make_layer};
 
-__layer!(KeepHostHeader);
+__make_layer!(KeepHostHeader);
 
 fn make(_: Args) -> Result<KeepHostHeaderLayer, Error> {
     Ok(KeepHostHeaderLayer::default())

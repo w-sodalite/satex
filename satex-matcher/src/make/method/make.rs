@@ -7,9 +7,9 @@ use satex_core::serde::http::SerdeMethod;
 use satex_core::Error;
 
 use crate::make::method::MethodMatcher;
-use crate::{MakeRouteMatcher, __matcher};
+use crate::{MakeRouteMatcher, __make_matcher};
 
-__matcher! {
+__make_matcher! {
     Method,
     List,
     methods: HashSet<SerdeMethod>,

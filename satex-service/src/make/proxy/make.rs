@@ -2,9 +2,9 @@ use satex_core::config::args::Args;
 use satex_core::Error;
 
 use crate::make::proxy::ProxyService;
-use crate::{MakeRouteService, __service};
+use crate::{MakeRouteService, __make_service};
 
-__service! {
+__make_service! {
     Proxy,
     uri: String,
 }

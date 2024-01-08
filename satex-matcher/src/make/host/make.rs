@@ -5,9 +5,9 @@ use satex_core::serde::regex::SerdeRegex;
 use satex_core::Error;
 
 use crate::make::host::HostMatcher;
-use crate::{MakeRouteMatcher, __matcher};
+use crate::{MakeRouteMatcher, __make_matcher};
 
-__matcher! {
+__make_matcher! {
     Host,
     List,
     patterns: Vec<SerdeRegex>
