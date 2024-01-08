@@ -41,7 +41,7 @@ mod test {
 
     #[test]
     fn test_match() {
-        let args = Args::Shortcut(Shortcut::new("127.0.0.([1-9])"));
+        let args = Args::Shortcut(Shortcut::from("127.0.0.([1-9])"));
         let make = MakeHostMatcher::default();
         let matcher = make.make(args).unwrap();
         assert!(matcher.is_match(&new_request("127.0.0.1")).unwrap());

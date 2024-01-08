@@ -43,7 +43,7 @@ mod test {
 
     #[test]
     fn test_match() {
-        let args = Args::Shortcut(Shortcut::new("GET,POST"));
+        let args = Args::Shortcut(Shortcut::from("GET,POST"));
         let make = MakeMethodMatcher::default();
         let matcher = make.make(args).unwrap();
         assert!(matcher.is_match(&new_request(Method::GET)).unwrap());

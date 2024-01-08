@@ -36,7 +36,7 @@ mod test {
 
     #[test]
     fn test_match() {
-        let args = Args::Shortcut(Shortcut::new("k1,v1"));
+        let args = Args::Shortcut(Shortcut::from("k1,v1"));
         let make = MakeHeaderMatcher::default();
         let matcher = make.make(Args::from(args)).unwrap();
         assert!(matcher.is_match(&new_request("k1", "v1")).unwrap());

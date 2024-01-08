@@ -50,7 +50,7 @@ mod test {
 
     #[test]
     fn test_match() {
-        let args = Args::Shortcut(Shortcut::new("@/a,/b"));
+        let args = Args::Shortcut(Shortcut::from("@/a,/b"));
         let make = MakePathMatcher::default();
         let matcher = make.make(args).unwrap();
         assert!(matcher.is_match(&new_request("/a")).unwrap());

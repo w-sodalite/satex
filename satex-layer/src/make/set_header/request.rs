@@ -44,7 +44,7 @@ mod test {
 
     #[tokio::test]
     async fn test_layer() {
-        let args = Args::Shortcut(Shortcut::new("k1,v1"));
+        let args = Args::Shortcut(Shortcut::from("k1,v1"));
         let make = MakeSetRequestHeaderLayer::default();
         let layer = make.make(args).unwrap();
         let request = Request::new(Body::empty());

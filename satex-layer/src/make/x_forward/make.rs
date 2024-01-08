@@ -66,7 +66,7 @@ mod test {
 
     #[tokio::test]
     async fn test_override() {
-        let args = Args::Shortcut(Shortcut::new("Override"));
+        let args = Args::Shortcut(Shortcut::from("Override"));
         let make = MakeXForwardLayer::default();
         let layer = make.make(args).unwrap();
         let service = service_fn(|request: Request<Body>| async move {

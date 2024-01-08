@@ -52,12 +52,12 @@ mod test {
         let before = now.sub(m5).format(DEFAULT_TIME_PATTERN).to_string();
         let after: String = now.add(m5).format(DEFAULT_TIME_PATTERN).to_string();
         let before = format!("After,{}", before);
-        let args = Args::Shortcut(Shortcut::new(&before));
+        let args = Args::Shortcut(Shortcut::from(before.as_str()));
         let matcher = make.make(args).unwrap();
         assert!(matcher.is_match(&new_request()).unwrap());
 
         let after = format!("Before,{}", after);
-        let args = Args::Shortcut(Shortcut::new(&after));
+        let args = Args::Shortcut(Shortcut::from(after.as_str()));
         let matcher = make.make(args).unwrap();
         assert!(matcher.is_match(&new_request()).unwrap());
     }

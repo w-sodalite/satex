@@ -33,7 +33,7 @@ mod test {
 
     #[tokio::test]
     async fn test_layer() {
-        let args = Args::Shortcut(Shortcut::new("1"));
+        let args = Args::Shortcut(Shortcut::from("1"));
         let make = MakePathStripLayer::default();
         let layer = make.make(args).unwrap();
         let request = Request::builder()

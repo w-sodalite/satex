@@ -37,7 +37,7 @@ mod test {
 
     #[test]
     fn test_match() {
-        let args = Args::Shortcut(Shortcut::new("k1,v1"));
+        let args = Args::Shortcut(Shortcut::from("k1,v1"));
         let make = MakeQueryMatcher::default();
         let matcher = make.make(args).unwrap();
         assert!(matcher.is_match(&new_request("k1", "v1")).unwrap());
