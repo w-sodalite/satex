@@ -1,0 +1,19 @@
+server:
+  port: 9000
+
+tracing:
+  max_level: debug
+
+router:
+  routes:
+    - id: x-forward-shortcut
+      layers:
+        - XForward
+      service: Static=examples/resources
+
+    - id: set-path-complete
+      layers:
+        - kind: SetPath
+          args:
+            path: /index.html
+      service: Static=examples/resources
