@@ -15,11 +15,13 @@ pub enum GatherMode {
 #[derive(Clone, Copy)]
 pub struct Shortcut<'a>(Option<&'a str>);
 
-impl<'a> Shortcut<'a> {
-    pub fn new(value: &'a str) -> Self {
-        Self(Some(value))
+impl<'a> From<&'a str> for Shortcut<'a> {
+    fn from(value: &'a str) -> Self {
+        Shortcut(Some(value))
     }
+}
 
+impl<'a> Shortcut<'a> {
     pub fn none() -> Self {
         Self(None)
     }

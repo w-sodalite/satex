@@ -65,7 +65,7 @@ impl Future for Serve {
                             _ => {
                                 break Err(satex_error!(
                                     "App serve future current status `Accepting` is invalid!"
-                                ))
+                                ));
                             }
                         }
                     }
@@ -157,11 +157,7 @@ where
 
     fn call(&self, req: Request<ReqBody>) -> Self::Future {
         let mut router = self.router.clone();
-        let addr: SocketAddr = self.addr;
-        let (parts, body) = req.into_parts();
-        let essential = Essential::new(addr, parts.clone());
-        let mut req = Request::from_parts(parts, Body::new(body));
-        req.extensions_mut().insert(essential);
-        router.call(req)
+        let req = Essential::set_extension(req, self.addr);
+        router.call(req.map(Body::new))
     }
 }

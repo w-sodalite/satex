@@ -93,7 +93,7 @@ async fn proxy(uri: String, mut req: Request<Body>) -> Result<Response<Body>, Er
     if let Some(endpoint) = discovery.resolve(&essential, host).await? {
         let host = match endpoint {
             Endpoint::Ip(addr) => format!("{}:{}", addr.ip(), addr.port()),
-            Endpoint::Raw(raw) => raw.to_string(),
+            Endpoint::Domain(raw) => raw.to_string(),
         };
         uri = Uri::from_str(&format!(
             "{}://{}{}",

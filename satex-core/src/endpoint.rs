@@ -8,7 +8,7 @@ use crate::Error;
 #[derive(Debug, Clone, PartialOrd, PartialEq, Eq, Ord, Hash)]
 pub enum Endpoint {
     Ip(SocketAddr),
-    Raw(String),
+    Domain(String),
 }
 
 impl<'de> Deserialize<'de> for Endpoint {
@@ -24,10 +24,32 @@ impl<'de> Deserialize<'de> for Endpoint {
 impl FromStr for Endpoint {
     type Err = Error;
 
+    ///
+    /// # Examples
+    ///
+    /// - From ip
+    ///
+    /// ```
+    /// use std::net::{IpAddr, Ipv4Addr, SocketAddr};
+    /// use std::str::FromStr;
+    /// use satex_core::endpoint::Endpoint;
+    /// let endpoint = Endpoint::from_str("127.0.0.1:3000").unwrap();
+    /// assert_eq!(endpoint,Endpoint::Ip(SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127,0,0,1)),3000)));
+    /// ```
+    ///
+    /// - From domain
+    ///
+    /// ```
+    /// use std::str::FromStr;
+    /// use satex_core::endpoint::Endpoint;
+    /// let endpoint = Endpoint::from_str("satex.com:8080").unwrap();
+    /// assert_eq!(endpoint,Endpoint::Domain(String::from("satex.com:8080")));
+    /// ```
+    ///
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.parse::<SocketAddr>() {
             Ok(addr) => Ok(Endpoint::Ip(addr)),
-            Err(_) => Ok(Endpoint::Raw(s.to_string())),
+            Err(_) => Ok(Endpoint::Domain(s.to_string())),
         }
     }
 }
@@ -54,7 +76,7 @@ impl ToSocketAddrs for Endpoint {
     fn to_socket_addrs(&self) -> std::io::Result<Self::Iter> {
         match self {
             Endpoint::Ip(addr) => addr.to_socket_addrs().map(Iter::Option),
-            Endpoint::Raw(raw) => raw.to_socket_addrs().map(Iter::Vec),
+            Endpoint::Domain(domain) => domain.to_socket_addrs().map(Iter::Vec),
         }
     }
 }
