@@ -74,7 +74,7 @@ mod test {
 
     #[test]
     fn test_match() {
-        let args = Args::Shortcut(Shortcut::new("127.0.0.1/24"));
+        let args = Args::Shortcut(Shortcut::from("127.0.0.1/24"));
         let make = MakeRemoteAddrMatcher::default();
         let matcher = make.make(args).unwrap();
         assert!(matcher

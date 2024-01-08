@@ -31,7 +31,7 @@ mod test {
 
     #[tokio::test]
     async fn test_layer() {
-        let args = Args::Shortcut(Shortcut::new("/a/b/index.html"));
+        let args = Args::Shortcut(Shortcut::from("/a/b/index.html"));
         let make = MakeSetPathLayer::default();
         let layer = make.make(args).unwrap();
         let service = service_fn(|request: Request<Body>| async move {

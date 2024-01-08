@@ -37,7 +37,7 @@ mod test {
 
         use crate::{make::set_status::MakeSetStatusLayer, MakeRouteServiceLayer};
 
-        let args = Args::Shortcut(Shortcut::new("404"));
+        let args = Args::Shortcut(Shortcut::from("404"));
         let make = MakeSetStatusLayer::default();
         let layer = make.make(args).unwrap();
         let service = service_fn(|_: Request<Body>| async move {
