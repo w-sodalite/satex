@@ -1,7 +1,13 @@
 use hyper::header::{HeaderName, HeaderValue};
-use hyper::{HeaderMap, Method};
+use hyper::{HeaderMap, Method, StatusCode};
 
 use crate::serde_with;
+
+serde_with!(
+    StatusCode,
+    "http_serde::status_code",
+    [Debug, Clone, PartialEq, Eq, Hash]
+);
 
 serde_with!(
     Method,
