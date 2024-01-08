@@ -26,3 +26,41 @@ fn make(args: Args) -> Result<SetRequestHeaderLayer, Error> {
         _ => Ok(SetRequestHeaderLayer::overriding(header_name, make)),
     }
 }
+
+#[cfg(test)]
+mod test {
+    use std::convert::Infallible;
+
+    use bytes::Buf;
+    use http_body_util::BodyExt;
+    use hyper::{Request, Response};
+    use satex_core::{
+        config::args::{Args, Shortcut},
+        http::Body,
+    };
+    use tower::{service_fn, Layer, Service};
+
+    use crate::{make::set_header::MakeSetRequestHeaderLayer, MakeRouteServiceLayer};
+
+    #[tokio::test]
+    async fn test_layer() {
+        let args = Args::Shortcut(Shortcut::new("k1,v1"));
+        let make = MakeSetRequestHeaderLayer::default();
+        let layer = make.make(args).unwrap();
+        let request = Request::new(Body::empty());
+        let service = service_fn(|mut request: Request<Body>| async move {
+            let value = request
+                .headers_mut()
+                .remove("k1")
+                .map(|value| value.to_str().unwrap().to_string())
+                .unwrap_or_default();
+            Ok::<_, Infallible>(Response::new(Body::from(value)))
+        });
+        let mut service = layer.layer(service);
+        let response = service.call(request).await.unwrap();
+        let collected = response.into_body().collect().await.unwrap();
+        let buf = collected.aggregate();
+        let data = String::from_utf8(buf.chunk().to_vec()).unwrap();
+        assert_eq!(data, "v1");
+    }
+}
