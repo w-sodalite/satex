@@ -5,9 +5,10 @@
 `Satex`是一个使用`RUST`开发的高性能的HTTP网关，基于`hyper`、`tokio`、`tower`构建。
 
 ## 功能
-- 使用配置定义路由
-- 内置多种常见场景的路由组件
-- 负载均衡支持
+
+- 灵活的路由配置
+- 内置多种通用场景的路由组件
+- 服务发现和负载均衡支持
 - 完全兼容[tower](https://crates.io/crates/tower)和[tower-http](https://crates.io/crates/tower-http)的生态，包括中间件、服务和工具等。
 
 ## 数据流
