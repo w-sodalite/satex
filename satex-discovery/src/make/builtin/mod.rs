@@ -15,16 +15,21 @@ use crate::ServerDiscovery;
 mod make;
 
 pub struct BuiltinDiscovery {
-    selectors: HashMap<String, Selector>,
-    lbs: HashMap<String, NamedLoadBalance>,
+    items: HashMap<String, (Selector, NamedLoadBalance)>,
 }
 
 impl BuiltinDiscovery {
-    pub fn new(
-        selectors: HashMap<String, Selector>,
-        lbs: HashMap<String, NamedLoadBalance>,
-    ) -> Self {
-        Self { selectors, lbs }
+    ///
+    /// 创建内置的服务发现对象
+    ///
+    /// # Arguments
+    ///
+    /// * `items`: 所有服务对应的选择器和负载均衡策略
+    ///
+    /// returns: BuiltinDiscovery
+    ///
+    pub fn new(items: HashMap<String, (Selector, NamedLoadBalance)>) -> Self {
+        Self { items }
     }
 }
 
@@ -35,16 +40,13 @@ impl ServerDiscovery for BuiltinDiscovery {
         essential: &Essential,
         server: &str,
     ) -> Result<Option<Endpoint>, Error> {
-        match self.selectors.get(server) {
-            Some(selector) => {
+        match self.items.get(server) {
+            Some((selector, lb)) => {
                 let endpoints = selector.select().await?;
                 match endpoints.len() {
                     0 => Ok(None),
                     1 => Ok(endpoints.into_iter().next().map(Endpoint::from)),
-                    _ => match self.lbs.get(server) {
-                        Some(lb) => lb.choose(Context::new(essential, endpoints)).await,
-                        None => Ok(endpoints.into_iter().next().map(Endpoint::from)),
-                    },
+                    _ => lb.choose(Context::new(essential, endpoints)).await,
                 }
             }
             None => {

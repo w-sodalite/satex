@@ -9,6 +9,7 @@ use crate::make::request_body_limit::MakeRequestBodyLimitLayer;
 use crate::make::set_header::{MakeSetRequestHeaderLayer, MakeSetResponseHeaderLayer};
 use crate::make::set_path::MakeSetPathLayer;
 use crate::make::set_status::MakeSetStatusLayer;
+use crate::make::x_forward::MakeXForwardLayer;
 use crate::{ArcMakeRouteServiceLayer, MakeRouteServiceLayer, NamedRouteServiceLayer};
 
 registry!(
@@ -18,6 +19,7 @@ registry!(
     [
         MakeCorsLayer,
         MakeSetPathLayer,
+        MakeXForwardLayer,
         MakeSetStatusLayer,
         MakePathStripLayer,
         MakeRateLimitLayer,

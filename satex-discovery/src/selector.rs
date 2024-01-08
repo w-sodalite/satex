@@ -167,7 +167,7 @@ impl Selector {
                     for (index, endpoint) in endpoints.iter().enumerate() {
                         let stream = match endpoint {
                             Endpoint::Ip(addr) => TcpStream::connect(addr).await,
-                            Endpoint::Raw(raw) => TcpStream::connect(raw.as_str()).await,
+                            Endpoint::Domain(raw) => TcpStream::connect(raw.as_str()).await,
                         };
                         match stream {
                             Ok(_) => {
@@ -224,10 +224,6 @@ impl Selector {
                 .clone()
         };
         Ok(actives)
-    }
-
-    pub fn server(&self) -> &str {
-        &self.server
     }
 }
 
