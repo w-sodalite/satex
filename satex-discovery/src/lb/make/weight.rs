@@ -59,3 +59,27 @@ fn make(args: Args) -> Result<WeightLoadBalance, Error> {
     }
     .map(WeightLoadBalance::new)
 }
+
+#[cfg(test)]
+mod test {
+    use satex_core::config::args::{Args, Shortcut};
+    use satex_core::essential::Essential;
+
+    use crate::lb::make::new_endpoints;
+    use crate::lb::make::weight::MakeWeightLoadBalance;
+    use crate::lb::{Context, LoadBalance, MakeLoadBalance};
+
+    #[tokio::test]
+    async fn test_choose() {
+        let args = Args::Shortcut(Shortcut::from("1,1,8"));
+        let make = MakeWeightLoadBalance::default();
+        let lb = make.make(args).unwrap();
+        let essential = Essential::default();
+        let context = Context::new(&essential, new_endpoints(3000, 3));
+        for index in 0..10 {
+            let endpoint = lb.choose(context.clone()).await.unwrap();
+            assert!(endpoint.is_some());
+            println!("Weight choose {}: {}", index, endpoint.unwrap());
+        }
+    }
+}

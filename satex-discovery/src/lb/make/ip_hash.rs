@@ -166,3 +166,26 @@ fn make(args: Args) -> Result<IpHashLoadBalance, Error> {
         )
     })
 }
+
+#[cfg(test)]
+mod test {
+    use satex_core::config::args::{Args, Shortcut};
+    use satex_core::essential::Essential;
+
+    use crate::lb::make::ip_hash::MakeIpHashLoadBalance;
+    use crate::lb::make::new_endpoints;
+    use crate::lb::{Context, LoadBalance, MakeLoadBalance};
+
+    #[tokio::test]
+    async fn test_choose() {
+        let args = Args::Shortcut(Shortcut::from("30,10"));
+        let make = MakeIpHashLoadBalance::default();
+        let lb = make.make(args).unwrap();
+        let essential = Essential::default();
+        let endpoints = new_endpoints(3000, 8);
+        let context = Context::new(&essential, endpoints);
+        let e1 = lb.choose(context.clone()).await.unwrap();
+        let e2 = lb.choose(context).await.unwrap();
+        assert!(matches!((e1, e2), (Some(e1), Some(e2)) if e1==e2))
+    }
+}
