@@ -34,12 +34,12 @@ const STATUS_STARTED: u8 = 2;
 const STATUS_SHUTDOWN: u8 = 3;
 
 #[derive(Debug, Clone, PartialOrd, PartialEq, Eq, Ord, Hash)]
-pub struct IndexedEndpoint {
+pub struct SortedEndpoint {
     index: usize,
     endpoint: Endpoint,
 }
 
-impl IndexedEndpoint {
+impl SortedEndpoint {
     pub fn new(index: usize, endpoint: Endpoint) -> Self {
         Self { index, endpoint }
     }
@@ -57,8 +57,8 @@ impl IndexedEndpoint {
     }
 }
 
-impl From<IndexedEndpoint> for Endpoint {
-    fn from(value: IndexedEndpoint) -> Self {
+impl From<SortedEndpoint> for Endpoint {
+    fn from(value: SortedEndpoint) -> Self {
         value.endpoint
     }
 }
@@ -78,7 +78,7 @@ pub struct Selector {
     ///
     /// 有效的地址下标集合，这里使用同步的[`RwLock`]是因为即使出现竞争情况，等待的时间也非常少，所以不使用异步的[`RwLock`]。
     ///
-    actives: Arc<RwLock<Vec<IndexedEndpoint>>>,
+    actives: Arc<RwLock<Vec<SortedEndpoint>>>,
 
     ///
     /// 选择器检测[`Endpoint`]是否有效的间隔时间
@@ -175,7 +175,7 @@ impl Selector {
                                     "Selector(server={}) validate endpoint [{:?}] status is valid!",
                                     server, endpoint
                                 );
-                                snapshots.push(IndexedEndpoint::new(index, endpoint.clone()));
+                                snapshots.push(SortedEndpoint::new(index, endpoint.clone()));
                             }
                             Err(e) => {
                                 warn!(
@@ -213,7 +213,7 @@ impl Selector {
         }
     }
 
-    pub async fn select(&self) -> Result<Vec<IndexedEndpoint>, Error> {
+    pub async fn select(&self) -> Result<Vec<SortedEndpoint>, Error> {
         if self.status.load(Ordering::Relaxed) != 2 {
             self.notify.notified().await;
         }

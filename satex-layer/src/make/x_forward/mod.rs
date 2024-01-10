@@ -56,7 +56,7 @@ where
         if let Some(addr) = req
             .extensions()
             .get::<Essential>()
-            .map(|essential| essential.addr())
+            .map(|essential| essential.client_addr)
         {
             let headers = req.headers_mut();
             let value = match (headers.remove(X_FORWARDED_FOR), self.mode) {

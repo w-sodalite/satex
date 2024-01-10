@@ -47,7 +47,7 @@ mod test {
             Ok::<_, Infallible>(Response::new(Body::from(value)))
         });
         let mut service = layer.layer(service);
-        let mut request = Essential::set_extension(
+        let mut request = Essential::attach(
             Request::new(Body::empty()),
             SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), 3000),
         );
@@ -78,7 +78,7 @@ mod test {
             Ok::<_, Infallible>(Response::new(Body::from(value)))
         });
         let mut service = layer.layer(service);
-        let mut request = Essential::set_extension(
+        let mut request = Essential::attach(
             Request::new(Body::empty()),
             SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), 3000),
         );

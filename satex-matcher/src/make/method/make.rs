@@ -24,30 +24,26 @@ fn make(args: Args) -> Result<MethodMatcher, Error> {
 
 #[cfg(test)]
 mod test {
-    use hyper::{Method, Request};
-    use satex_core::{
-        config::args::{Args, Shortcut},
-        http::Body,
-    };
+    use hyper::Method;
 
-    use crate::{MakeRouteMatcher, RouteMatcher};
+    use satex_core::config::args::{Args, Shortcut};
+
+    use crate::{MakeRouteMatcher, RouteMatcher, __assert_matcher};
 
     use super::MakeMethodMatcher;
-
-    fn new_request(method: Method) -> Request<Body> {
-        Request::builder()
-            .method(method)
-            .body(Body::empty())
-            .unwrap()
-    }
 
     #[test]
     fn test_match() {
         let args = Args::Shortcut(Shortcut::from("GET,POST"));
-        let make = MakeMethodMatcher::default();
-        let matcher = make.make(args).unwrap();
-        assert!(matcher.is_match(&new_request(Method::GET)).unwrap());
-        assert!(matcher.is_match(&new_request(Method::POST)).unwrap());
-        assert!(!matcher.is_match(&new_request(Method::PUT)).unwrap());
+        __assert_matcher!(
+            MakeMethodMatcher,
+            args,
+            [
+                Ok(true) => |e| { e.method = Method::GET },
+                Ok(true) => |e| { e.method = Method::POST },
+                Ok(false) => |e| { e.method = Method::DELETE },
+                Ok(false) => |e| { e.method = Method::PUT },
+            ]
+        );
     }
 }

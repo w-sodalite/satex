@@ -50,41 +50,34 @@ fn make(args: Args) -> Result<RemoteAddrMatcher, Error> {
 
 #[cfg(test)]
 mod test {
-    use std::net::{IpAddr, Ipv4Addr, SocketAddr};
+    use std::net::{Ipv4Addr, SocketAddr, SocketAddrV4};
 
-    use hyper::Request;
-    use satex_core::{
-        config::args::{Args, Shortcut},
-        essential::Essential,
-        http::Body,
-    };
+    use satex_core::config::args::{Args, Shortcut};
 
-    use crate::{MakeRouteMatcher, RouteMatcher};
+    use crate::{MakeRouteMatcher, RouteMatcher, __assert_matcher};
 
     use super::MakeRemoteAddrMatcher;
-
-    fn new_request(ip: IpAddr) -> Request<Body> {
-        let request = Request::builder().body(Body::empty()).unwrap();
-        let (parts, body) = request.into_parts();
-        let essential = Essential::new(SocketAddr::new(ip, 80), parts.clone());
-        let mut request = Request::from_parts(parts, body);
-        request.extensions_mut().insert(essential);
-        request
-    }
 
     #[test]
     fn test_match() {
         let args = Args::Shortcut(Shortcut::from("127.0.0.1/24"));
-        let make = MakeRemoteAddrMatcher::default();
-        let matcher = make.make(args).unwrap();
-        assert!(matcher
-            .is_match(&new_request(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1))))
-            .unwrap());
-        assert!(matcher
-            .is_match(&new_request(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 2))))
-            .unwrap());
-        assert!(!matcher
-            .is_match(&new_request(IpAddr::V4(Ipv4Addr::new(127, 0, 2, 1))))
-            .unwrap());
+        __assert_matcher!(
+            MakeRemoteAddrMatcher,
+            args,
+            [
+                Ok(true) => |e| {
+                    e.client_addr
+                        = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 3000))
+                },
+                Ok(true) => |e| {
+                    e.client_addr
+                        = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 2), 3000))
+                },
+                Ok(false) => |e| {
+                    e.client_addr
+                        = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 1, 1), 3000))
+                },
+            ]
+        );
     }
 }

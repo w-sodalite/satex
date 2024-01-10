@@ -1,11 +1,10 @@
-use hyper::Request;
-
 use regex::Regex;
-use satex_core::http::Body;
+
+pub use make::MakePathMatcher;
+use satex_core::essential::Essential;
 use satex_core::Error;
 
 use crate::RouteMatcher;
-pub use make::MakePathMatcher;
 
 mod make;
 
@@ -25,8 +24,8 @@ impl PathMatcher {
 }
 
 impl RouteMatcher for PathMatcher {
-    fn is_match(&self, request: &Request<Body>) -> Result<bool, Error> {
-        let path = request.uri().path();
+    fn is_match(&self, essential: &mut Essential) -> Result<bool, Error> {
+        let path = essential.uri.path();
         for pattern in self.patterns.iter() {
             match pattern {
                 Pattern::StartsWith(pattern) => {

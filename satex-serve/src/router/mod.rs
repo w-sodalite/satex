@@ -7,8 +7,8 @@ use tower::{Service, ServiceExt};
 use tracing::{info, warn};
 
 use route::Route;
-use satex_core::http::Body;
-use satex_core::BoxError;
+use satex_core::essential::Essential;
+use satex_core::http::{make_response, Body};
 use satex_core::Error;
 
 pub mod make;
@@ -47,11 +47,12 @@ impl Service<Request<Body>> for Router {
         Poll::Ready(Ok(()))
     }
 
-    fn call(&mut self, req: Request<Body>) -> Self::Future {
+    fn call(&mut self, mut request: Request<Body>) -> Self::Future {
         let mut iter = self.routes.iter();
+        let essential = request.extensions_mut().get_mut::<Essential>().unwrap();
         let route = loop {
             if let Some(route) = iter.next() {
-                match route.is_match(&req) {
+                match route.is_match(essential) {
                     Ok(false) => continue,
                     Ok(true) => break Ok(Some(route)),
                     Err(e) => break Err(e),
@@ -66,11 +67,17 @@ impl Service<Request<Body>> for Router {
                 let route = route.clone();
                 Either::Right(Box::pin(async move {
                     match <Route as ServiceExt<Request<Body>>>::ready_oneshot(route).await {
-                        Ok(mut route) => match route.call(req).await {
+                        Ok(mut route) => match route.call(request).await {
                             Ok(response) => Ok(response),
-                            Err(e) => Ok(make_error_response(e)),
+                            Err(e) => Ok(make_response(
+                                format!("{e}"),
+                                StatusCode::INTERNAL_SERVER_ERROR,
+                            )),
                         },
-                        Err(e) => Ok(make_error_response(e)),
+                        Err(e) => Ok(make_response(
+                            format!("{e}"),
+                            StatusCode::INTERNAL_SERVER_ERROR,
+                        )),
                     }
                 }))
             }
@@ -83,18 +90,11 @@ impl Service<Request<Body>> for Router {
             }
             Err(e) => {
                 warn!("Find matched route appear error: {}", e);
-                Either::Left(ready(Ok(make_error_response(e))))
+                Either::Left(ready(Ok(make_response(
+                    format!("{e}"),
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                ))))
             }
         }
     }
-}
-
-fn make_error_response(e: impl Into<BoxError>) -> Response<Body> {
-    make_response(format!("{}", e.into()), StatusCode::INTERNAL_SERVER_ERROR)
-}
-
-fn make_response<ResBody: Into<Body>>(body: ResBody, status: StatusCode) -> Response<Body> {
-    let mut response = Response::new(body.into());
-    *response.status_mut() = status;
-    response
 }

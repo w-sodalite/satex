@@ -18,30 +18,24 @@ fn make(args: Args) -> Result<QueryMatcher, Error> {
 
 #[cfg(test)]
 mod test {
-    use hyper::Request;
-    use satex_core::{
-        config::args::{Args, Shortcut},
-        http::Body,
-    };
+    use hyper::Uri;
 
-    use crate::{MakeRouteMatcher, RouteMatcher};
+    use satex_core::config::args::{Args, Shortcut};
+
+    use crate::{MakeRouteMatcher, RouteMatcher, __assert_matcher};
 
     use super::MakeQueryMatcher;
-
-    fn new_request(key: &str, value: &str) -> Request<Body> {
-        Request::builder()
-            .uri(format!("https://www.rust-lang.org?{}={}", key, value))
-            .body(Body::empty())
-            .unwrap()
-    }
 
     #[test]
     fn test_match() {
         let args = Args::Shortcut(Shortcut::from("k1,v1"));
-        let make = MakeQueryMatcher::default();
-        let matcher = make.make(args).unwrap();
-        assert!(matcher.is_match(&new_request("k1", "v1")).unwrap());
-        assert!(!matcher.is_match(&new_request("k1", "v2")).unwrap());
-        assert!(!matcher.is_match(&new_request("k2", "v2")).unwrap());
+        __assert_matcher!(
+            MakeQueryMatcher,
+            args,
+            [
+                Ok(true) => |e| { e.uri = Uri::from_static("https://satex.dev/index.html?k1=v1") },
+                Ok(false) => |e| { e.uri = Uri::from_static("https://satex.dev/index.html?k1=v2") },
+            ]
+        );
     }
 }

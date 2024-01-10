@@ -4,9 +4,11 @@ use rand::{thread_rng, Rng};
 use satex_core::apply::Apply;
 use satex_core::config::args::Args;
 use satex_core::endpoint::Endpoint;
+use satex_core::essential::Essential;
 use satex_core::{satex_error, Error};
 
-use crate::lb::{Context, LoadBalance, MakeLoadBalance};
+use crate::lb::{LoadBalance, MakeLoadBalance};
+use crate::selector::SortedEndpoint;
 use crate::{__make_load_balance, valid_endpoints};
 
 pub struct WeightLoadBalance {
@@ -21,8 +23,12 @@ impl WeightLoadBalance {
 
 #[async_trait]
 impl LoadBalance for WeightLoadBalance {
-    async fn choose<'a>(&self, context: Context<'a>) -> Result<Option<Endpoint>, Error> {
-        let (mut endpoints, _) = valid_endpoints!(context.endpoints);
+    async fn choose(
+        &self,
+        _: &Essential,
+        endpoints: Vec<SortedEndpoint>,
+    ) -> Result<Option<Endpoint>, Error> {
+        let (mut endpoints, _) = valid_endpoints!(endpoints);
         let mut ratios = vec![];
         let mut sum = 0;
         for endpoint in endpoints.iter() {
@@ -34,14 +40,19 @@ impl LoadBalance for WeightLoadBalance {
             ratios.push(ratio);
             sum += ratio;
         }
-        for (index, ratio) in ratios.into_iter().enumerate() {
-            if thread_rng().gen_ratio(ratio as u32, sum as u32) {
-                return Ok(Some(endpoints.remove(index).into()));
-            } else {
-                sum -= ratio;
+        let mut enumerate = ratios.into_iter().enumerate();
+        loop {
+            if let Some((index, ratio)) = enumerate.next() {
+                if ratio == sum {
+                    break Ok(Some(endpoints.remove(index).into()));
+                }
+                if thread_rng().gen_ratio(ratio as u32, sum as u32) {
+                    break Ok(Some(endpoints.remove(index).into()));
+                } else {
+                    sum -= ratio;
+                }
             }
         }
-        unreachable!()
     }
 }
 
@@ -62,24 +73,62 @@ fn make(args: Args) -> Result<WeightLoadBalance, Error> {
 
 #[cfg(test)]
 mod test {
+    use std::collections::HashMap;
+
     use satex_core::config::args::{Args, Shortcut};
+    use satex_core::endpoint::Endpoint;
     use satex_core::essential::Essential;
 
-    use crate::lb::make::new_endpoints;
+    use crate::lb::make::new_sorted_endpoints;
     use crate::lb::make::weight::MakeWeightLoadBalance;
-    use crate::lb::{Context, LoadBalance, MakeLoadBalance};
+    use crate::lb::{LoadBalance, MakeLoadBalance};
 
     #[tokio::test]
     async fn test_choose() {
-        let args = Args::Shortcut(Shortcut::from("1,1,8"));
+        let args = Args::Shortcut(Shortcut::from("1,1,2"));
         let make = MakeWeightLoadBalance::default();
         let lb = make.make(args).unwrap();
-        let essential = Essential::default();
-        let context = Context::new(&essential, new_endpoints(3000, 3));
-        for index in 0..10 {
-            let endpoint = lb.choose(context.clone()).await.unwrap();
-            assert!(endpoint.is_some());
-            println!("Weight choose {}: {}", index, endpoint.unwrap());
+        let endpoints = new_sorted_endpoints(3);
+        let size = 10000;
+        let mut targets = vec![];
+        for _ in 0..size {
+            targets.push(
+                lb.choose(&Essential::default(), endpoints.clone())
+                    .await
+                    .unwrap(),
+            );
+        }
+        let counter = targets.into_iter().flatten().collect::<Counter>();
+        println!("Sum: {}", counter.sum);
+        counter
+            .endpoints
+            .into_iter()
+            .for_each(|(endpoint, (count, ratio))| {
+                println!("{}: {},{}", endpoint, count, ratio);
+            });
+    }
+
+    #[derive(Debug)]
+    struct Counter {
+        sum: usize,
+        endpoints: HashMap<Endpoint, (usize, f32)>,
+    }
+
+    impl FromIterator<Endpoint> for Counter {
+        fn from_iter<T: IntoIterator<Item = Endpoint>>(iter: T) -> Self {
+            let mut endpoints = HashMap::new();
+            for endpoint in iter {
+                let (count, _) = endpoints.entry(endpoint).or_insert((0, 0.));
+                *count = *count + 1;
+            }
+            let sum = endpoints
+                .iter()
+                .map(|(_, (count, _))| *count)
+                .sum::<usize>();
+            endpoints
+                .iter_mut()
+                .for_each(|(_, (count, ratio))| *ratio = (*count as f32) / (sum as f32));
+            Self { sum, endpoints }
         }
     }
 }

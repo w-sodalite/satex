@@ -4,7 +4,7 @@ use hyper::Request;
 use tower::Service;
 
 pub use make::MakeKeepHostHeaderLayer;
-use satex_core::essential::Essential;
+use satex_service::KeepHostHeaderState;
 
 mod layer;
 mod make;
@@ -33,9 +33,7 @@ where
     }
 
     fn call(&mut self, mut req: Request<ReqBody>) -> Self::Future {
-        if let Some(essential) = req.extensions_mut().get_mut::<Essential>() {
-            essential.set_keep_host_header(Some(true));
-        }
+        req.extensions_mut().insert(KeepHostHeaderState);
         self.inner.call(req)
     }
 }

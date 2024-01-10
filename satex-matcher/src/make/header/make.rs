@@ -19,27 +19,23 @@ fn make(args: Args<'_>) -> Result<HeaderMatcher, Error> {
 
 #[cfg(test)]
 mod test {
-    use hyper::Request;
+    use hyper::http::HeaderValue;
 
     use satex_core::config::args::{Args, Shortcut};
-    use satex_core::http::Body;
 
     use crate::make::header::MakeHeaderMatcher;
-    use crate::{MakeRouteMatcher, RouteMatcher};
-
-    fn new_request(key: &str, value: &str) -> Request<Body> {
-        Request::builder()
-            .header(key, value)
-            .body(Body::empty())
-            .unwrap()
-    }
+    use crate::{MakeRouteMatcher, RouteMatcher, __assert_matcher};
 
     #[test]
     fn test_match() {
         let args = Args::Shortcut(Shortcut::from("k1,v1"));
-        let make = MakeHeaderMatcher::default();
-        let matcher = make.make(Args::from(args)).unwrap();
-        assert!(matcher.is_match(&new_request("k1", "v1")).unwrap());
-        assert!(!matcher.is_match(&new_request("k2", "v2")).unwrap());
+        __assert_matcher!(
+            MakeHeaderMatcher,
+            args,
+            [
+                Ok(true) => |e| { e.headers.insert("k1", HeaderValue::from_static("v1")) },
+                Ok(false) => |e| { e.headers.insert("k1", HeaderValue::from_static("v2")) }
+            ]
+        );
     }
 }

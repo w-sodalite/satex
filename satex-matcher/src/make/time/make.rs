@@ -30,19 +30,13 @@ mod test {
     };
 
     use chrono::Local;
-    use hyper::Request;
-    use satex_core::{
-        config::args::{Args, Shortcut},
-        http::Body,
-    };
+
+    use satex_core::config::args::{Args, Shortcut};
+    use satex_core::essential::Essential;
 
     use crate::{MakeRouteMatcher, RouteMatcher};
 
     use super::{MakeTimeMatcher, DEFAULT_TIME_PATTERN};
-
-    fn new_request() -> Request<Body> {
-        Request::builder().body(Body::empty()).unwrap()
-    }
 
     #[test]
     fn test_match() {
@@ -54,11 +48,17 @@ mod test {
         let before = format!("After,{}", before);
         let args = Args::Shortcut(Shortcut::from(before.as_str()));
         let matcher = make.make(args).unwrap();
-        assert!(matcher.is_match(&new_request()).unwrap());
+        assert!(matches!(
+            matcher.is_match(&mut Essential::default()),
+            Ok(true)
+        ));
 
         let after = format!("Before,{}", after);
         let args = Args::Shortcut(Shortcut::from(after.as_str()));
         let matcher = make.make(args).unwrap();
-        assert!(matcher.is_match(&new_request()).unwrap());
+        assert!(matches!(
+            matcher.is_match(&mut Essential::default()),
+            Ok(true)
+        ));
     }
 }

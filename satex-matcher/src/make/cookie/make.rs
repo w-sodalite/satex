@@ -19,27 +19,29 @@ fn make(args: Args<'_>) -> Result<CookieMatcher, Error> {
 
 #[cfg(test)]
 mod test {
-    use hyper::Request;
+    use hyper::http::HeaderValue;
 
     use satex_core::config::args::{Args, Shortcut};
-    use satex_core::http::Body;
 
     use crate::make::cookie::make::MakeCookieMatcher;
-    use crate::{MakeRouteMatcher, RouteMatcher};
-
-    fn new_request(key: &str, value: &str) -> Request<Body> {
-        Request::builder()
-            .header("cookie", format!("{}={}", key, value))
-            .body(Body::empty())
-            .unwrap()
-    }
+    use crate::{MakeRouteMatcher, RouteMatcher, __assert_matcher};
 
     #[test]
     fn test_match() {
         let args = Args::Shortcut(Shortcut::from("k1,v1"));
-        let make = MakeCookieMatcher::default();
-        let matcher = make.make(Args::from(args)).unwrap();
-        assert!(matcher.is_match(&new_request("k1", "v1")).unwrap());
-        assert!(!matcher.is_match(&new_request("k2", "v2")).unwrap());
+        __assert_matcher!(
+            MakeCookieMatcher,
+            args,
+            [
+                Ok(true) => |e| {
+                    e.headers
+                        .insert("cookie", HeaderValue::from_static("k1=v1"))
+                },
+                Ok(false) => |e| {
+                    e.headers
+                        .insert("cookie", HeaderValue::from_static("k1=v2"))
+                }
+            ]
+        );
     }
 }

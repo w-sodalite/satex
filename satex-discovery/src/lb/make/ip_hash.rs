@@ -12,20 +12,21 @@ use tracing::debug;
 
 use satex_core::config::args::Args;
 use satex_core::endpoint::Endpoint;
+use satex_core::essential::Essential;
 use satex_core::task::spawn;
 use satex_core::Error;
 
 use crate::lb::make::MakeLoadBalance;
-use crate::lb::{Context, LoadBalance};
-use crate::selector::IndexedEndpoint;
+use crate::lb::LoadBalance;
+use crate::selector::SortedEndpoint;
 use crate::{__make_load_balance, valid_endpoints};
 
 const DEFAULT_TIMEOUT_SECS: u64 = 1800;
 const DEFAULT_INTERVAL_SECS: u64 = 10;
 
-type ArcTable = Arc<RwLock<HashMap<IpAddr, (IndexedEndpoint, Instant)>>>;
+type ArcTable = Arc<RwLock<HashMap<IpAddr, (SortedEndpoint, Instant)>>>;
 
-type WeakTable = Weak<RwLock<HashMap<IpAddr, (IndexedEndpoint, Instant)>>>;
+type WeakTable = Weak<RwLock<HashMap<IpAddr, (SortedEndpoint, Instant)>>>;
 
 pub struct IpHashLoadBalance {
     table: ArcTable,
@@ -87,15 +88,18 @@ impl IpHashLoadBalance {
 
 #[async_trait]
 impl LoadBalance for IpHashLoadBalance {
-    async fn choose<'a>(&self, mut context: Context<'a>) -> Result<Option<Endpoint>, Error> {
-        let ip = context.essential.addr().ip();
+    async fn choose(
+        &self,
+        essential: &Essential,
+        mut endpoints: Vec<SortedEndpoint>,
+    ) -> Result<Option<Endpoint>, Error> {
+        let ip = essential.client_addr.ip();
         let mut table = self.table.write().await;
         let mut cached = table.get_mut(&ip);
         loop {
             match cached {
                 Some((endpoint, instant)) => {
-                    let index = context
-                        .endpoints
+                    let index = endpoints
                         .iter()
                         .enumerate()
                         .filter(|(_, item)| *item == endpoint)
@@ -105,7 +109,7 @@ impl LoadBalance for IpHashLoadBalance {
                         Some(index) => {
                             if instant.elapsed().lt(&self.timeout) {
                                 *instant = Instant::now();
-                                return Ok(Some(context.endpoints.remove(index).into()));
+                                return Ok(Some(endpoints.remove(index).into()));
                             } else {
                                 table.remove(&ip);
                                 cached = None;
@@ -117,7 +121,7 @@ impl LoadBalance for IpHashLoadBalance {
                     }
                 }
                 None => {
-                    let (mut endpoints, len) = valid_endpoints!(context.endpoints);
+                    let (mut endpoints, len) = valid_endpoints!(endpoints);
                     let mut hasher = DefaultHasher::new();
                     ip.hash(&mut hasher);
                     let hash = hasher.finish();
@@ -173,19 +177,20 @@ mod test {
     use satex_core::essential::Essential;
 
     use crate::lb::make::ip_hash::MakeIpHashLoadBalance;
-    use crate::lb::make::new_endpoints;
-    use crate::lb::{Context, LoadBalance, MakeLoadBalance};
+    use crate::lb::make::new_sorted_endpoints;
+    use crate::lb::{LoadBalance, MakeLoadBalance};
 
     #[tokio::test]
     async fn test_choose() {
         let args = Args::Shortcut(Shortcut::from("30,10"));
         let make = MakeIpHashLoadBalance::default();
         let lb = make.make(args).unwrap();
-        let essential = Essential::default();
-        let endpoints = new_endpoints(3000, 8);
-        let context = Context::new(&essential, endpoints);
-        let e1 = lb.choose(context.clone()).await.unwrap();
-        let e2 = lb.choose(context).await.unwrap();
+        let endpoints = new_sorted_endpoints(8);
+        let e1 = lb
+            .choose(&Essential::default(), endpoints.clone())
+            .await
+            .unwrap();
+        let e2 = lb.choose(&Essential::default(), endpoints).await.unwrap();
         assert!(matches!((e1, e2), (Some(e1), Some(e2)) if e1==e2))
     }
 }

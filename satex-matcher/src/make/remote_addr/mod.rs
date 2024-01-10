@@ -1,12 +1,10 @@
 use std::net::IpAddr;
 
-use hyper::Request;
 use serde::Deserialize;
 
 pub use make::MakeRemoteAddrMatcher;
 use satex_core::essential::Essential;
-use satex_core::http::Body;
-use satex_core::{satex_error, Error};
+use satex_core::Error;
 
 use crate::RouteMatcher;
 
@@ -45,12 +43,8 @@ impl RemoteAddrMatcher {
 }
 
 impl RouteMatcher for RemoteAddrMatcher {
-    fn is_match(&self, request: &Request<Body>) -> Result<bool, Error> {
-        let essential = request
-            .extensions()
-            .get::<Essential>()
-            .ok_or_else(|| satex_error!("Cannot get client addr!"))?;
-        let source = essential.addr().ip();
+    fn is_match(&self, essential: &mut Essential) -> Result<bool, Error> {
+        let source = essential.client_addr.ip();
         let policy = self.policy;
         match source {
             IpAddr::V4(source) => {

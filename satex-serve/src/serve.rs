@@ -101,9 +101,9 @@ impl EventLoop {
                 loop {
                     let router = router.clone();
                     match listener.accept().await {
-                        Ok((stream, addr)) => {
-                            info!("App serve listener accept client: {}", addr);
-                            let worker = Self::worker(TokioIo::new(stream), router, addr);
+                        Ok((stream, client_addr)) => {
+                            info!("App serve listener accept client: {}", client_addr);
+                            let worker = Self::worker(TokioIo::new(stream), router, client_addr);
                             spawn(worker);
                         }
                         Err(e) => {
@@ -115,11 +115,11 @@ impl EventLoop {
         }
     }
 
-    pub fn worker(io: TokioIo<TcpStream>, router: Router, addr: SocketAddr) -> Self {
+    pub fn worker(io: TokioIo<TcpStream>, router: Router, client_addr: SocketAddr) -> Self {
         Self {
             future: Box::pin(async move {
                 Builder::new(TokioExecutor::new())
-                    .serve_connection_with_upgrades(io, WorkService::new(router, addr))
+                    .serve_connection_with_upgrades(io, WorkService::new(router, client_addr))
                     .await
                     .map_err(|e| satex_error!(e))
             }),
@@ -137,12 +137,15 @@ impl Future for EventLoop {
 
 struct WorkService {
     router: Router,
-    addr: SocketAddr,
+    client_addr: SocketAddr,
 }
 
 impl WorkService {
-    pub fn new(router: Router, addr: SocketAddr) -> Self {
-        Self { router, addr }
+    pub fn new(router: Router, client_addr: SocketAddr) -> Self {
+        Self {
+            router,
+            client_addr,
+        }
     }
 }
 
@@ -157,7 +160,7 @@ where
 
     fn call(&self, req: Request<ReqBody>) -> Self::Future {
         let mut router = self.router.clone();
-        let req = Essential::set_extension(req, self.addr);
+        let req = Essential::attach(req, self.client_addr);
         router.call(req.map(Body::new))
     }
 }

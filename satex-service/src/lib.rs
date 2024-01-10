@@ -7,6 +7,7 @@ use hyper::{Request, Response};
 use tower::util::{BoxCloneService, MapErrLayer, MapResponseLayer};
 use tower::{Service, ServiceBuilder};
 
+pub use make::proxy::KeepHostHeaderState;
 use satex_core::http::Body;
 use satex_core::{export_make, BoxError};
 use satex_core::{satex_error, Error};

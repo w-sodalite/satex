@@ -1,9 +1,8 @@
 use chrono::{Local, NaiveDateTime};
-use hyper::Request;
 use serde::Deserialize;
 
 pub use make::MakeTimeMatcher;
-use satex_core::http::Body;
+use satex_core::essential::Essential;
 use satex_core::Error;
 
 use crate::RouteMatcher;
@@ -28,7 +27,7 @@ impl TimeMatcher {
 }
 
 impl RouteMatcher for TimeMatcher {
-    fn is_match(&self, _: &Request<Body>) -> Result<bool, Error> {
+    fn is_match(&self, _: &mut Essential) -> Result<bool, Error> {
         let now = Local::now().naive_local();
         match self.mode {
             Mode::Before => Ok(self.time.ge(&now)),

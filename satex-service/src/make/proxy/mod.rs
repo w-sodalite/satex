@@ -8,8 +8,8 @@ use hyper_tls::HttpsConnector;
 use hyper_util::client::legacy::connect::HttpConnector;
 use hyper_util::client::legacy::Client;
 use tower::Service;
-use tracing::debug;
 
+pub use keep_host_header::KeepHostHeaderState;
 pub use make::MakeProxyService;
 use satex_core::endpoint::Endpoint;
 use satex_core::essential::Essential;
@@ -17,6 +17,7 @@ use satex_core::http::Body;
 use satex_core::{satex_error, Error};
 use satex_discovery::{NamedServerDiscovery, ServerDiscovery};
 
+mod keep_host_header;
 mod make;
 
 const DEFAULT_SCHEMA: &str = "http";
@@ -61,13 +62,13 @@ impl Service<Request<Body>> for ProxyService {
     }
 }
 
-async fn proxy(uri: String, mut req: Request<Body>) -> Result<Response<Body>, Error> {
+async fn proxy(uri: String, mut request: Request<Body>) -> Result<Response<Body>, Error> {
     let prefix = uri.strip_suffix('/').unwrap_or(&uri);
-    let path = req
+    let path = request
         .uri()
         .path_and_query()
         .map(|x| x.as_str())
-        .unwrap_or(req.uri().path())
+        .unwrap_or(request.uri().path())
         .to_string();
 
     // reconstruct uri
@@ -79,16 +80,13 @@ async fn proxy(uri: String, mut req: Request<Body>) -> Result<Response<Body>, Er
         .ok_or_else(|| satex_error!("Proxy service uri miss `host`!"))?;
 
     // get server instance from discovery
-    let discovery = req
+    let discovery = request
         .extensions_mut()
         .remove::<NamedServerDiscovery>()
-        .ok_or_else(|| satex_error!("Cannot get `ServerDiscovery` extension!"))?;
+        .unwrap();
 
     // replace proxy uri host and port
-    let essential = req
-        .extensions_mut()
-        .remove::<Essential>()
-        .ok_or_else(|| satex_error!("Cannot get `Essential` extension!"))?;
+    let essential = request.extensions_mut().remove::<Essential>().unwrap();
 
     if let Some(endpoint) = discovery.resolve(&essential, host).await? {
         let host = match endpoint {
@@ -103,24 +101,21 @@ async fn proxy(uri: String, mut req: Request<Body>) -> Result<Response<Body>, Er
         ))
         .map_err(|e| satex_error!(e))?;
     }
-    *req.uri_mut() = uri;
+    *request.uri_mut() = uri;
 
-    // remove headers
-    let headers = req.headers_mut();
+    // 处理请求头
+    let keep_host_header = request
+        .extensions_mut()
+        .remove::<KeepHostHeaderState>()
+        .is_some();
+    let headers = request.headers_mut();
+    if !keep_host_header {
+        headers.remove(HOST);
+    }
     for name in REMOVE_HEADER_NAMES {
         headers.remove(name);
     }
-    if !essential.keep_host_header().map_or_else(|| false, |x| x) {
-        headers.remove(HOST);
-    }
-
-    let client = req
-        .extensions_mut()
-        .remove::<HttpClient>()
-        .ok_or_else(|| satex_error!("Cannot get `HttpClient` extension!"))?;
-
-    debug!("Proxy service request: {:?}", req);
-    let res = client.request(req).await.map_err(|e| satex_error!(e))?;
-    debug!("Proxy service request: {:?}", res);
-    Ok(res.map(Body::new))
+    let client = request.extensions_mut().remove::<HttpClient>().unwrap();
+    let response = client.request(request).await.map_err(|e| satex_error!(e))?;
+    Ok(response.map(Body::new))
 }

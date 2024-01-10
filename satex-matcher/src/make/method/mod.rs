@@ -1,9 +1,9 @@
 use std::collections::HashSet;
 
-use hyper::{Method, Request};
+use hyper::Method;
 
 pub use make::MakeMethodMatcher;
-use satex_core::http::Body;
+use satex_core::essential::Essential;
 use satex_core::Error;
 
 use crate::RouteMatcher;
@@ -22,7 +22,7 @@ impl MethodMatcher {
 }
 
 impl RouteMatcher for MethodMatcher {
-    fn is_match(&self, request: &Request<Body>) -> Result<bool, Error> {
-        Ok(self.methods.contains(request.method()))
+    fn is_match(&self, essential: &mut Essential) -> Result<bool, Error> {
+        Ok(self.methods.contains(&essential.method))
     }
 }

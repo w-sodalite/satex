@@ -8,7 +8,7 @@ use satex_core::endpoint::Endpoint;
 use satex_core::essential::Essential;
 use satex_core::Error;
 
-use crate::lb::{Context, LoadBalance, NamedLoadBalance};
+use crate::lb::{LoadBalance, NamedLoadBalance};
 use crate::selector::Selector;
 use crate::ServerDiscovery;
 
@@ -46,7 +46,7 @@ impl ServerDiscovery for BuiltinDiscovery {
                 match endpoints.len() {
                     0 => Ok(None),
                     1 => Ok(endpoints.into_iter().next().map(Endpoint::from)),
-                    _ => lb.choose(Context::new(essential, endpoints)).await,
+                    _ => lb.choose(essential, endpoints).await,
                 }
             }
             None => {
