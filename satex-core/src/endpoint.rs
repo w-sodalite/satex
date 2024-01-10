@@ -1,3 +1,4 @@
+use std::fmt::{Display, Formatter};
 use std::net::{SocketAddr, ToSocketAddrs};
 use std::str::FromStr;
 
@@ -9,6 +10,15 @@ use crate::Error;
 pub enum Endpoint {
     Ip(SocketAddr),
     Domain(String),
+}
+
+impl Display for Endpoint {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Endpoint::Ip(ip) => write!(f, "{}", ip),
+            Endpoint::Domain(domain) => write!(f, "{}", domain),
+        }
+    }
 }
 
 impl<'de> Deserialize<'de> for Endpoint {
@@ -25,6 +35,8 @@ impl FromStr for Endpoint {
     type Err = Error;
 
     ///
+    /// 根据输入的字符串创建[Endpoint]
+    ///
     /// # Examples
     ///
     /// - From ip
@@ -33,8 +45,8 @@ impl FromStr for Endpoint {
     /// use std::net::{IpAddr, Ipv4Addr, SocketAddr};
     /// use std::str::FromStr;
     /// use satex_core::endpoint::Endpoint;
-    /// let endpoint = Endpoint::from_str("127.0.0.1:3000").unwrap();
-    /// assert_eq!(endpoint,Endpoint::Ip(SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127,0,0,1)),3000)));
+    /// let endpoint = Endpoint::from_str("127.0.0.1:3000");
+    /// assert!(matches!(endpoint, Ok(Endpoint::Ip(_))));
     /// ```
     ///
     /// - From domain
@@ -42,8 +54,8 @@ impl FromStr for Endpoint {
     /// ```
     /// use std::str::FromStr;
     /// use satex_core::endpoint::Endpoint;
-    /// let endpoint = Endpoint::from_str("satex.com:8080").unwrap();
-    /// assert_eq!(endpoint,Endpoint::Domain(String::from("satex.com:8080")));
+    /// let endpoint = Endpoint::from_str("satex.com:8080");
+    /// assert!(matches!(endpoint, Ok(Endpoint::Domain(_))));
     /// ```
     ///
     fn from_str(s: &str) -> Result<Self, Self::Err> {

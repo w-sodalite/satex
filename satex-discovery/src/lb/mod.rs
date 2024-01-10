@@ -14,6 +14,7 @@ mod make;
 mod registry;
 export_make!(MakeLoadBalance);
 
+#[derive(Clone)]
 pub struct Context<'a> {
     pub essential: &'a Essential,
     pub endpoints: Vec<IndexedEndpoint>,

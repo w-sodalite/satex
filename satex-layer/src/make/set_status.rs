@@ -4,10 +4,10 @@ use tower_http::set_status::SetStatusLayer;
 use satex_core::config::args::Args;
 use satex_core::{satex_error, Error};
 
-use crate::__layer;
+use crate::__make_layer;
 use crate::make::MakeRouteServiceLayer;
 
-__layer! {
+__make_layer! {
     SetStatus,
     #[serde(deserialize_with="satex_core::serde::tot::as_u64")]
     status: u64,

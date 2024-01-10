@@ -2,13 +2,13 @@ use regex::Regex;
 use satex_core::{apply::Apply, config::args::Args};
 use satex_core::{satex_error, Error};
 
-use crate::{MakeRouteMatcher, __matcher};
+use crate::{MakeRouteMatcher, __make_matcher};
 
 use super::{PathMatcher, Pattern};
 
 const STARTS_WITH_PREFIX: &str = "@";
 
-__matcher! {
+__make_matcher! {
     Path,
     List,
     patterns: Vec<String>

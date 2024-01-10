@@ -5,11 +5,11 @@ use satex_core::satex_error;
 use satex_core::Error;
 
 use crate::make::time::{Mode, TimeMatcher};
-use crate::{MakeRouteMatcher, __matcher};
+use crate::{MakeRouteMatcher, __make_matcher};
 
 const DEFAULT_TIME_PATTERN: &str = "%Y-%m-%d %H:%M:%S";
 
-__matcher! {
+__make_matcher! {
     Time,
     mode: Mode,
     time: String,

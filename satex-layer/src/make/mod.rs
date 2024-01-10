@@ -57,7 +57,7 @@ impl ArcMakeRouteServiceLayer {
 ///
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __layer {
+macro_rules! __make_layer {
     ($name:ident $(,)?) => {
         satex_core::make_impl!(MakeRouteServiceLayer,Layer,$name,Default);
     };

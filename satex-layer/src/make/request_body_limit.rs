@@ -3,12 +3,12 @@ use tower_http::limit::RequestBodyLimitLayer;
 use satex_core::config::args::Args;
 use satex_core::Error;
 
-use crate::__layer;
+use crate::__make_layer;
 use crate::make::MakeRouteServiceLayer;
 
 const DEFAULT_REQUEST_BODY_LIMIT: u64 = 10 * 1024;
 
-__layer! {
+__make_layer! {
     RequestBodyLimit,
     #[serde(deserialize_with = "satex_core::serde::tot::as_u64", default = "Config::default_limit")]
     limit: u64,

@@ -18,7 +18,7 @@ use satex_core::Error;
 use crate::lb::make::MakeLoadBalance;
 use crate::lb::{Context, LoadBalance};
 use crate::selector::IndexedEndpoint;
-use crate::{__load_balance, valid_endpoints};
+use crate::{__make_load_balance, valid_endpoints};
 
 const DEFAULT_TIMEOUT_SECS: u64 = 1800;
 const DEFAULT_INTERVAL_SECS: u64 = 10;
@@ -129,7 +129,7 @@ impl LoadBalance for IpHashLoadBalance {
     }
 }
 
-__load_balance! {
+__make_load_balance! {
     IpHash,
     #[serde(
         deserialize_with = "satex_core::serde::tot::as_u64",
@@ -165,4 +165,27 @@ fn make(args: Args) -> Result<IpHashLoadBalance, Error> {
             Duration::from_secs(config.interval),
         )
     })
+}
+
+#[cfg(test)]
+mod test {
+    use satex_core::config::args::{Args, Shortcut};
+    use satex_core::essential::Essential;
+
+    use crate::lb::make::ip_hash::MakeIpHashLoadBalance;
+    use crate::lb::make::new_endpoints;
+    use crate::lb::{Context, LoadBalance, MakeLoadBalance};
+
+    #[tokio::test]
+    async fn test_choose() {
+        let args = Args::Shortcut(Shortcut::from("30,10"));
+        let make = MakeIpHashLoadBalance::default();
+        let lb = make.make(args).unwrap();
+        let essential = Essential::default();
+        let endpoints = new_endpoints(3000, 8);
+        let context = Context::new(&essential, endpoints);
+        let e1 = lb.choose(context.clone()).await.unwrap();
+        let e2 = lb.choose(context).await.unwrap();
+        assert!(matches!((e1, e2), (Some(e1), Some(e2)) if e1==e2))
+    }
 }

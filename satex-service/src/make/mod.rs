@@ -43,7 +43,7 @@ impl ArcMakeRouteService {
 ///
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __service {
+macro_rules! __make_service {
     ($name:ident $(,)?) => {
         satex_core::make_impl!(MakeRouteService,Service,$name,Default);
     };

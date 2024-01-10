@@ -16,7 +16,7 @@ make! {
 ///
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __discovery {
+macro_rules! __make_discovery {
     ($name:ident $(,)?) => {
         satex_core::make_impl!(MakeServerDiscovery,Discovery,$name,Default);
     };

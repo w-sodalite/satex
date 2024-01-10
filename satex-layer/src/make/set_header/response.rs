@@ -3,11 +3,11 @@ use satex_core::serde::http::{SerdeHeaderName, SerdeHeaderValue};
 use satex_core::Error;
 
 use crate::make::set_header::common::{FixedMakeHeaderValue, InsertHeaderMode};
-use crate::{MakeRouteServiceLayer, __layer};
+use crate::{MakeRouteServiceLayer, __make_layer};
 
 type SetResponseHeaderLayer = tower_http::set_header::SetResponseHeaderLayer<FixedMakeHeaderValue>;
 
-__layer! {
+__make_layer! {
     SetResponseHeader,
     name: SerdeHeaderName,
     value: SerdeHeaderValue,

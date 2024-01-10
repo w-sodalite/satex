@@ -1,6 +1,10 @@
+use std::net::{IpAddr, Ipv4Addr, SocketAddr};
+
+use satex_core::endpoint::Endpoint;
 use satex_core::make;
 
 use crate::lb::{LoadBalance, NamedLoadBalance};
+use crate::selector::IndexedEndpoint;
 
 pub mod ip_hash;
 pub mod random;
@@ -20,7 +24,7 @@ make! {
 ///
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __load_balance {
+macro_rules! __make_load_balance {
     ($name:ident $(,)?) => {
         satex_core::make_impl!(MakeLoadBalance,LoadBalance,$name,Default);
     };
@@ -44,4 +48,20 @@ macro_rules! valid_endpoints {
             len => ($endpoints, len),
         }
     }};
+}
+
+#[cfg(test)]
+fn new_endpoints(port: u16, size: usize) -> Vec<IndexedEndpoint> {
+    (0..size)
+        .into_iter()
+        .map(|index| {
+            IndexedEndpoint::new(
+                index,
+                Endpoint::Ip(SocketAddr::new(
+                    IpAddr::V4(Ipv4Addr::LOCALHOST),
+                    port + (index as u16),
+                )),
+            )
+        })
+        .collect::<Vec<_>>()
 }

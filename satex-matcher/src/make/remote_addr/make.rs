@@ -6,9 +6,9 @@ use satex_core::satex_error;
 use satex_core::Error;
 
 use crate::make::remote_addr::{Policy, RemoteAddrMatcher};
-use crate::{MakeRouteMatcher, __matcher};
+use crate::{MakeRouteMatcher, __make_matcher};
 
-__matcher! {
+__make_matcher! {
     RemoteAddr,
     ListFlag,
     sources: Vec<String>,

@@ -2,11 +2,11 @@ use satex_core::config::args::Args;
 use satex_core::serde::regex::SerdeRegex;
 use satex_core::Error;
 
-use crate::{MakeRouteMatcher, __matcher};
+use crate::{MakeRouteMatcher, __make_matcher};
 
 use super::CookieMatcher;
 
-__matcher! {
+__make_matcher! {
     Cookie,
     name: String,
     value: SerdeRegex

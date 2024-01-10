@@ -7,9 +7,9 @@ use satex_core::serde::http::{SerdeHeaderName, SerdeHeaderValue, SerdeMethod};
 use satex_core::Error;
 
 use crate::make::cors::complex::*;
-use crate::{MakeRouteServiceLayer, __layer};
+use crate::{MakeRouteServiceLayer, __make_layer};
 
-__layer! {
+__make_layer! {
     Cors,
     allow_credentials: Option<bool>,
     allow_headers: Option<Complex<SerdeHeaderName>>,
