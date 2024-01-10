@@ -30,3 +30,20 @@ macro_rules! __make_matcher {
         satex_core::make_impl!(MakeRouteMatcher,Matcher,$name,$mode,$($(#[$meta])* $vis $field : $ty),*);
     };
 }
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __assert_matcher {
+    ($make:ty,$args:expr,[$($result:pat => |$essential:ident|$block:block),* $(,)?]) => {
+        let make = <$make>::default();
+        let matcher = make.make($args).unwrap();
+        $(
+            {
+                let mut essential = satex_core::essential::Essential::default();
+                let callback = |$essential: &mut satex_core::essential::Essential| $block;
+                let _ = callback(&mut essential);
+                assert!(matches!(matcher.is_match(&mut essential), $result))
+            }
+        )*
+    };
+}

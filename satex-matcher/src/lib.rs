@@ -1,9 +1,7 @@
 use std::fmt::{Debug, Formatter};
 use std::sync::Arc;
 
-use hyper::Request;
-
-use satex_core::http::Body;
+use satex_core::essential::Essential;
 use satex_core::{export_make, Error};
 
 mod make;
@@ -11,7 +9,7 @@ mod registry;
 export_make!(MakeRouteMatcher);
 
 pub trait RouteMatcher {
-    fn is_match(&self, request: &Request<Body>) -> Result<bool, Error>;
+    fn is_match(&self, essential: &mut Essential) -> Result<bool, Error>;
 }
 
 #[derive(Clone)]
@@ -42,8 +40,8 @@ impl NamedRouteMatcher {
 }
 
 impl RouteMatcher for NamedRouteMatcher {
-    fn is_match(&self, request: &Request<Body>) -> Result<bool, Error> {
-        self.inner.is_match(request)
+    fn is_match(&self, essential: &mut Essential) -> Result<bool, Error> {
+        self.inner.is_match(essential)
     }
 }
 
@@ -54,9 +52,9 @@ pub(crate) struct MatchFn<F> {
 
 impl<F> RouteMatcher for MatchFn<F>
 where
-    F: Fn(&Request<Body>) -> Result<bool, Error>,
+    F: Fn(&mut Essential) -> Result<bool, Error>,
 {
-    fn is_match(&self, request: &Request<Body>) -> Result<bool, Error> {
-        (self.f)(request)
+    fn is_match(&self, essential: &mut Essential) -> Result<bool, Error> {
+        (self.f)(essential)
     }
 }

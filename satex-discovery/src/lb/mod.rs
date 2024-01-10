@@ -8,30 +8,19 @@ use satex_core::essential::Essential;
 use satex_core::{export_make, Error};
 
 use crate::lb::make::sequential::SequentialLoadBalance;
-use crate::selector::IndexedEndpoint;
+use crate::selector::SortedEndpoint;
 
 mod make;
 mod registry;
 export_make!(MakeLoadBalance);
 
-#[derive(Clone)]
-pub struct Context<'a> {
-    pub essential: &'a Essential,
-    pub endpoints: Vec<IndexedEndpoint>,
-}
-
-impl<'a> Context<'a> {
-    pub fn new(essential: &'a Essential, endpoints: Vec<IndexedEndpoint>) -> Self {
-        Self {
-            essential,
-            endpoints,
-        }
-    }
-}
-
 #[async_trait]
 pub trait LoadBalance {
-    async fn choose<'a>(&self, context: Context<'a>) -> Result<Option<Endpoint>, Error>;
+    async fn choose(
+        &self,
+        essential: &Essential,
+        endpoints: Vec<SortedEndpoint>,
+    ) -> Result<Option<Endpoint>, Error>;
 }
 
 #[derive(Clone)]
@@ -65,7 +54,11 @@ impl Default for NamedLoadBalance {
 
 #[async_trait]
 impl LoadBalance for NamedLoadBalance {
-    async fn choose<'a>(&self, context: Context<'a>) -> Result<Option<Endpoint>, Error> {
-        self.inner.choose(context).await
+    async fn choose(
+        &self,
+        essential: &Essential,
+        endpoints: Vec<SortedEndpoint>,
+    ) -> Result<Option<Endpoint>, Error> {
+        self.inner.choose(essential, endpoints).await
     }
 }

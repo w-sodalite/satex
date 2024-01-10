@@ -22,30 +22,33 @@ fn make(args: Args<'_>) -> Result<HostMatcher, Error> {
 
 #[cfg(test)]
 mod test {
-    use hyper::{header::HOST, Request};
-    use satex_core::{
-        config::args::{Args, Shortcut},
-        http::Body,
-    };
+    use hyper::header::{HeaderValue, HOST};
 
-    use crate::{MakeRouteMatcher, RouteMatcher};
+    use satex_core::config::args::{Args, Shortcut};
 
-    use super::MakeHostMatcher;
-
-    fn new_request(host: &str) -> Request<Body> {
-        Request::builder()
-            .header(HOST, host)
-            .body(Body::empty())
-            .unwrap()
-    }
+    use crate::make::host::MakeHostMatcher;
+    use crate::{MakeRouteMatcher, RouteMatcher, __assert_matcher};
 
     #[test]
     fn test_match() {
         let args = Args::Shortcut(Shortcut::from("127.0.0.([1-9])"));
-        let make = MakeHostMatcher::default();
-        let matcher = make.make(args).unwrap();
-        assert!(matcher.is_match(&new_request("127.0.0.1")).unwrap());
-        assert!(matcher.is_match(&new_request("127.0.0.2")).unwrap());
-        assert!(!matcher.is_match(&new_request("127.0.1.1")).unwrap());
+        __assert_matcher!(
+            MakeHostMatcher,
+            args,
+            [
+                Ok(true) => |e| {
+                    e.headers
+                        .insert(HOST, HeaderValue::from_static("127.0.0.1"))
+                },
+                Ok(true) => |e| {
+                    e.headers
+                        .insert(HOST, HeaderValue::from_static("127.0.0.2"))
+                },
+                Ok(false) => |e| {
+                    e.headers
+                        .insert(HOST, HeaderValue::from_static("127.0.1.1"))
+                }
+            ]
+        );
     }
 }

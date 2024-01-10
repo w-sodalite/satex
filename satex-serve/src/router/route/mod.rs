@@ -7,6 +7,7 @@ use hyper::{Request, Response};
 use tower::Service;
 use tracing::debug;
 
+use satex_core::essential::Essential;
 use satex_core::http::Body;
 use satex_core::BoxError;
 use satex_core::Error;
@@ -41,14 +42,14 @@ impl Route {
         }
     }
 
-    pub(crate) fn is_match(&self, request: &Request<Body>) -> Result<bool, Error> {
+    pub(crate) fn is_match(&self, essential: &mut Essential) -> Result<bool, Error> {
         let mut match_msg = String::new();
         let mut iter = self.matchers.iter();
         let result = loop {
             if let Some(matcher) = iter.next() {
                 match_msg.push_str(&format!("{:?}", matcher));
                 match_msg.push_str(" -> ");
-                match matcher.is_match(request) {
+                match matcher.is_match(essential) {
                     Ok(true) => {
                         continue;
                     }

@@ -24,6 +24,7 @@ mod test {
         essential::Essential,
         http::Body,
     };
+    use satex_service::KeepHostHeaderState;
 
     use crate::MakeRouteServiceLayer;
 
@@ -35,14 +36,16 @@ mod test {
         let make = MakeKeepHostHeaderLayer::default();
         let layer = make.make(args).unwrap();
         let service = service_fn(|mut request: Request<Body>| async move {
-            let essential = request.extensions_mut().remove::<Essential>().unwrap();
             Ok::<_, Infallible>(Response::new(Body::from(format!(
                 "{}",
-                essential.keep_host_header().is_some()
+                request
+                    .extensions_mut()
+                    .remove::<KeepHostHeaderState>()
+                    .is_some()
             ))))
         });
         let mut service = layer.layer(service);
-        let request = Essential::set_extension(
+        let request = Essential::attach(
             Request::new(Body::empty()),
             "127.0.0.1:3000".parse().unwrap(),
         );

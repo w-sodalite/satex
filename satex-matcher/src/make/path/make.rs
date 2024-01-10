@@ -1,4 +1,5 @@
 use regex::Regex;
+
 use satex_core::{apply::Apply, config::args::Args};
 use satex_core::{satex_error, Error};
 
@@ -33,30 +34,25 @@ fn make(args: Args) -> Result<PathMatcher, Error> {
 
 #[cfg(test)]
 mod test {
-    use hyper::Request;
-    use satex_core::{
-        config::args::{Args, Shortcut},
-        http::Body,
-    };
+    use hyper::Uri;
 
-    use crate::{make::path::make::MakePathMatcher, MakeRouteMatcher, RouteMatcher};
+    use satex_core::config::args::{Args, Shortcut};
 
-    fn new_request(path: &str) -> Request<Body> {
-        Request::builder()
-            .uri(format!("http://test{}", path))
-            .body(Body::empty())
-            .unwrap()
-    }
+    use crate::{MakeRouteMatcher, RouteMatcher, __assert_matcher};
+
+    use super::MakePathMatcher;
 
     #[test]
     fn test_match() {
         let args = Args::Shortcut(Shortcut::from("@/a,/b"));
-        let make = MakePathMatcher::default();
-        let matcher = make.make(args).unwrap();
-        assert!(matcher.is_match(&new_request("/a")).unwrap());
-        assert!(matcher.is_match(&new_request("/b")).unwrap());
-        assert!(matcher.is_match(&new_request("/a/b")).unwrap());
-        assert!(matcher.is_match(&new_request("/b/c")).unwrap());
-        assert!(!matcher.is_match(&new_request("/c")).unwrap());
+        __assert_matcher!(
+            MakePathMatcher,
+            args,
+            [
+                Ok(true) => |e| { e.uri = Uri::from_static("https://satex.dev/a") },
+                Ok(true) => |e| { e.uri = Uri::from_static("https://satex.dev/a/b") },
+                Ok(false) => |e| { e.uri = Uri::from_static("https://satex.dev/c") },
+            ]
+        );
     }
 }

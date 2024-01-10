@@ -1,7 +1,9 @@
 use cookie::Cookie;
 use hyper::header::COOKIE;
 use regex::Regex;
-use satex_core::satex_error;
+
+use satex_core::essential::Essential;
+use satex_core::{satex_error, Error};
 
 use crate::RouteMatcher;
 
@@ -19,11 +21,8 @@ impl CookieMatcher {
 }
 
 impl RouteMatcher for CookieMatcher {
-    fn is_match(
-        &self,
-        request: &hyper::Request<satex_core::http::Body>,
-    ) -> Result<bool, satex_core::Error> {
-        match request.headers().get(COOKIE) {
+    fn is_match(&self, essential: &mut Essential) -> Result<bool, Error> {
+        match essential.headers.get(COOKIE) {
             Some(value) => {
                 let value = value.to_str().map_err(|e| satex_error!(e))?;
                 Ok(Cookie::split_parse(value)

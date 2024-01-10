@@ -1,8 +1,7 @@
-use hyper::Request;
+use regex::Regex;
 
 pub use make::MakeQueryMatcher;
-use regex::Regex;
-use satex_core::http::Body;
+use satex_core::essential::Essential;
 use satex_core::Error;
 
 use crate::RouteMatcher;
@@ -22,8 +21,8 @@ impl QueryMatcher {
 }
 
 impl RouteMatcher for QueryMatcher {
-    fn is_match(&self, request: &Request<Body>) -> Result<bool, Error> {
-        match request.uri().query() {
+    fn is_match(&self, essential: &mut Essential) -> Result<bool, Error> {
+        match essential.uri.query() {
             Some(query) => {
                 let query = qstring::QString::from(query);
                 let matched = query

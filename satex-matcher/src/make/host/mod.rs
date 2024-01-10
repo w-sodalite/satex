@@ -1,9 +1,8 @@
 use hyper::header::HOST;
-use hyper::Request;
 use regex::Regex;
 
 pub use make::MakeHostMatcher;
-use satex_core::http::Body;
+use satex_core::essential::Essential;
 use satex_core::{satex_error, Error};
 
 use crate::RouteMatcher;
@@ -21,8 +20,8 @@ impl HostMatcher {
 }
 
 impl RouteMatcher for HostMatcher {
-    fn is_match(&self, request: &Request<Body>) -> Result<bool, Error> {
-        let host = request.headers().get(HOST);
+    fn is_match(&self, essential: &mut Essential) -> Result<bool, Error> {
+        let host = essential.headers.get(HOST);
         match host {
             None => Ok(false),
             Some(host) => host
