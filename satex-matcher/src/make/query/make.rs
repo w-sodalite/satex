@@ -1,5 +1,5 @@
 use satex_core::config::args::Args;
-use satex_core::serde::regex::SerdeRegex;
+use satex_core::pattern::Pattern;
 use satex_core::Error;
 
 use crate::make::query::QueryMatcher;
@@ -7,13 +7,14 @@ use crate::{MakeRouteMatcher, __make_matcher};
 
 __make_matcher! {
     Query,
+    CollectTail,
     name: String,
-    value: SerdeRegex,
+    patterns: Vec<Pattern>,
 }
 
 fn make(args: Args) -> Result<QueryMatcher, Error> {
     let config = Config::try_from(args)?;
-    Ok(QueryMatcher::new(config.name, config.value.into()))
+    Ok(QueryMatcher::new(config.name, config.patterns))
 }
 
 #[cfg(test)]

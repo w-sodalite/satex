@@ -1,7 +1,5 @@
-use regex::Regex;
-
 use satex_core::config::args::Args;
-use satex_core::serde::regex::SerdeRegex;
+use satex_core::pattern::Pattern;
 use satex_core::Error;
 
 use crate::make::host::HostMatcher;
@@ -9,15 +7,13 @@ use crate::{MakeRouteMatcher, __make_matcher};
 
 __make_matcher! {
     Host,
-    List,
-    patterns: Vec<SerdeRegex>
+    CollectTail,
+    patterns: Vec<Pattern>
 }
 
 fn make(args: Args<'_>) -> Result<HostMatcher, Error> {
     let config = Config::try_from(args)?;
-    Ok(HostMatcher::new(
-        config.patterns.into_iter().map(Regex::from).collect(),
-    ))
+    Ok(HostMatcher::new(config.patterns))
 }
 
 #[cfg(test)]
@@ -31,7 +27,7 @@ mod test {
 
     #[test]
     fn test_match() {
-        let args = Args::Shortcut(Shortcut::from("127.0.0.([1-9])"));
+        let args = Args::Shortcut(Shortcut::from("Regex,127.0.0.([1-9])"));
         __assert_matcher!(
             MakeHostMatcher,
             args,

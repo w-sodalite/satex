@@ -1,6 +1,6 @@
 use satex_core::config::args::Args;
+use satex_core::pattern::Pattern;
 use satex_core::serde::http::SerdeHeaderName;
-use satex_core::serde::regex::SerdeRegex;
 use satex_core::Error;
 
 use crate::make::header::HeaderMatcher;
@@ -8,13 +8,14 @@ use crate::{MakeRouteMatcher, __make_matcher};
 
 __make_matcher! {
     Header,
+    CollectTail,
     name: SerdeHeaderName,
-    value: SerdeRegex
+    patterns: Vec<Pattern>
 }
 
 fn make(args: Args<'_>) -> Result<HeaderMatcher, Error> {
     let config = Config::try_from(args)?;
-    Ok(HeaderMatcher::new(config.name.into(), config.value.into()))
+    Ok(HeaderMatcher::new(config.name.into(), config.patterns))
 }
 
 #[cfg(test)]

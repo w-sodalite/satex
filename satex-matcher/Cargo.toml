@@ -13,3 +13,4 @@ cookie = { workspace = true }
 chrono = { workspace = true }
 qstring = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
+serde_yaml = { workspace = true }

@@ -10,6 +10,7 @@ pub mod path;
 pub mod query;
 pub mod remote_addr;
 pub mod time;
+mod value;
 
 make! {
     MakeRouteMatcher,

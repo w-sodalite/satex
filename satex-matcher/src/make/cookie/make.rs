@@ -1,5 +1,5 @@
 use satex_core::config::args::Args;
-use satex_core::serde::regex::SerdeRegex;
+use satex_core::pattern::Pattern;
 use satex_core::Error;
 
 use crate::{MakeRouteMatcher, __make_matcher};
@@ -8,13 +8,14 @@ use super::CookieMatcher;
 
 __make_matcher! {
     Cookie,
+    CollectTail,
     name: String,
-    value: SerdeRegex
+    patterns: Vec<Pattern>
 }
 
 fn make(args: Args<'_>) -> Result<CookieMatcher, Error> {
     let config = Config::try_from(args)?;
-    Ok(CookieMatcher::new(config.name, config.value.into()))
+    Ok(CookieMatcher::new(config.name, config.patterns))
 }
 
 #[cfg(test)]

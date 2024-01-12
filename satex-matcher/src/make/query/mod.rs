@@ -1,7 +1,7 @@
-use regex::Regex;
-
 pub use make::MakeQueryMatcher;
 use satex_core::essential::Essential;
+use satex_core::pattern::Pattern;
+use satex_core::Error;
 use satex_core::Error;
 
 use crate::RouteMatcher;
@@ -11,26 +11,25 @@ mod make;
 #[derive(Clone)]
 pub struct QueryMatcher {
     name: String,
-    value: Regex,
+    patterns: Vec<Pattern>,
 }
 
 impl QueryMatcher {
-    pub fn new(name: String, value: Regex) -> Self {
-        Self { name, value }
+    pub fn new(name: String, patterns: Vec<Pattern>) -> Self {
+        Self { name, patterns }
     }
 }
 
 impl RouteMatcher for QueryMatcher {
     fn is_match(&self, essential: &mut Essential) -> Result<bool, Error> {
-        match essential.uri.query() {
+        Ok(match essential.uri.query() {
             Some(query) => {
                 let query = qstring::QString::from(query);
-                let matched = query
-                    .get(&self.name)
-                    .map_or_else(|| false, |value| self.value.is_match(value));
-                Ok(matched)
+                self.patterns
+                    .iter()
+                    .any(|pattern| pattern.is_match(query.get(&self.name)))
             }
-            None => Ok(false),
-        }
+            None => self.patterns.iter().any(|pattern| pattern.is_match(None)),
+        })
     }
 }

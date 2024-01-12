@@ -10,6 +10,7 @@ mod error;
 pub mod essential;
 pub mod http;
 mod macros;
+pub mod pattern;
 pub mod registry;
 pub mod serde;
 pub mod task;

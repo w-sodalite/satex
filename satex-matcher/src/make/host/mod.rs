@@ -1,8 +1,8 @@
 use hyper::header::HOST;
-use regex::Regex;
 
 pub use make::MakeHostMatcher;
 use satex_core::essential::Essential;
+use satex_core::pattern::Patterns;
 use satex_core::{satex_error, Error};
 
 use crate::RouteMatcher;
@@ -10,24 +10,23 @@ use crate::RouteMatcher;
 mod make;
 
 pub struct HostMatcher {
-    patterns: Vec<Regex>,
+    patterns: Patterns,
 }
 
 impl HostMatcher {
-    pub fn new(patterns: Vec<Regex>) -> Self {
+    pub fn new(patterns: Patterns) -> Self {
         Self { patterns }
     }
 }
 
 impl RouteMatcher for HostMatcher {
     fn is_match(&self, essential: &mut Essential) -> Result<bool, Error> {
-        let host = essential.headers.get(HOST);
-        match host {
-            None => Ok(false),
-            Some(host) => host
-                .to_str()
-                .map(|host| self.patterns.iter().any(|pattern| pattern.is_match(host)))
-                .map_err(|e| satex_error!(e)),
-        }
+        let value = match essential.headers.get(HOST) {
+            Some(host) => {
+                let value = host.to_str().map_err(|e| satex_error!(e))?;
+            }
+            None => None,
+        };
+        Ok(self.patterns.iter().any(|pattern| pattern.is_match(value)))
     }
 }

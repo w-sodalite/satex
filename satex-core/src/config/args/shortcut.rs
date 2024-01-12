@@ -7,6 +7,7 @@ use crate::{satex_error, Error};
 
 pub enum GatherMode {
     Default,
+    CollectTail,
     List,
     ListFlag,
     Unsupported,
@@ -44,6 +45,21 @@ impl<'a> Shortcut<'a> {
                     if let Some(value) = values.get(index) {
                         mapping.insert(Value::from(fields[index]), Value::from(*value));
                     }
+                }
+            }
+            GatherMode::CollectTail => {
+                if values.len() > fields.len() {
+                    for index in 0..len {
+                        let key = Value::from(fields[index]);
+                        let value = if index == len - 1 {
+                            Value::from(values.join(","))
+                        } else {
+                            Value::from(values.remove(index))
+                        };
+                        mapping.insert(key, value);
+                    }
+                } else {
+                    return self.deserialize(fields, GatherMode::Default);
                 }
             }
             GatherMode::List => {
