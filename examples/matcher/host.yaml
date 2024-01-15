@@ -8,13 +8,15 @@ router:
   routes:
     - id: host-shortcut
       matchers:
-        - Host=127.0.0.1/8
+        - Host=Exact,127.0.0.1
       service: Static=examples/resources
 
     - id: host-complete
       matchers:
         - kind: Host
           args:
-            patterns: 
-              - 127.0.0.1
+            - mode: Exact
+              value: 127.0.0.1
+            - mode: StartsWith
+              value: 127.0.0
       service: Static=examples/resources

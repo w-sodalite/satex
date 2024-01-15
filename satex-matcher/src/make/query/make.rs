@@ -7,14 +7,14 @@ use crate::{MakeRouteMatcher, __make_matcher};
 
 __make_matcher! {
     Query,
-    CollectTail,
+    TailSequence,
     name: String,
-    patterns: Vec<Pattern>,
+    values: Vec<Pattern>,
 }
 
 fn make(args: Args) -> Result<QueryMatcher, Error> {
     let config = Config::try_from(args)?;
-    Ok(QueryMatcher::new(config.name, config.patterns))
+    Ok(QueryMatcher::new(config.name, config.values))
 }
 
 #[cfg(test)]
@@ -29,12 +29,13 @@ mod test {
 
     #[test]
     fn test_match() {
-        let args = Args::Shortcut(Shortcut::from("k1,v1"));
+        let args = Args::Shortcut(Shortcut::from("k1,StartsWith,v1"));
         __assert_matcher!(
             MakeQueryMatcher,
             args,
             [
                 Ok(true) => |e| { e.uri = Uri::from_static("https://satex.dev/index.html?k1=v1") },
+                Ok(true) => |e| { e.uri = Uri::from_static("https://satex.dev/index.html?k1=v1111") },
                 Ok(false) => |e| { e.uri = Uri::from_static("https://satex.dev/index.html?k1=v2") },
             ]
         );

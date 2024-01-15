@@ -15,6 +15,7 @@ tracing = { workspace = true }
 futures = { workspace = true }
 hyper-tls = { workspace = true }
 leaky-bucket = { workspace = true }
+aho-corasick = { workspace = true }
 http-body-util = { workspace = true }
 pin-project-lite = { workspace = true }
 tower = { workspace = true, features = ["limit"] }

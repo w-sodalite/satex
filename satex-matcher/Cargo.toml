@@ -12,5 +12,6 @@ hyper = { workspace = true }
 cookie = { workspace = true }
 chrono = { workspace = true }
 qstring = { workspace = true }
+path-tree = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_yaml = { workspace = true }

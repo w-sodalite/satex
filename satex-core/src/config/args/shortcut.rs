@@ -5,11 +5,13 @@ use serde_yaml::{Mapping, Value};
 
 use crate::{satex_error, Error};
 
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
 pub enum GatherMode {
     Default,
-    CollectTail,
-    List,
-    ListFlag,
+    Tail,
+    TailSequence,
+    Sequence,
+    SequenceFlag,
     Unsupported,
 }
 
@@ -47,12 +49,16 @@ impl<'a> Shortcut<'a> {
                     }
                 }
             }
-            GatherMode::CollectTail => {
+            GatherMode::Tail | GatherMode::TailSequence => {
                 if values.len() > fields.len() {
                     for index in 0..len {
                         let key = Value::from(fields[index]);
                         let value = if index == len - 1 {
-                            Value::from(values.join(","))
+                            if GatherMode::Tail == mode {
+                                Value::from(values.join(","))
+                            } else {
+                                Value::from(vec![Value::from(values.join(","))])
+                            }
                         } else {
                             Value::from(values.remove(index))
                         };
@@ -62,7 +68,7 @@ impl<'a> Shortcut<'a> {
                     return self.deserialize(fields, GatherMode::Default);
                 }
             }
-            GatherMode::List => {
+            GatherMode::Sequence => {
                 if len != 1 {
                     return Err(satex_error!(
                         "Shortcut gather mode `GatherList` must have fields of size 1!"
@@ -70,7 +76,7 @@ impl<'a> Shortcut<'a> {
                 }
                 mapping.insert(Value::from(fields[0]), Value::from(values));
             }
-            GatherMode::ListFlag => {
+            GatherMode::SequenceFlag => {
                 if len != 2 {
                     return Err(satex_error!(
                         "Shortcut gather mode `GatherListTailFlag` must have fields of size 2!"

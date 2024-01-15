@@ -24,7 +24,7 @@ make! {
 #[macro_export]
 macro_rules! __make_load_balance {
     ($name:ident $(,)?) => {
-        satex_core::make_impl!(MakeLoadBalance,LoadBalance,$name,Default);
+        satex_core::make_impl!(MakeLoadBalance,LoadBalance,$name);
     };
     ($name:ident,$($(#[$meta:meta])* $vis:vis $field:ident : $ty:ty),* $(,)?) => {
         satex_core::make_impl!(MakeLoadBalance,LoadBalance,$name,Default,$($(#[$meta])* $vis $field : $ty),*);

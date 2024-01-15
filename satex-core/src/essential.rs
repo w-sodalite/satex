@@ -1,9 +1,13 @@
+use std::collections::HashMap;
 use std::net::{Ipv4Addr, SocketAddr, SocketAddrV4};
 
 use hyper::http::Extensions;
 use hyper::{HeaderMap, Method, Request, Uri, Version};
 
 use crate::apply::Apply;
+
+#[derive(Debug, Clone)]
+pub struct PathVariables(pub HashMap<String, String>);
 
 #[derive(Clone)]
 #[non_exhaustive]

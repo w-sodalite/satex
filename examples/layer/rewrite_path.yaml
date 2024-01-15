@@ -1,0 +1,23 @@
+server:
+  port: 9000
+
+tracing:
+  max_level: debug
+
+router:
+  routes:
+    - id: rewrite-path-shortcut
+      matchers:
+        - Path=/a/:x+
+      layers:
+        - RewritePath=/b/{x}
+      service: Static=examples/resources
+
+    - id: rewrite-path-complete
+      matchers:
+        - Path=/a/:x+
+      layers:
+        - kind: RewritePath
+          args:
+            path: /b/{x}
+      service: Static=examples/resources

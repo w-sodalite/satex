@@ -45,7 +45,7 @@ impl ArcMakeRouteService {
 #[macro_export]
 macro_rules! __make_service {
     ($name:ident $(,)?) => {
-        satex_core::make_impl!(MakeRouteService,Service,$name,Default);
+        satex_core::make_impl!(MakeRouteService,Service,$name);
     };
     ($name:ident,$($(#[$meta:meta])* $vis:vis $field:ident : $ty:ty),* $(,)?) => {
         satex_core::make_impl!(MakeRouteService,Service,$name,Default,$($(#[$meta])* $vis $field : $ty),*);

@@ -2,7 +2,7 @@ use cookie::Cookie;
 use hyper::header::COOKIE;
 
 use satex_core::essential::Essential;
-use satex_core::pattern::Patterns;
+use satex_core::pattern::Pattern;
 use satex_core::{satex_error, Error};
 
 use crate::RouteMatcher;
@@ -11,36 +11,30 @@ mod make;
 
 pub struct CookieMatcher {
     name: String,
-    patterns: Patterns,
+    values: Vec<Pattern>,
 }
 
 impl CookieMatcher {
-    pub fn new(name: String, patterns: Patterns) -> Self {
-        Self { name, patterns }
+    pub fn new(name: String, values: Vec<Pattern>) -> Self {
+        Self { name, values }
     }
 }
 
 impl RouteMatcher for CookieMatcher {
     fn is_match(&self, essential: &mut Essential) -> Result<bool, Error> {
-        let value = match essential.headers.get(COOKIE) {
+        let cookie = match essential.headers.get(COOKIE) {
             Some(cookie) => {
                 let cookie = cookie.to_str().map_err(|e| satex_error!(e))?;
-                Cookie::split_parse(cookie).try_fold(None, |mut target, cookie| match cookie {
-                    Ok(cookie) => {
-                        if cookie.name() == self.name {
-                            Ok(Some(cookie.value().to_string()))
-                        } else {
-                            Ok(None)
-                        }
-                    }
-                    Err(e) => Err(satex_error!(e)),
-                })?
+                Cookie::split_parse(cookie)
+                    .flatten()
+                    .filter(|cookie| cookie.name() == self.name)
+                    .next()
             }
             None => None,
         };
         Ok(self
-            .patterns
+            .values
             .iter()
-            .any(|pattern| pattern.is_match(value.as_ref())))
+            .any(|pattern| pattern.is_match(cookie.as_ref().map(|cookie| cookie.value()))))
     }
 }

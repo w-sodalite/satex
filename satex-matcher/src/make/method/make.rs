@@ -11,7 +11,7 @@ use crate::{MakeRouteMatcher, __make_matcher};
 
 __make_matcher! {
     Method,
-    List,
+    Sequence,
     methods: HashSet<SerdeMethod>,
 }
 

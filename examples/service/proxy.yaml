@@ -8,7 +8,7 @@ router:
   routes:
     - id: static
       layers:
-        - SetPath=/index.html
+        - RewritePath=/index.html
       service: Static=examples/resources
 
     - id: proxy-shortcut

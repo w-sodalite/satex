@@ -8,7 +8,7 @@ router:
   routes:
     - id: query-shortcut
       matchers:
-        - Query=k1,v1
+        - Query=k1,Exact,v1
       service: Static=examples/resources
 
     - id: query-complete
@@ -16,5 +16,8 @@ router:
         - kind: Query
           args:
             name: k2
-            value: v2
+            values:
+              - mode: StartsWith
+                value: v2
+                sensitive: false
       service: Static=examples/resources

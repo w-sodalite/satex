@@ -9,36 +9,11 @@ use serde_this_or_that::Deserialize;
 
 use crate::{satex_error, Error};
 
-pub enum Straggly {
-    All,
-    Any,
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct Patterns {
-    patterns: Vec<Pattern>,
-}
-
-impl Patterns {
-    pub fn iter(&self) -> std::slice::Iter<Pattern> {
-        self.0.iter()
-    }
-}
-
-impl IntoIterator for Patterns {
-    type Item = Pattern;
-    type IntoIter = std::vec::IntoIter<Pattern>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.0.into_iter()
-    }
-}
-
 #[derive(Debug, Clone)]
 pub enum Mode {
     Exact(Arc<str>, Arc<str>, bool),
-    Prefix(Arc<str>, Arc<str>, bool),
-    Suffix(Arc<str>, Arc<str>, bool),
+    StartsWith(Arc<str>, Arc<str>, bool),
+    EndsWith(Arc<str>, Arc<str>, bool),
     Contains(Arc<str>, Arc<str>, bool),
     NotContains(Arc<str>, Arc<str>, bool),
     Exists,
@@ -65,8 +40,8 @@ macro_rules! construct {
 impl Pattern {
     construct! {
         (exact,Exact),
-        (prefix,Prefix),
-        (suffix,Suffix),
+        (starts_with,StartsWith),
+        (ends_with,EndsWith),
         (contains,Contains),
         (not_contains,NotContains)
     }
@@ -85,55 +60,43 @@ impl Pattern {
             .map_err(|e| satex_error!(e))
     }
 
-    pub fn is_match<T: AsRef<str>>(&self, input: Option<T>) -> bool {
+    pub fn is_match(&self, input: Option<&str>) -> bool {
         match input {
             Some(input) => match self {
                 Pattern::Simple(mode) => match mode {
                     Mode::Exact(value, lowercase, sensitive) => {
                         if *sensitive {
-                            input.as_ref() == value.as_ref()
+                            input.eq(value.as_ref())
                         } else {
-                            input.as_ref().to_ascii_lowercase().eq(lowercase.as_ref())
+                            input.to_ascii_lowercase().eq(lowercase.as_ref())
                         }
                     }
-                    Mode::Prefix(value, lowercase, sensitive) => {
+                    Mode::StartsWith(value, lowercase, sensitive) => {
                         if *sensitive {
-                            input.as_ref().starts_with(value.as_ref())
+                            input.starts_with(value.as_ref())
                         } else {
-                            input
-                                .as_ref()
-                                .to_ascii_lowercase()
-                                .starts_with(lowercase.as_ref())
+                            input.to_ascii_lowercase().starts_with(lowercase.as_ref())
                         }
                     }
-                    Mode::Suffix(value, lowercase, sensitive) => {
+                    Mode::EndsWith(value, lowercase, sensitive) => {
                         if *sensitive {
-                            input.as_ref().ends_with(value.as_ref())
+                            input.ends_with(value.as_ref())
                         } else {
-                            input
-                                .as_ref()
-                                .to_ascii_lowercase()
-                                .ends_with(lowercase.as_ref())
+                            input.to_ascii_lowercase().ends_with(lowercase.as_ref())
                         }
                     }
                     Mode::Contains(value, lowercase, sensitive) => {
                         if *sensitive {
-                            input.as_ref().contains(value.as_ref())
+                            input.contains(value.as_ref())
                         } else {
-                            input
-                                .as_ref()
-                                .to_ascii_lowercase()
-                                .contains(lowercase.as_ref())
+                            input.to_ascii_lowercase().contains(lowercase.as_ref())
                         }
                     }
                     Mode::NotContains(value, lowercase, sensitive) => {
                         !if *sensitive {
-                            input.as_ref().contains(value.as_ref())
+                            input.contains(value.as_ref())
                         } else {
-                            input
-                                .as_ref()
-                                .to_ascii_lowercase()
-                                .contains(lowercase.as_ref())
+                            input.to_ascii_lowercase().contains(lowercase.as_ref())
                         }
                     }
                     Mode::Exists => true,
@@ -190,11 +153,21 @@ impl Serialize for Pattern {
                 Mode::Exact(value, _, sensitive) => {
                     set_value(&mut data, "Exact", Some(value.as_ref()), Some(*sensitive));
                 }
-                Mode::Prefix(value, _, sensitive) => {
-                    set_value(&mut data, "Prefix", Some(value.as_ref()), Some(*sensitive));
+                Mode::StartsWith(value, _, sensitive) => {
+                    set_value(
+                        &mut data,
+                        "StartsWith",
+                        Some(value.as_ref()),
+                        Some(*sensitive),
+                    );
                 }
-                Mode::Suffix(value, _, sensitive) => {
-                    set_value(&mut data, "Suffix", Some(value.as_ref()), Some(*sensitive));
+                Mode::EndsWith(value, _, sensitive) => {
+                    set_value(
+                        &mut data,
+                        "EndsWith",
+                        Some(value.as_ref()),
+                        Some(*sensitive),
+                    );
                 }
                 Mode::Contains(value, _, sensitive) => {
                     set_value(
@@ -240,8 +213,8 @@ fn try_from<E: serde::de::Error>(
                 Some(value) => match mode {
                     "Regex" => Pattern::regex(value).map_err(|e| serde::de::Error::custom(e)),
                     "Exact" => Ok(Pattern::exact(value, sensitive.unwrap_or_default())),
-                    "Prefix" => Ok(Pattern::prefix(value, sensitive.unwrap_or_default())),
-                    "Suffix" => Ok(Pattern::suffix(value, sensitive.unwrap_or_default())),
+                    "StartsWith" => Ok(Pattern::starts_with(value, sensitive.unwrap_or_default())),
+                    "EndsWith" => Ok(Pattern::ends_with(value, sensitive.unwrap_or_default())),
                     "Contains" => Ok(Pattern::contains(value, sensitive.unwrap_or_default())),
                     "NotContains" => {
                         Ok(Pattern::not_contains(value, sensitive.unwrap_or_default()))
@@ -253,8 +226,8 @@ fn try_from<E: serde::de::Error>(
                             "NotExists",
                             "Regex",
                             "Exact",
-                            "Prefix",
-                            "Suffix",
+                            "StartsWith",
+                            "EndsWith",
                             "Contains",
                             "NotContains",
                         ],

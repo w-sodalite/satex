@@ -8,14 +8,14 @@ use super::CookieMatcher;
 
 __make_matcher! {
     Cookie,
-    CollectTail,
+    TailSequence,
     name: String,
-    patterns: Vec<Pattern>
+    values: Vec<Pattern>
 }
 
 fn make(args: Args<'_>) -> Result<CookieMatcher, Error> {
     let config = Config::try_from(args)?;
-    Ok(CookieMatcher::new(config.name, config.patterns))
+    Ok(CookieMatcher::new(config.name, config.values))
 }
 
 #[cfg(test)]
@@ -29,7 +29,7 @@ mod test {
 
     #[test]
     fn test_match() {
-        let args = Args::Shortcut(Shortcut::from("k1,v1"));
+        let args = Args::Shortcut(Shortcut::from("k1,Exact,v1"));
         __assert_matcher!(
             MakeCookieMatcher,
             args,

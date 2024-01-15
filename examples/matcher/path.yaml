@@ -8,14 +8,19 @@ router:
   routes:
     - id: path-shortcut
       matchers:
-        # 使用@表示使用前缀匹配
-        - Path=@/a
+        # 使用:x绑定变量 +匹配多层
+        - Path=/a,/b/:x,/b/:x+
+      layers:
+        # 重写路径
+        - RewritePath=/a/b/{x}
       service: Static=examples/resources
 
     - id: path-complete
       matchers:
         - kind: Path
           args:
-            patterns: 
-              - "/b/(.)*"
+            patterns:
+              - /a
+              - /b/:x
+              - /c/:x+
       service: Static=examples/resources

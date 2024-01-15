@@ -749,6 +749,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "path-tree"
+version = "0.7.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "acf04d141d0437cd7b9beec692a0376fac8baba905247515b7ce708ff63d06b0"
+dependencies = [
+ "smallvec",
+]
+
+[[package]]
 name = "percent-encoding"
 version = "2.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -974,6 +983,7 @@ dependencies = [
 name = "satex-layer"
 version = "0.1.0"
 dependencies = [
+ "aho-corasick",
  "bytes",
  "futures",
  "http-body-util",
@@ -999,11 +1009,12 @@ dependencies = [
  "chrono",
  "cookie",
  "hyper",
+ "path-tree",
  "qstring",
  "regex",
  "satex-core",
  "serde",
-    "serde_yaml",
+ "serde_yaml",
 ]
 
 [[package]]

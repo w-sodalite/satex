@@ -10,7 +10,7 @@ use crate::{MakeRouteMatcher, __make_matcher};
 
 __make_matcher! {
     RemoteAddr,
-    ListFlag,
+    SequenceFlag,
     sources: Vec<String>,
     policy: Option<bool>
 }

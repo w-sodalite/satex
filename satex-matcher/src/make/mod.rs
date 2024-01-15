@@ -10,7 +10,6 @@ pub mod path;
 pub mod query;
 pub mod remote_addr;
 pub mod time;
-mod value;
 
 make! {
     MakeRouteMatcher,
@@ -24,6 +23,9 @@ make! {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __make_matcher {
+    ($name:ident) => {
+        satex_core::make_impl!(MakeRouteMatcher,Matcher,$name);
+    };
     ($name:ident,$($(#[$meta:meta])* $vis:vis $field:ident : $ty:ty),* $(,)?) => {
         satex_core::make_impl!(MakeRouteMatcher,Matcher,$name,Default,$($(#[$meta])* $vis $field : $ty),*);
     };

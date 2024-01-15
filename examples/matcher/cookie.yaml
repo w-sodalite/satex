@@ -8,7 +8,7 @@ router:
   routes:
     - id: cookie-shortcut
       matchers:
-        - Cookie=k1,v1
+        - Cookie=k1,Exact,v1
       service: Static=examples/resources
 
     - id: cookie-complete
@@ -16,5 +16,11 @@ router:
         - kind: Cookie
           args:
             name: k2
-            value: v2
+            values:
+              - mode: Exact
+                value: v2
+                sensitive: false
+              - mode: StartsWith
+                value: v3
+                sensitive: true
       service: Static=examples/resources

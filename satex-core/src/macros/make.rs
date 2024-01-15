@@ -105,7 +105,7 @@ macro_rules! make {
 
 #[macro_export]
 macro_rules! make_impl {
-    (@internal $make_trait:ident,$classify:ident,$name:ident,$mode:ident) => {
+    (@internal $make_trait:ident,$classify:ident,$name:ident) => {
         $crate::concat_idents!(make_classify=Make,$name,$classify{
              #[derive(Default, Debug, Clone, Copy)]
              pub struct make_classify;
@@ -123,17 +123,17 @@ macro_rules! make_impl {
             }
          });
     };
-    ($make_trait:ident,$classify:ident,$name:ident,$mode:ident) => {
+    ($make_trait:ident,$classify:ident,$name:ident) => {
         $crate::concat_idents!(classify = $name,$classify {
             type __Classify = classify;
         });
-        $crate::make_impl!(@internal $make_trait,$classify,$name,$mode);
+        $crate::make_impl!(@internal $make_trait,$classify,$name);
     };
     ($make_trait:ident,$classify:ident,$name:ident,$mode:ident,$($(#[$meta:meta])* $vis:vis $field:ident:$ty:ty),* $(,)?) => {
         $crate::concat_idents!(classify = $name,$classify {
             type __Classify = classify;
             $crate::config!($name,$mode,$($(#[$meta])* $vis $field : $ty),*);
         });
-        $crate::make_impl!(@internal $make_trait,$classify,$name,$mode);
+        $crate::make_impl!(@internal $make_trait,$classify,$name);
     };
 }

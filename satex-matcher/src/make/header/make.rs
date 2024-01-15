@@ -8,14 +8,14 @@ use crate::{MakeRouteMatcher, __make_matcher};
 
 __make_matcher! {
     Header,
-    CollectTail,
+    TailSequence,
     name: SerdeHeaderName,
-    patterns: Vec<Pattern>
+    values: Vec<Pattern>
 }
 
 fn make(args: Args<'_>) -> Result<HeaderMatcher, Error> {
     let config = Config::try_from(args)?;
-    Ok(HeaderMatcher::new(config.name.into(), config.patterns))
+    Ok(HeaderMatcher::new(config.name.into(), config.values))
 }
 
 #[cfg(test)]
@@ -29,7 +29,7 @@ mod test {
 
     #[test]
     fn test_match() {
-        let args = Args::Shortcut(Shortcut::from("k1,v1"));
+        let args = Args::Shortcut(Shortcut::from("k1,Exact,v1"));
         __assert_matcher!(
             MakeHeaderMatcher,
             args,

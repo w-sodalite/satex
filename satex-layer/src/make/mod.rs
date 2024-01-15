@@ -17,8 +17,8 @@ pub mod keep_host_header;
 pub mod path_strip;
 pub mod rate_limit;
 pub mod request_body_limit;
+pub mod rewrite_path;
 pub mod set_header;
-pub mod set_path;
 pub mod set_status;
 pub mod x_forward;
 
@@ -59,7 +59,7 @@ impl ArcMakeRouteServiceLayer {
 #[macro_export]
 macro_rules! __make_layer {
     ($name:ident $(,)?) => {
-        satex_core::make_impl!(MakeRouteServiceLayer,Layer,$name,Default);
+        satex_core::make_impl!(MakeRouteServiceLayer,Layer,$name);
     };
     ($name:ident,$($(#[$meta:meta])* $vis:vis $field:ident : $ty:ty),* $(,)?) => {
         satex_core::make_impl!(MakeRouteServiceLayer,Layer,$name,Default,$($(#[$meta])* $vis $field : $ty),*);

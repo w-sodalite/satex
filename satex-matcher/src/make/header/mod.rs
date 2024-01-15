@@ -11,12 +11,15 @@ mod make;
 
 pub struct HeaderMatcher {
     name: HeaderName,
-    patterns: Vec<Pattern>,
+    values: Vec<Pattern>,
 }
 
 impl HeaderMatcher {
     pub fn new(name: HeaderName, patterns: Vec<Pattern>) -> Self {
-        Self { name, patterns }
+        Self {
+            name,
+            values: patterns,
+        }
     }
 }
 
@@ -26,6 +29,6 @@ impl RouteMatcher for HeaderMatcher {
             Some(value) => Some(value.to_str().map_err(|e| satex_error!(e))?),
             None => None,
         };
-        Ok(self.patterns.iter().any(|pattern| pattern.is_match(value)))
+        Ok(self.values.iter().any(|pattern| pattern.is_match(value)))
     }
 }

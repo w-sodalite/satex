@@ -13,7 +13,5 @@ router:
 
     - id: set-path-complete
       layers:
-        - kind: SetPath
-          args:
-            path: /index.html
+        - kind: XForward
       service: Static=examples/resources
