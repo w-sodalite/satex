@@ -10,8 +10,6 @@ use satex_core::Error;
 use crate::router::make::MakeRouter;
 use crate::serve::Serve;
 
-const DEFAULT_CONFIG_PATH: &str = "config.yaml";
-
 pub struct App {
     config: Config,
 }
