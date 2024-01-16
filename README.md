@@ -2,6 +2,8 @@
 
 使用`RUST`开发的轻量、高性能的HTTP网关，基于`tokio`、`hyper`、`tower`构建。
 
+[![Rust](https://github.com/w-sodalite/satex/actions/workflows/rust.yml/badge.svg?branch=master)](https://github.com/w-sodalite/satex/actions/workflows/rust.yml)
+
 ## 优势
 
 - 纯异步IO实现
