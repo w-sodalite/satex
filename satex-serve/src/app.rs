@@ -1,4 +1,3 @@
-use std::net::SocketAddr;
 use std::str::FromStr;
 
 use tracing::Level;
@@ -7,7 +6,6 @@ use tracing_subscriber::fmt::format::FmtSpan;
 use satex_core::config::SatexConfig;
 use satex_core::Error;
 
-use crate::router::make::MakeRouter;
 use crate::serve::{Serve, Serves};
 
 pub struct App {
@@ -37,19 +35,13 @@ impl App {
             .with_line_number(logging.line_number())
             .init();
 
-        let mut serves = vec![];
-        let serve_configs = self.config.load().expect("App load serve config error!");
-        for serve_config in serve_configs {
-            // 创建路由
-            let router = match MakeRouter::make(&serve_config) {
-                Ok(router) => router,
-                Err(e) => panic!("App create the router error: {}", e),
-            };
-
-            // 创建服务
-            let addr = SocketAddr::from(serve_config.server());
-            serves.push(Serve::new(addr, router, serve_config.tls().clone()))
-        }
+        let serves = self
+            .config
+            .load()
+            .expect("Load all serve config error")
+            .into_iter()
+            .map(|serve_config| Serve::new(serve_config))
+            .collect();
         Serves::new(serves)
     }
 }

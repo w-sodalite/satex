@@ -16,6 +16,8 @@ pub mod metadata;
 
 const SATEX: &str = "satex";
 const SATEX_YAML: &str = "satex.yaml";
+const HTTP: &str = "HTTP";
+const HTTPS: &str = "HTTPS";
 
 fn normalize_path(path: &str) -> Result<PathBuf, Error> {
     if path.starts_with('/') {
@@ -47,21 +49,31 @@ impl SatexConfig {
     }
 
     pub fn from_yaml<P: AsRef<Path>>(path: P) -> Result<Self, Error> {
-        let bytes = std::fs::read(path).map_err(|e| satex_error!(e))?;
-        let value =
-            serde_yaml::from_slice::<Value>(bytes.as_slice()).map_err(|e| satex_error!(e))?;
+        let display = path.as_ref().display();
+        let bytes = std::fs::read(path.as_ref())
+            .map_err(|e| satex_error!("Load satex config file [{}] error: {}", display, e))?;
+        let value = serde_yaml::from_slice::<Value>(bytes.as_slice()).map_err(|e| {
+            satex_error!("Deserialize satex config file [{}] error: {}", display, e)
+        })?;
         match value {
             Value::Mapping(mut value) => match value.remove(SATEX) {
                 Some(value) => serde_yaml::from_value(value).map_err(|e| satex_error!(e)),
-                None => Err(satex_error!("Miss field `satex`!")),
+                None => Err(satex_error!(
+                    "Deserialize satex config file [{}] error: Miss field `satex`!",
+                    display
+                )),
             },
-            _ => Err(satex_error!("Unexpect type!")),
+            _ => Err(satex_error!(
+                "Deserialize satex config file [{}] error: Unexpect field `satex` type!",
+                display
+            )),
         }
     }
 
     pub fn detect() -> Result<Self, Error> {
         Self::detect_path().and_then(|path| Self::from_yaml(path))
     }
+
     fn detect_path() -> Result<PathBuf, Error> {
         let mut args = std::env::args()
             .map(|it| it.trim().to_string())
@@ -96,31 +108,44 @@ impl SatexConfig {
     pub fn tracing(&self) -> &Tracing {
         &self.tracing
     }
-
-    pub fn paths(&self) -> &[String] {
-        &self.serves
-    }
 }
 
-#[derive(Debug, Default, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct ServeConfig {
-    #[serde(default)]
+    ///
+    /// 配置文件路径
+    ///
+    #[serde(skip)]
+    id: String,
+
+    ///
+    /// 服务信息
+    ///
     server: Server,
 
+    ///
+    /// 路由信息
+    ///
     #[serde(default)]
     router: Router,
 
+    ///
+    /// 服务发现配置
+    ///
     #[serde(default)]
     discovery: Vec<Metadata>,
 
+    ///
+    /// Http Client配置
+    ///
     #[serde(default)]
     client: Client,
-
-    #[serde(default)]
-    tls: Option<Tls>,
 }
 
 impl ServeConfig {
+    pub fn id(&self) -> &str {
+        &self.id
+    }
     pub fn server(&self) -> &Server {
         &self.server
     }
@@ -133,50 +158,55 @@ impl ServeConfig {
     pub fn client(&self) -> &Client {
         &self.client
     }
-    pub fn tls(&self) -> &Option<Tls> {
-        &self.tls
-    }
     pub fn from_yaml<P: AsRef<Path>>(path: P) -> Result<Self, Error> {
-        let bytes = std::fs::read(path).map_err(|e| satex_error!(e))?;
-        serde_yaml::from_slice(bytes.as_slice()).map_err(|e| satex_error!(e))
+        let display = path.as_ref().display();
+        let bytes = std::fs::read(path.as_ref())
+            .map_err(|e| satex_error!("Load serve config [{}] error: {}", display, e))?;
+        serde_yaml::from_slice::<ServeConfig>(bytes.as_slice())
+            .map(|config| {
+                config.apply(|config| {
+                    config.id = format!(
+                        "{} - {}",
+                        if config.server().tls().is_some() {
+                            HTTPS
+                        } else {
+                            HTTP
+                        },
+                        config.server().bind_addr()
+                    )
+                })
+            })
+            .map_err(|e| satex_error!("Deserialize serve config [{}] error: {}", display, e))
     }
 }
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Server {
-    #[serde(default = "Server::default_port")]
+    ///
+    /// 服务端口
+    ///
     port: u16,
 
+    ///
+    /// 绑定地址
+    ///
     #[serde(default = "Server::default_ip")]
     ip: IpAddr,
 
+    ///
+    /// TLS信息
+    ///
     #[serde(default)]
     tls: Option<Tls>,
 }
 
-impl Default for Server {
-    fn default() -> Self {
-        Self {
-            port: Server::default_port(),
-            ip: Server::default_ip(),
-            tls: None,
-        }
-    }
-}
-
-impl<'a> From<&'a Server> for SocketAddr {
-    fn from(server: &'a Server) -> Self {
-        SocketAddr::new(server.ip, server.port)
-    }
-}
-
 impl Server {
-    pub fn default_port() -> u16 {
-        3000
-    }
-
     pub fn default_ip() -> IpAddr {
         IpAddr::V4(Ipv4Addr::UNSPECIFIED)
+    }
+
+    pub fn bind_addr(&self) -> SocketAddr {
+        SocketAddr::new(self.ip, self.port)
     }
 
     pub fn port(&self) -> u16 {
@@ -186,7 +216,6 @@ impl Server {
     pub fn ip(&self) -> IpAddr {
         self.ip
     }
-
     pub fn tls(&self) -> &Option<Tls> {
         &self.tls
     }
@@ -407,8 +436,19 @@ impl Client {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Tls {
+    ///
+    /// 证书路径
+    ///
     certs: String,
+
+    ///
+    /// 密钥路径
+    ///
     private_key: String,
+
+    ///
+    /// ALPN协议集合
+    ///
     #[serde(default = "Tls::default_alpn_protocols")]
     alpn_protocols: Vec<String>,
 }
