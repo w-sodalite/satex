@@ -1,0 +1,49 @@
+# 服务配置
+server:
+  # 监听地址
+  ip: 0.0.0.0
+  # 监听端口
+  port: 9000
+  # TLS配置
+  tls:
+    # 证书文件
+    certs: examples/tls/cert.pem
+    # 私钥文件
+    private_key: examples/tls/private-key.pem
+
+# 日志配置
+tracing:
+  # 日志级别
+  max_level: info
+  # 是否使用ANSI
+  ansi: true
+  # 是否显示级别
+  level: true
+  # 是否显示文件
+  file: true
+  # 是否显示线程名称
+  thread_names: true
+  # 是否显示行号
+  line_number: true
+
+# 路由配置
+router:
+  # 请求日志
+  trace:
+    # 级别
+    level: debug
+    # 是否输出请求头
+    include_headers: true
+  # 全局配置
+  global:
+    # 全局的Layer
+    layers:
+      - Cors
+  # 路由列表
+  routes:
+    - id: static
+      # Matchers
+      matchers:
+        - Method=GET
+      # Service
+      service: Static=examples/resources

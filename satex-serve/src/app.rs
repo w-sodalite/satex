@@ -44,6 +44,7 @@ impl App {
 
         // 创建服务
         let addr = SocketAddr::from(self.config.server());
-        Serve::new(addr, router)
+        let tls = self.config.server().tls().clone();
+        Serve::new(addr, router, tls)
     }
 }

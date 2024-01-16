@@ -57,7 +57,6 @@ impl Config {
     pub fn detect() -> Result<Self, Error> {
         Self::detect_path().and_then(|path| Self::from_yaml(path))
     }
-
     fn detect_path() -> Result<PathBuf, Error> {
         let mut args = std::env::args()
             .map(|it| it.trim().to_string())
@@ -97,6 +96,9 @@ pub struct Server {
 
     #[serde(default = "Server::default_ip")]
     ip: IpAddr,
+
+    #[serde(default)]
+    tls: Option<Tls>,
 }
 
 impl Default for Server {
@@ -104,6 +106,7 @@ impl Default for Server {
         Self {
             port: Server::default_port(),
             ip: Server::default_ip(),
+            tls: None,
         }
     }
 }
@@ -129,6 +132,10 @@ impl Server {
 
     pub fn ip(&self) -> IpAddr {
         self.ip
+    }
+
+    pub fn tls(&self) -> &Option<Tls> {
+        &self.tls
     }
 }
 
@@ -342,5 +349,38 @@ impl Client {
     }
     pub fn set_host(&self) -> bool {
         self.set_host
+    }
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct Tls {
+    certs: String,
+    private_key: String,
+    #[serde(default = "Tls::default_alpn_protocols")]
+    alpn_protocols: Vec<String>,
+}
+
+impl Tls {
+    pub fn default_alpn_protocols() -> Vec<String> {
+        vec![
+            "h2".to_string(),
+            "http/1.1".to_string(),
+            "http/1.0".to_string(),
+        ]
+    }
+
+    pub fn certs(&self) -> &str {
+        &self.certs
+    }
+
+    pub fn private_key(&self) -> &str {
+        &self.private_key
+    }
+
+    pub fn alpn_protocols(&self) -> Vec<Vec<u8>> {
+        self.alpn_protocols
+            .iter()
+            .map(|protocol| protocol.as_bytes().to_vec())
+            .collect()
     }
 }
