@@ -7,7 +7,7 @@ use std::sync::Arc;
 use std::task::{ready, Context, Poll};
 
 use bytes::Bytes;
-use futures_util::future::BoxFuture;
+use futures_util::future::{select_all, BoxFuture, SelectAll};
 use hyper::{Request, Response};
 use hyper_util::rt::{TokioExecutor, TokioIo};
 use hyper_util::server::conn::auto::Builder;
@@ -36,6 +36,7 @@ pin_project! {
     #[project_replace=ServeProjReplace]
     pub enum Serve {
         Binding {
+            bind_addr: SocketAddr,
             router: Router,
             tls: Option<Tls>,
             #[pin]
@@ -43,6 +44,7 @@ pin_project! {
         },
         Listening,
         Accepting{
+            bind_addr: SocketAddr,
             #[pin]
             handle: JoinHandle<Result<(),Error>>
         }
@@ -50,11 +52,12 @@ pin_project! {
 }
 
 impl Serve {
-    pub fn new(addr: SocketAddr, router: Router, tls: Option<Tls>) -> Self {
+    pub fn new(bind_addr: SocketAddr, router: Router, tls: Option<Tls>) -> Self {
         Serve::Binding {
+            bind_addr,
             router,
             tls,
-            future: Box::pin(TcpListener::bind(addr)),
+            future: Box::pin(TcpListener::bind(bind_addr)),
         }
     }
 }
@@ -65,49 +68,55 @@ impl Future for Serve {
     fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
         Poll::Ready(loop {
             match self.as_mut().project() {
-                ServeProj::Binding { future, .. } => match ready!(future.poll(cx)) {
-                    Ok(listener) => match self.as_mut().project_replace(Serve::Listening) {
-                        ServeProjReplace::Binding { router, tls, .. } => {
-                            let handle = match tls {
-                                Some(tls) => {
-                                    info!(
-                                        "App serve listen on: (https) - [{:?}]",
-                                        listener.local_addr().unwrap()
-                                    );
-                                    match EventLoop::tls_boos(listener, router, tls) {
-                                        Ok(boss) => spawn(boss),
-                                        Err(e) => break Err(satex_error!(e)),
+                ServeProj::Binding {
+                    future, bind_addr, ..
+                } => {
+                    let bind_addr = *bind_addr;
+                    match ready!(future.poll(cx)) {
+                        Ok(listener) => match self.as_mut().project_replace(Serve::Listening) {
+                            ServeProjReplace::Binding { router, tls, .. } => {
+                                let handle = match tls {
+                                    Some(tls) => {
+                                        info!("App serve listen on: (https) - [{:?}]", bind_addr);
+                                        match EventLoop::tls_boos(listener, router, tls) {
+                                            Ok(boss) => spawn(boss),
+                                            Err(e) => break Err(satex_error!(e)),
+                                        }
                                     }
-                                }
-                                None => {
-                                    info!(
-                                        "App serve listen on: (http) - [{:?}]",
-                                        listener.local_addr().unwrap()
-                                    );
-                                    spawn(EventLoop::boss(listener, router))
-                                }
-                            };
-                            self.as_mut().project_replace(Serve::Accepting { handle });
-                        }
-                        _ => {
+                                    None => {
+                                        info!("App serve listen on: (http) - [{:?}]", bind_addr);
+                                        spawn(EventLoop::boss(listener, router))
+                                    }
+                                };
+                                self.as_mut()
+                                    .project_replace(Serve::Accepting { handle, bind_addr });
+                            }
+                            _ => unreachable!(),
+                        },
+                        Err(e) => {
                             break Err(satex_error!(
-                                "App serve future current status `Accepting` is invalid!"
-                            ));
+                                "App serve listen on [{}] error: {}",
+                                bind_addr,
+                                e
+                            ))
                         }
-                    },
-                    Err(e) => break Err(satex_error!(e)),
-                },
-
-                ServeProj::Accepting { handle } => match ready!(handle.poll(cx)) {
-                    Ok(x) => break x,
-                    Err(e) => break Err(satex_error!(e)),
-                },
-
-                ServeProj::Listening => {
-                    break Err(satex_error!(
-                        "App serve future current status `Listening` is invalid!"
-                    ));
+                    }
                 }
+
+                ServeProj::Accepting {
+                    handle, bind_addr, ..
+                } => match ready!(handle.poll(cx)) {
+                    Ok(x) => break x,
+                    Err(e) => {
+                        break Err(satex_error!(
+                            "App serve listen [{:?}] task interrupt: {}",
+                            bind_addr,
+                            e
+                        ))
+                    }
+                },
+
+                ServeProj::Listening => unreachable!(),
             }
         })
     }
@@ -244,5 +253,35 @@ where
         let mut router = self.router.clone();
         let req = Essential::attach(req, self.client_addr);
         router.call(req.map(Body::new))
+    }
+}
+
+pin_project! {
+
+    pub struct Serves {
+        #[pin]
+        serves: SelectAll<Serve>,
+    }
+
+}
+
+impl Serves {
+    pub fn new(serves: Vec<Serve>) -> Self {
+        Self {
+            serves: select_all(serves),
+        }
+    }
+}
+
+impl Future for Serves {
+    type Output = Result<(), Error>;
+
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        let projection = self.project();
+        match projection.serves.poll(cx) {
+            Poll::Ready((Ok(_), _, _)) => Poll::Ready(Ok(())),
+            Poll::Ready((Err(e), _, _)) => Poll::Ready(Err(e)),
+            Poll::Pending => Poll::Pending,
+        }
     }
 }

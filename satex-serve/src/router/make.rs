@@ -1,4 +1,4 @@
-use satex_core::config::Config;
+use satex_core::config::ServeConfig;
 use satex_core::Error;
 use satex_layer::{MakeDefaultRouteServiceLayerRegistry, MakeRouteServiceLayerRegistry};
 use satex_matcher::MakeRouteMatcherRegistry;
@@ -10,7 +10,7 @@ use crate::router::Router;
 pub enum MakeRouter {}
 
 impl MakeRouter {
-    pub fn make(config: &Config) -> Result<Router, Error> {
+    pub fn make(config: &ServeConfig) -> Result<Router, Error> {
         // 路由
         let mut router = Router::default();
 

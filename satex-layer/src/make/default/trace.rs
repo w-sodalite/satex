@@ -1,8 +1,9 @@
-use satex_core::{config::Config, Error};
 use tower_http::{
     classify::{ServerErrorsAsFailures, SharedClassifier},
     trace::{DefaultMakeSpan, TraceLayer},
 };
+
+use satex_core::{config::ServeConfig, Error};
 
 use crate::MakeDefaultRouteServiceLayer;
 
@@ -16,7 +17,7 @@ impl MakeDefaultRouteServiceLayer for MakeTraceLayer {
         "Trace"
     }
 
-    fn make(&self, config: &Config) -> Result<Self::Layer, Error> {
+    fn make(&self, config: &ServeConfig) -> Result<Self::Layer, Error> {
         let trace = config.router().trace();
         Ok(TraceLayer::new_for_http().make_span_with(
             DefaultMakeSpan::default()

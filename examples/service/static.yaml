@@ -10,7 +10,7 @@ router:
       service: Static=examples/resources
 
     - id: static-complete
-      service: 
+      service:
         kind: Static
         args:
           directory: examples/resources

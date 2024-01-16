@@ -6,7 +6,7 @@ use hyper_util::client::legacy::Client;
 use hyper_util::rt::TokioExecutor;
 use tower_http::add_extension::AddExtensionLayer;
 
-use satex_core::config::Config;
+use satex_core::config::ServeConfig;
 use satex_core::http::Body;
 use satex_core::{satex_error, Error};
 
@@ -24,7 +24,7 @@ impl MakeDefaultRouteServiceLayer for MakeSetHttpClientLayer {
         "SetHttpClient"
     }
 
-    fn make(&self, config: &Config) -> Result<Self::Layer, Error> {
+    fn make(&self, config: &ServeConfig) -> Result<Self::Layer, Error> {
         let config = config.client();
         let connector = HttpsConnectorBuilder::default()
             .with_native_roots()
