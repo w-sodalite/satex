@@ -13,7 +13,7 @@ tower = { workspace = true }
 hyper = { workspace = true }
 bytes = { workspace = true }
 tracing = { workspace = true }
-hyper-tls = { workspace = true }
+hyper-rustls = { workspace = true, features = ["http1", "http2"] }
 futures-util = { workspace = true }
 tokio = { workspace = true, features = ["fs"] }
 tower-http = { workspace = true, features = ["fs"] }

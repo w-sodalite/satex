@@ -1,6 +1,9 @@
+use std::fs::File;
 use std::future::Future;
+use std::io::BufReader;
 use std::net::SocketAddr;
 use std::pin::Pin;
+use std::sync::Arc;
 use std::task::{ready, Context, Poll};
 
 use bytes::Bytes;
@@ -9,10 +12,16 @@ use hyper::{Request, Response};
 use hyper_util::rt::{TokioExecutor, TokioIo};
 use hyper_util::server::conn::auto::Builder;
 use pin_project_lite::pin_project;
-use tokio::net::{TcpListener, TcpStream};
+use rustls_pki_types::PrivateKeyDer;
+use tokio::io::{AsyncRead, AsyncWrite};
+use tokio::net::TcpListener;
+use tokio_rustls::rustls::pki_types::CertificateDer;
+use tokio_rustls::rustls::ServerConfig;
+use tokio_rustls::TlsAcceptor;
 use tower::Service;
 use tracing::{info, warn};
 
+use satex_core::config::Tls;
 use satex_core::essential::Essential;
 use satex_core::http::Body;
 use satex_core::task::spawn;
@@ -28,6 +37,7 @@ pin_project! {
     pub enum Serve {
         Binding {
             router: Router,
+            tls: Option<Tls>,
             #[pin]
             future: BoxFuture<'static, Result<TcpListener, std::io::Error>>,
         },
@@ -40,9 +50,10 @@ pin_project! {
 }
 
 impl Serve {
-    pub fn new(addr: SocketAddr, router: Router) -> Self {
+    pub fn new(addr: SocketAddr, router: Router, tls: Option<Tls>) -> Self {
         Serve::Binding {
             router,
+            tls,
             future: Box::pin(TcpListener::bind(addr)),
         }
     }
@@ -55,20 +66,35 @@ impl Future for Serve {
         Poll::Ready(loop {
             match self.as_mut().project() {
                 ServeProj::Binding { future, .. } => match ready!(future.poll(cx)) {
-                    Ok(listener) => {
-                        info!("App serve listen on: {:?}", listener);
-                        match self.as_mut().project_replace(Serve::Listening) {
-                            ServeProjReplace::Binding { router, .. } => {
-                                let handle = spawn(EventLoop::boss(listener, router));
-                                self.as_mut().project_replace(Serve::Accepting { handle });
-                            }
-                            _ => {
-                                break Err(satex_error!(
-                                    "App serve future current status `Accepting` is invalid!"
-                                ));
-                            }
+                    Ok(listener) => match self.as_mut().project_replace(Serve::Listening) {
+                        ServeProjReplace::Binding { router, tls, .. } => {
+                            let handle = match tls {
+                                Some(tls) => {
+                                    info!(
+                                        "App serve listen on: (https) - [{:?}]",
+                                        listener.local_addr().unwrap()
+                                    );
+                                    match EventLoop::tls_boos(listener, router, tls) {
+                                        Ok(boss) => spawn(boss),
+                                        Err(e) => break Err(satex_error!(e)),
+                                    }
+                                }
+                                None => {
+                                    info!(
+                                        "App serve listen on: (http) - [{:?}]",
+                                        listener.local_addr().unwrap()
+                                    );
+                                    spawn(EventLoop::boss(listener, router))
+                                }
+                            };
+                            self.as_mut().project_replace(Serve::Accepting { handle });
                         }
-                    }
+                        _ => {
+                            break Err(satex_error!(
+                                "App serve future current status `Accepting` is invalid!"
+                            ));
+                        }
+                    },
                     Err(e) => break Err(satex_error!(e)),
                 },
 
@@ -95,6 +121,59 @@ pin_project! {
 }
 
 impl EventLoop {
+    fn load_certs(path: &str) -> Result<Vec<CertificateDer<'static>>, Error> {
+        let file = File::open(path).map_err(|e| satex_error!(e))?;
+        let mut reader = BufReader::new(file);
+        rustls_pemfile::certs(&mut reader)
+            .map(|x| x.map_err(|e| satex_error!(e)))
+            .collect()
+    }
+
+    fn load_private_key(path: &str) -> Result<PrivateKeyDer<'static>, Error> {
+        let file = File::open(path).map_err(|e| satex_error!(e))?;
+        let mut reader = BufReader::new(file);
+        rustls_pemfile::private_key(&mut reader)
+            .map_err(|e| satex_error!(e))
+            .and_then(|key| key.ok_or_else(|| satex_error!("App serve load private key error!")))
+    }
+
+    pub fn tls_boos(listener: TcpListener, router: Router, tls: Tls) -> Result<Self, Error> {
+        let certs = Self::load_certs(tls.certs())?;
+        let private_key = Self::load_private_key(tls.private_key())?;
+        let mut tls_config = ServerConfig::builder()
+            .with_no_client_auth()
+            .with_single_cert(certs, private_key)
+            .map_err(|e| satex_error!(e))?;
+        tls_config.alpn_protocols = tls.alpn_protocols();
+        let acceptor = TlsAcceptor::from(Arc::new(tls_config));
+        Ok(Self {
+            future: Box::pin(async move {
+                loop {
+                    let router = router.clone();
+                    let acceptor = acceptor.clone();
+                    match listener.accept().await {
+                        Ok((stream, client_addr)) => {
+                            info!("App serve listener accept client: {}", client_addr);
+                            match acceptor.accept(stream).await {
+                                Ok(tls_stream) => {
+                                    let worker =
+                                        Self::worker(TokioIo::new(tls_stream), router, client_addr);
+                                    spawn(worker);
+                                }
+                                Err(e) => {
+                                    warn!("App serve listener accept TLS stream error: {}", e);
+                                }
+                            };
+                        }
+                        Err(e) => {
+                            warn!("App serve listener accept client error: {}", e);
+                        }
+                    }
+                }
+            }),
+        })
+    }
+
     pub fn boss(listener: TcpListener, router: Router) -> Self {
         Self {
             future: Box::pin(async move {
@@ -115,7 +194,10 @@ impl EventLoop {
         }
     }
 
-    pub fn worker(io: TokioIo<TcpStream>, router: Router, client_addr: SocketAddr) -> Self {
+    pub fn worker<S>(io: TokioIo<S>, router: Router, client_addr: SocketAddr) -> Self
+    where
+        S: AsyncRead + AsyncWrite + Send + Unpin + 'static,
+    {
         Self {
             future: Box::pin(async move {
                 Builder::new(TokioExecutor::new())

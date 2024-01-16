@@ -4,7 +4,7 @@ use std::task::{Context, Poll};
 use futures_util::future::BoxFuture;
 use hyper::header::HOST;
 use hyper::{Request, Response, Uri};
-use hyper_tls::HttpsConnector;
+use hyper_rustls::HttpsConnector;
 use hyper_util::client::legacy::connect::HttpConnector;
 use hyper_util::client::legacy::Client;
 use tower::Service;

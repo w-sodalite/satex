@@ -13,7 +13,7 @@ hyper = { workspace = true }
 bytes = { workspace = true }
 tracing = { workspace = true }
 futures = { workspace = true }
-hyper-tls = { workspace = true }
+hyper-rustls = { workspace = true }
 leaky-bucket = { workspace = true }
 aho-corasick = { workspace = true }
 http-body-util = { workspace = true }
