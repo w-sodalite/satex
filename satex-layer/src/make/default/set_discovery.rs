@@ -1,6 +1,6 @@
 use tower_http::add_extension::AddExtensionLayer;
 
-use satex_core::config::Config;
+use satex_core::config::ServeConfig;
 use satex_core::Error;
 use satex_discovery::{MakeServerDiscovery, MakeServerDiscoveryRegistry, NamedServerDiscovery};
 
@@ -16,7 +16,7 @@ impl MakeDefaultRouteServiceLayer for MakeSetDiscoveryLayer {
         "SetDiscovery"
     }
 
-    fn make(&self, config: &Config) -> Result<Self::Layer, Error> {
+    fn make(&self, config: &ServeConfig) -> Result<Self::Layer, Error> {
         let mut discoveries = vec![];
         for metadata in config.discovery() {
             let kind = metadata.kind();

@@ -22,4 +22,3 @@ rustls-pki-types = { workspace = true }
 pin-project-lite = { workspace = true }
 tracing-subscriber = { workspace = true }
 hyper-util = { workspace = true, features = ["server-auto"] }
-tower-http = { workspace = true, features = ["add-extension"] }

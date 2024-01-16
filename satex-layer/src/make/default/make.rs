@@ -4,7 +4,7 @@ use bytes::Bytes;
 use hyper::{Request, Response};
 use tower::{Layer, Service};
 
-use satex_core::config::Config;
+use satex_core::config::ServeConfig;
 use satex_core::http::Body;
 use satex_core::{make, BoxError};
 use satex_service::NamedRouteService;
@@ -16,7 +16,7 @@ make! {
     MakeDefaultRouteServiceLayer,
     Layer,
     (Layer<NamedRouteService>),
-    (&Config),
+    (&ServeConfig),
     NamedRouteServiceLayer
 }
 

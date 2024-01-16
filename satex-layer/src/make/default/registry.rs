@@ -1,4 +1,4 @@
-use satex_core::config::Config;
+use satex_core::config::ServeConfig;
 use satex_core::{registry, Error};
 
 use crate::make::default::set_discovery::MakeSetDiscoveryLayer;
@@ -18,7 +18,7 @@ registry!(
 );
 
 impl MakeDefaultRouteServiceLayerRegistry {
-    pub fn make_all(config: &Config) -> Result<Vec<NamedRouteServiceLayer>, Error> {
+    pub fn make_all(config: &ServeConfig) -> Result<Vec<NamedRouteServiceLayer>, Error> {
         let makes = Self::all()?;
         makes.values().try_fold(vec![], |layers, make| {
             make.make(config)

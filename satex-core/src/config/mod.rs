@@ -1,10 +1,10 @@
 use std::collections::VecDeque;
 use std::env::current_dir;
-use std::fs::read;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 use std::path::{Path, PathBuf};
 
 use serde::Deserialize;
+use serde_yaml::Value;
 use tracing::Level;
 
 use crate::apply::Apply;
@@ -14,44 +14,49 @@ use crate::{satex_error, Error};
 pub mod args;
 pub mod metadata;
 
-#[derive(Debug, Default, Clone, Deserialize)]
-pub struct Config {
-    #[serde(default)]
-    server: Server,
+const SATEX: &str = "satex";
+const SATEX_YAML: &str = "satex.yaml";
+
+fn normalize_path(path: &str) -> Result<PathBuf, Error> {
+    if path.starts_with('/') {
+        Ok(PathBuf::new().apply(|buf| buf.push(path)))
+    } else {
+        current_dir()
+            .map_err(|e| satex_error!(e))
+            .map(|current| current.join(path))
+    }
+}
+
+#[derive(Debug, Clone, Default, Deserialize)]
+pub struct SatexConfig {
+    serves: Vec<String>,
 
     #[serde(default)]
     tracing: Tracing,
-
-    #[serde(default)]
-    router: Router,
-
-    #[serde(default)]
-    discovery: Vec<Metadata>,
-
-    #[serde(default)]
-    client: Client,
 }
 
-impl Config {
-    pub fn server(&self) -> &Server {
-        &self.server
-    }
-    pub fn tracing(&self) -> &Tracing {
-        &self.tracing
-    }
-    pub fn router(&self) -> &Router {
-        &self.router
-    }
-    pub fn discovery(&self) -> &[Metadata] {
-        &self.discovery
-    }
-    pub fn client(&self) -> &Client {
-        &self.client
+impl SatexConfig {
+    pub fn load(&self) -> Result<Vec<ServeConfig>, Error> {
+        let mut serves = Vec::with_capacity(self.serves.len());
+        for path in &self.serves {
+            let path = normalize_path(path)?;
+            let serve = ServeConfig::from_yaml(path)?;
+            serves.push(serve);
+        }
+        Ok(serves)
     }
 
     pub fn from_yaml<P: AsRef<Path>>(path: P) -> Result<Self, Error> {
-        let bytes = read(path).map_err(|e| satex_error!(e))?;
-        serde_yaml::from_slice(bytes.as_slice()).map_err(|e| satex_error!(e))
+        let bytes = std::fs::read(path).map_err(|e| satex_error!(e))?;
+        let value =
+            serde_yaml::from_slice::<Value>(bytes.as_slice()).map_err(|e| satex_error!(e))?;
+        match value {
+            Value::Mapping(mut value) => match value.remove(SATEX) {
+                Some(value) => serde_yaml::from_value(value).map_err(|e| satex_error!(e)),
+                None => Err(satex_error!("Miss field `satex`!")),
+            },
+            _ => Err(satex_error!("Unexpect type!")),
+        }
     }
 
     pub fn detect() -> Result<Self, Error> {
@@ -83,9 +88,57 @@ impl Config {
                 }
             }
             None => current_dir()
-                .map(|dir| dir.join("config.yaml"))
+                .map(|dir| dir.join(SATEX_YAML))
                 .map_err(|e| satex_error!(e)),
         }
+    }
+
+    pub fn tracing(&self) -> &Tracing {
+        &self.tracing
+    }
+
+    pub fn paths(&self) -> &[String] {
+        &self.serves
+    }
+}
+
+#[derive(Debug, Default, Clone, Deserialize)]
+pub struct ServeConfig {
+    #[serde(default)]
+    server: Server,
+
+    #[serde(default)]
+    router: Router,
+
+    #[serde(default)]
+    discovery: Vec<Metadata>,
+
+    #[serde(default)]
+    client: Client,
+
+    #[serde(default)]
+    tls: Option<Tls>,
+}
+
+impl ServeConfig {
+    pub fn server(&self) -> &Server {
+        &self.server
+    }
+    pub fn router(&self) -> &Router {
+        &self.router
+    }
+    pub fn discovery(&self) -> &[Metadata] {
+        &self.discovery
+    }
+    pub fn client(&self) -> &Client {
+        &self.client
+    }
+    pub fn tls(&self) -> &Option<Tls> {
+        &self.tls
+    }
+    pub fn from_yaml<P: AsRef<Path>>(path: P) -> Result<Self, Error> {
+        let bytes = std::fs::read(path).map_err(|e| satex_error!(e))?;
+        serde_yaml::from_slice(bytes.as_slice()).map_err(|e| satex_error!(e))
     }
 }
 

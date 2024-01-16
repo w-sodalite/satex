@@ -1,8 +1,5 @@
 server:
-  port: 9000
-
-tracing:
-  max_level: debug
+  port: 9001
 
 router:
   routes:

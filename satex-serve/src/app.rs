@@ -4,26 +4,27 @@ use std::str::FromStr;
 use tracing::Level;
 use tracing_subscriber::fmt::format::FmtSpan;
 
-use satex_core::config::Config;
+use satex_core::config::SatexConfig;
 use satex_core::Error;
 
 use crate::router::make::MakeRouter;
-use crate::serve::Serve;
+use crate::serve::{Serve, Serves};
 
 pub struct App {
-    config: Config,
+    config: SatexConfig,
 }
 
 impl App {
-    pub fn new(config: Config) -> Self {
+    pub fn new(config: SatexConfig) -> Self {
         Self { config }
     }
 
     pub fn detect() -> Result<Self, Error> {
-        Config::detect().map(Self::new)
+        let config = SatexConfig::detect()?;
+        Ok(Self::new(config))
     }
 
-    pub fn serve(&self) -> Serve {
+    pub fn serve(&self) -> Serves {
         // 初始化日志
         let logging = self.config.tracing();
         tracing_subscriber::fmt()
@@ -36,15 +37,19 @@ impl App {
             .with_line_number(logging.line_number())
             .init();
 
-        // 创建路由
-        let router = match MakeRouter::make(&self.config) {
-            Ok(router) => router,
-            Err(e) => panic!("App create the router error: {}", e),
-        };
+        let mut serves = vec![];
+        let serve_configs = self.config.load().expect("App load serve config error!");
+        for serve_config in serve_configs {
+            // 创建路由
+            let router = match MakeRouter::make(&serve_config) {
+                Ok(router) => router,
+                Err(e) => panic!("App create the router error: {}", e),
+            };
 
-        // 创建服务
-        let addr = SocketAddr::from(self.config.server());
-        let tls = self.config.server().tls().clone();
-        Serve::new(addr, router, tls)
+            // 创建服务
+            let addr = SocketAddr::from(serve_config.server());
+            serves.push(Serve::new(addr, router, serve_config.tls().clone()))
+        }
+        Serves::new(serves)
     }
 }
