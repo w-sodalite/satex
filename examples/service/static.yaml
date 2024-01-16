@@ -1,9 +1,6 @@
 server:
   port: 9000
 
-tracing:
-  max_level: debug
-
 router:
   routes:
     - id: static-shortcut

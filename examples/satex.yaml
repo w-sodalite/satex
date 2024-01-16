@@ -14,6 +14,8 @@ satex:
     # 是否显示行号
     line_number: true
 
+  # 服务配置
   serves:
     - examples/service/static.yaml
     - examples/service/proxy.yaml
+    - examples/tls/tls.yaml
