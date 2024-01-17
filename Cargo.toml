@@ -1,7 +1,3 @@
-[workspace.package]
-version = "0.1.0"
-edition = "2021"
-
 [workspace]
 resolver = "2"
 members = [
@@ -13,7 +9,23 @@ members = [
     "satex-discovery",
 ]
 
+[workspace.package]
+version = "0.1.6"
+edition = "2021"
+license = "Apache-2.0"
+license-file = "LICENSE"
+authors = ["w-sodalite@hotmail.com"]
+readme = "README.md"
+repository = "https://github.com/w-sodalite/satex.git"
+
 [workspace.dependencies]
+satex-core = { path = "satex-core", version = "0.1.6" }
+satex-serve = { path = "satex-serve", version = "0.1.6" }
+satex-layer = { path = "satex-layer", version = "0.1.6" }
+satex-matcher = { path = "satex-matcher", version = "0.1.6" }
+satex-service = { path = "satex-service", version = "0.1.6" }
+satex-discovery = { path = "satex-discovery", version = "0.1.6" }
+
 url = { version = "2.5" }
 rand = { version = "0.8" }
 hyper = { version = "1.0" }
@@ -29,7 +41,6 @@ futures = { version = "0.3" }
 qstring = { version = "0.7" }
 cookie = { version = "0.18" }
 path-tree = { version = "0.7" }
-hyper-rustls = { version = "0.26" }
 serde_yaml = { version = "0.9" }
 hyper-util = { version = "0.1" }
 tower-http = { version = "0.5" }
@@ -39,6 +50,7 @@ lazy_static = { version = "1.4" }
 sync_wrapper = { version = "0.1" }
 leaky-bucket = { version = "1.0" }
 aho-corasick = { version = "1.1" }
+hyper-rustls = { version = "0.26" }
 concat-idents = { version = "1.1" }
 rustls-pemfile = { version = "2.0" }
 http-body-util = { version = "0.1" }
@@ -49,14 +61,27 @@ rustls-pki-types = { version = "1.0" }
 tracing-subscriber = { version = "0.3" }
 serde-this-or-that = { version = "0.4" }
 
+[workspace.metadata.release]
+registry = "crates-io"
+shared-version = true
+consolidate-commits = true
+pre-release-commit-message = "Release {{version}}"
+tag-name = "v{{version}}"
+allow-branch = ["master"]
+
 [package]
 name = "satex"
 version.workspace = true
 edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "使用`RUST`开发的轻量、高性能的HTTP网关，基于`tokio`、`hyper`、`tower`构建。"
+keywords = ["Gateway", "Router", "Http", "Proxy"]
 
 [dependencies]
-satex-core = { path = "satex-core" }
-satex-serve = { path = "satex-serve" }
+satex-core = { workspace = true }
+satex-serve = { workspace = true }
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 
 [profile.release]

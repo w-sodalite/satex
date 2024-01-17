@@ -2,14 +2,16 @@
 name = "satex-serve"
 version.workspace = true
 edition.workspace = true
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Satex服务初始化库"
 
 [dependencies]
-satex-core = { path = "../satex-core" }
-satex-layer = { path = "../satex-layer" }
-satex-matcher = { path = "../satex-matcher" }
-satex-service = { path = "../satex-service" }
+satex-core = { workspace = true }
+satex-layer = { workspace = true }
+satex-matcher = { workspace = true }
+satex-service = { workspace = true }
 hyper = { workspace = true }
 bytes = { workspace = true }
 tower = { workspace = true }

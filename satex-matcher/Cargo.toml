@@ -2,11 +2,13 @@
 name = "satex-matcher"
 version.workspace = true
 edition.workspace = true
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Satex请求匹配接口定义和通用实现"
 
 [dependencies]
-satex-core = { path = "../satex-core" }
+satex-core = { workspace = true }
 hyper = { workspace = true }
 cookie = { workspace = true }
 chrono = { workspace = true }

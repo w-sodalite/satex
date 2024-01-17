@@ -2,6 +2,10 @@
 name = "satex-core"
 version.workspace = true
 edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Satex核心库，提供基础和通用的一些功能。"
 
 [dependencies]
 bytes = { workspace = true }

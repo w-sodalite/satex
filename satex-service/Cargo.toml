@@ -2,12 +2,14 @@
 name = "satex-service"
 version.workspace = true
 edition.workspace = true
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Satex请求处理接口定义和通用实现"
 
 [dependencies]
-satex-core = { path = "../satex-core" }
-satex-discovery = { path = "../satex-discovery" }
+satex-core = { workspace = true }
+satex-discovery = { workspace = true }
 serde = { workspace = true }
 tower = { workspace = true }
 hyper = { workspace = true }

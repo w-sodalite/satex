@@ -900,7 +900,7 @@ checksum = "f98d2aa92eebf49b69786be48e4477826b256916e84a57ff2a4f21923b48eb4c"
 
 [[package]]
 name = "satex"
-version = "0.1.0"
+version = "0.1.6"
 dependencies = [
  "satex-core",
  "satex-serve",
@@ -909,7 +909,7 @@ dependencies = [
 
 [[package]]
 name = "satex-core"
-version = "0.1.0"
+version = "0.1.6"
 dependencies = [
  "anyhow",
  "bytes",
@@ -932,7 +932,7 @@ dependencies = [
 
 [[package]]
 name = "satex-discovery"
-version = "0.1.0"
+version = "0.1.6"
 dependencies = [
  "async-trait",
  "hyper",
@@ -945,7 +945,7 @@ dependencies = [
 
 [[package]]
 name = "satex-layer"
-version = "0.1.0"
+version = "0.1.6"
 dependencies = [
  "aho-corasick",
  "bytes",
@@ -967,7 +967,7 @@ dependencies = [
 
 [[package]]
 name = "satex-matcher"
-version = "0.1.0"
+version = "0.1.6"
 dependencies = [
  "chrono",
  "cookie",
@@ -980,7 +980,7 @@ dependencies = [
 
 [[package]]
 name = "satex-serve"
-version = "0.1.0"
+version = "0.1.6"
 dependencies = [
  "bytes",
  "futures",
@@ -1002,7 +1002,7 @@ dependencies = [
 
 [[package]]
 name = "satex-service"
-version = "0.1.0"
+version = "0.1.6"
 dependencies = [
  "bytes",
  "futures",

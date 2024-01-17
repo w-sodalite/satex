@@ -72,13 +72,3 @@ where
         self.inner.call(req)
     }
 }
-
-#[cfg(test)]
-mod test {
-
-    #[test]
-    fn foo() {
-        let text = format!("{{{}}}", "name");
-        println!("{}", text);
-    }
-}
