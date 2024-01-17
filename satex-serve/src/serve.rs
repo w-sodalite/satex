@@ -70,33 +70,25 @@ impl Future for Serve {
                         ServeProjReplace::Binding { config, .. } => {
                             match MakeRouter::make(&config) {
                                 Ok(router) => {
-                                    let handle = match config.server().tls() {
-                                        Some(tls) => {
-                                            info!(
-                                                "Serve [{}] create listener success!",
-                                                config.id()
-                                            );
-                                            match EventLoop::tls_boos(
-                                                listener,
-                                                router,
-                                                tls,
-                                                config.id().to_string(),
-                                            ) {
-                                                Ok(boss) => spawn(boss),
-                                                Err(e) => break Err(satex_error!(e)),
-                                            }
+                                    let tls = config.server().tls();
+                                    let handle = if tls.enabled() {
+                                        info!("Serve [{}] create listener success!", config.id());
+                                        match EventLoop::tls_boos(
+                                            listener,
+                                            router,
+                                            tls,
+                                            config.id().to_string(),
+                                        ) {
+                                            Ok(boss) => spawn(boss),
+                                            Err(e) => break Err(satex_error!(e)),
                                         }
-                                        None => {
-                                            info!(
-                                                "Serve [{}] create listener success!",
-                                                config.id()
-                                            );
-                                            spawn(EventLoop::boss(
-                                                listener,
-                                                router,
-                                                config.id().to_string(),
-                                            ))
-                                        }
+                                    } else {
+                                        info!("Serve [{}] create listener success!", config.id());
+                                        spawn(EventLoop::boss(
+                                            listener,
+                                            router,
+                                            config.id().to_string(),
+                                        ))
                                     };
                                     self.as_mut()
                                         .project_replace(Serve::Accepting { handle, config });
@@ -168,8 +160,16 @@ impl EventLoop {
         tls: &Tls,
         config_id: String,
     ) -> Result<Self, Error> {
-        let certs = Self::load_certs(tls.certs())?;
-        let private_key = Self::load_private_key(tls.private_key())?;
+        let certs = tls
+            .certs()
+            .as_ref()
+            .ok_or_else(|| satex_error!("Tls is enabled, but miss `certs`!"))
+            .and_then(|certs| Self::load_certs(certs))?;
+        let private_key = tls
+            .private_key()
+            .as_ref()
+            .ok_or_else(|| satex_error!("Tls is enabled, but miss `private_key`!"))
+            .and_then(|private_key| Self::load_private_key(private_key))?;
         let mut tls_config = ServerConfig::builder()
             .with_no_client_auth()
             .with_single_cert(certs, private_key)
