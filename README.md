@@ -67,6 +67,12 @@
 
 [examples](./examples)
 
+## 启动
+
+```shell
+cargo run --release -- -c examples/satex.yaml
+```
+
 ## License
 
 This project is licensed under the [Apache 2.0](./LICENSE)
