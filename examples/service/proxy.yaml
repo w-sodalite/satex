@@ -11,10 +11,10 @@ router:
       service: Static=examples/resources
 
     - id: proxy-shortcut
-      service: Proxy=http://127.0.0.1:9000/static
+      service: Proxy=http://127.0.0.1:9001/static
 
-    - id: echo-complete
+    - id: proxy-complete
       service:
         kind: Proxy
         args:
-          uri: http://127.0.0.1:9000/static
+          uri: http://127.0.0.1:9001/static

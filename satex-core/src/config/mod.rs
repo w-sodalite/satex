@@ -310,11 +310,17 @@ impl Router {
 pub struct Global {
     #[serde(default)]
     layers: Vec<Metadata>,
+
+    #[serde(default)]
+    matchers: Vec<Metadata>,
 }
 
 impl Global {
     pub fn layers(&self) -> &[Metadata] {
         self.layers.as_slice()
+    }
+    pub fn matchers(&self) -> &[Metadata] {
+        &self.matchers.as_slice()
     }
 }
 
