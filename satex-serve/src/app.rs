@@ -22,7 +22,7 @@ impl App {
         Ok(Self::new(config))
     }
 
-    pub fn serve(&self) -> Serves {
+    pub fn run(&self) -> Serves {
         // 初始化日志
         let logging = self.config.tracing();
         tracing_subscriber::fmt()
