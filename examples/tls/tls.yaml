@@ -1,34 +1,13 @@
-# 服务配置
 server:
-  # 监听端口
   port: 9002
-  # TLS配置
   tls:
-    # 是否开启
     enabled: true
-    # 证书文件
     certs: examples/tls/cert.pem
-    # 私钥文件
     private_key: examples/tls/private-key.pem
 
-# 路由配置
 router:
-  # 请求日志
-  trace:
-    # 级别
-    level: debug
-    # 是否输出请求头
-    include_headers: true
-  # 全局配置
-  global:
-    # 全局的Layer
-    layers:
-      - Cors
-  # 路由列表
   routes:
     - id: static
-      # Matchers
       matchers:
         - Method=GET
-      # Service
       service: Static=examples/resources
