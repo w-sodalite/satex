@@ -1,6 +1,6 @@
 use std::future::{ready, Ready};
-use std::task::{Context, Poll};
 
+use bytes::Bytes;
 use futures_util::future::{BoxFuture, Either};
 use hyper::{Request, Response, StatusCode};
 use tower::{Service, ServiceExt};
@@ -9,45 +9,59 @@ use tracing::{info, warn};
 use route::Route;
 use satex_core::essential::Essential;
 use satex_core::http::{make_response, Body};
-use satex_core::Error;
+use satex_core::{BoxError, Error};
 
 pub mod make;
 pub mod route;
 
 #[derive(Default, Clone)]
 pub struct Router {
+    ///
+    /// 路由表
+    ///
     routes: Vec<Route>,
 }
 
 impl Router {
+    ///
+    ///
+    /// 根据输入的路透表创建一个新的路由
+    ///
+    /// # Arguments
+    ///
+    /// * `routes`: 路由表
+    ///
+    /// returns: Router
+    ///
     pub fn new(routes: Vec<Route>) -> Self {
         Self { routes }
     }
 
-    pub fn append(&mut self, route: Route) -> &mut Self {
+    ///
+    /// 添加新的路由到路由表中
+    ///
+    /// # Arguments
+    ///
+    /// * `route`: 添加的路由
+    ///
+    /// returns: &mut Router
+    ///
+    pub fn push(&mut self, route: Route) -> &mut Self {
         self.routes.push(route);
-        self
-    }
-
-    pub fn prepend(&mut self, route: Route) -> &mut Self {
-        self.routes.insert(0, route);
         self
     }
 }
 
-pub type RouterFuture<T, E> = Either<Ready<Result<T, E>>, BoxFuture<'static, Result<T, E>>>;
-
-impl Service<Request<Body>> for Router {
+impl<ReqBody> hyper::service::Service<Request<ReqBody>> for Router
+where
+    ReqBody: hyper::body::Body<Data = Bytes> + Send + 'static,
+    ReqBody::Error: Into<BoxError>,
+{
     type Response = Response<Body>;
     type Error = Error;
     type Future = RouterFuture<Self::Response, Self::Error>;
 
-    fn poll_ready(&mut self, _: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-        // router should not poll ready, please use route poll_ready
-        Poll::Ready(Ok(()))
-    }
-
-    fn call(&mut self, mut request: Request<Body>) -> Self::Future {
+    fn call(&self, mut request: Request<ReqBody>) -> Self::Future {
         let mut iter = self.routes.iter();
         let essential = request.extensions_mut().get_mut::<Essential>().unwrap();
         let route = loop {
@@ -98,3 +112,5 @@ impl Service<Request<Body>> for Router {
         }
     }
 }
+
+pub type RouterFuture<T, E> = Either<Ready<Result<T, E>>, BoxFuture<'static, Result<T, E>>>;
