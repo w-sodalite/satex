@@ -4,6 +4,8 @@ server:
   port: 9002
   # TLS配置
   tls:
+    # 是否开启
+    enabled: true
     # 证书文件
     certs: examples/tls/cert.pem
     # 私钥文件

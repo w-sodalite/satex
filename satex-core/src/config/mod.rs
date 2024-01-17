@@ -167,7 +167,7 @@ impl ServeConfig {
                 config.apply(|config| {
                     config.id = format!(
                         "{} - {}",
-                        if config.server().tls().is_some() {
+                        if config.server().tls().enabled() {
                             HTTPS
                         } else {
                             HTTP
@@ -197,26 +197,23 @@ pub struct Server {
     /// TLS信息
     ///
     #[serde(default)]
-    tls: Option<Tls>,
+    tls: Tls,
 }
 
 impl Server {
     pub fn default_ip() -> IpAddr {
         IpAddr::V4(Ipv4Addr::UNSPECIFIED)
     }
-
     pub fn bind_addr(&self) -> SocketAddr {
         SocketAddr::new(self.ip, self.port)
     }
-
     pub fn port(&self) -> u16 {
         self.port
     }
-
     pub fn ip(&self) -> IpAddr {
         self.ip
     }
-    pub fn tls(&self) -> &Option<Tls> {
+    pub fn tls(&self) -> &Tls {
         &self.tls
     }
 }
@@ -434,17 +431,23 @@ impl Client {
     }
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Default, Clone, Deserialize)]
 pub struct Tls {
+    ///
+    /// 是否开启
+    ///
+    #[serde(default)]
+    enabled: bool,
+
     ///
     /// 证书路径
     ///
-    certs: String,
+    certs: Option<String>,
 
     ///
     /// 密钥路径
     ///
-    private_key: String,
+    private_key: Option<String>,
 
     ///
     /// ALPN协议集合
@@ -462,18 +465,19 @@ impl Tls {
         ]
     }
 
-    pub fn certs(&self) -> &str {
-        &self.certs
-    }
-
-    pub fn private_key(&self) -> &str {
-        &self.private_key
-    }
-
     pub fn alpn_protocols(&self) -> Vec<Vec<u8>> {
         self.alpn_protocols
             .iter()
             .map(|protocol| protocol.as_bytes().to_vec())
             .collect()
+    }
+    pub fn enabled(&self) -> bool {
+        self.enabled
+    }
+    pub fn certs(&self) -> &Option<String> {
+        &self.certs
+    }
+    pub fn private_key(&self) -> &Option<String> {
+        &self.private_key
     }
 }
