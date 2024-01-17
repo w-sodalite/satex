@@ -2,6 +2,9 @@ server:
   port: 9000
 
 router:
+  global:
+    matchers:
+      - Method=GET
   routes:
     - id: static-shortcut
       service: Static=examples/resources

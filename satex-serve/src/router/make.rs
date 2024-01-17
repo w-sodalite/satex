@@ -14,14 +14,18 @@ impl MakeRouter {
         // 路由
         let mut router = Router::default();
 
-        // 默认的Layer集合
+        // 默认Layer集合
         let default_layers = MakeDefaultRouteServiceLayerRegistry::make_all(config)?;
 
-        // 全局的Layer集合
+        // 全局Layer集合
         let global_layers =
             MakeRouteServiceLayerRegistry::make_many(config.router().global().layers())?;
 
-        // 根据配置创建所有的路由
+        // 全局Matcher集合
+        let global_matchers =
+            MakeRouteMatcherRegistry::make_many(config.router().global().matchers())?;
+
+        // 创建所有的路由
         for route in config.router().routes() {
             let id = route.id();
             let route_service = MakeRouteServiceRegistry::make_single(route.service())?;
@@ -31,6 +35,7 @@ impl MakeRouter {
                 .add_layers(global_layers.clone())
                 .add_layers(default_layers.clone())
                 .add_layers(route_layers)
+                .add_matchers(global_matchers.clone())
                 .add_matchers(route_matchers)
                 .make()
             {
