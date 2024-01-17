@@ -40,7 +40,7 @@ impl MakeRouter {
                 .make()
             {
                 Ok(route) => {
-                    router.append(route);
+                    router.push(route);
                 }
                 Err(e) => return Err(e),
             }
