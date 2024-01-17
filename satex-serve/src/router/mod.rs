@@ -1,7 +1,7 @@
 use std::future::{ready, Ready};
 
 use bytes::Bytes;
-use futures_util::future::{BoxFuture, Either};
+use futures::future::{BoxFuture, Either};
 use hyper::{Request, Response, StatusCode};
 use tower::{Service, ServiceExt};
 use tracing::{info, warn};

@@ -1,9 +1,8 @@
 use std::pin::Pin;
-use std::task::{Context, Poll};
+use std::task::{ready, Context, Poll};
 
 use bytes::Bytes;
-use futures_util::stream::Stream;
-use futures_util::TryStream;
+use futures::{Stream, TryStream};
 use http_body_util::BodyExt;
 use hyper::body::{Body as _, Frame};
 use pin_project_lite::pin_project;
@@ -142,7 +141,7 @@ impl Stream for BodyDataStream {
     #[inline]
     fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
         loop {
-            match futures_util::ready!(Pin::new(&mut self.inner).poll_frame(cx)?) {
+            match ready!(Pin::new(&mut self.inner).poll_frame(cx)?) {
                 Some(frame) => match frame.into_data() {
                     Ok(data) => return Poll::Ready(Some(Ok(data))),
                     Err(_frame) => {}
@@ -197,7 +196,7 @@ where
         cx: &mut Context<'_>,
     ) -> Poll<Option<Result<Frame<Self::Data>, Self::Error>>> {
         let stream = self.project().stream.get_pin_mut();
-        match futures_util::ready!(stream.try_poll_next(cx)) {
+        match ready!(stream.try_poll_next(cx)) {
             Some(Ok(chunk)) => Poll::Ready(Some(Ok(Frame::data(chunk.into())))),
             Some(Err(e)) => Poll::Ready(Some(Err(satex_error!(e.into())))),
             None => Poll::Ready(None),

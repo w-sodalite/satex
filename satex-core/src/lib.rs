@@ -13,4 +13,3 @@ mod macros;
 pub mod pattern;
 pub mod registry;
 pub mod serde;
-pub mod task;

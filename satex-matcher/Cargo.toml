@@ -7,11 +7,9 @@ edition.workspace = true
 
 [dependencies]
 satex-core = { path = "../satex-core" }
-regex = { workspace = true }
 hyper = { workspace = true }
 cookie = { workspace = true }
 chrono = { workspace = true }
 qstring = { workspace = true }
 path-tree = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
-serde_yaml = { workspace = true }

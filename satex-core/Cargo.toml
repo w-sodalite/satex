@@ -13,7 +13,6 @@ tracing = { workspace = true }
 serde_yaml = { workspace = true }
 http-serde = { workspace = true }
 lazy_static = { workspace = true }
-futures-util = { workspace = true }
 sync_wrapper = { workspace = true }
 concat-idents = { workspace = true }
 http-body-util = { workspace = true }

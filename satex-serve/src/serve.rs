@@ -2,14 +2,14 @@ use std::future::Future;
 use std::pin::Pin;
 use std::task::{ready, Context, Poll};
 
-use futures_util::future::{select_all, BoxFuture, SelectAll};
+use futures::future::{select_all, BoxFuture, SelectAll};
 use pin_project_lite::pin_project;
 use tokio::net::TcpListener;
+use tokio::spawn;
+use tokio::task::JoinHandle;
 use tracing::info;
 
 use satex_core::config::ServeConfig;
-use satex_core::task::spawn;
-use satex_core::task::JoinHandle;
 use satex_core::{satex_error, Error};
 
 use crate::acceptor::TcpAcceptor;
