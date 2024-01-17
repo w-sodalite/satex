@@ -15,7 +15,7 @@ bytes = { workspace = true }
 tower = { workspace = true }
 tokio = { workspace = true }
 tracing = { workspace = true }
-futures-util = { workspace = true }
+futures = { workspace = true }
 tokio-rustls = { workspace = true }
 rustls-pemfile = { workspace = true }
 rustls-pki-types = { workspace = true }

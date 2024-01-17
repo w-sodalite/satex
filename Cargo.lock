@@ -915,7 +915,6 @@ dependencies = [
  "bytes",
  "concat-idents",
  "futures",
- "futures-util",
  "http-body-util",
  "http-serde",
  "hyper",
@@ -956,7 +955,6 @@ dependencies = [
  "hyper-rustls",
  "hyper-util",
  "leaky-bucket",
- "pin-project-lite",
  "satex-core",
  "satex-discovery",
  "satex-service",
@@ -976,10 +974,8 @@ dependencies = [
  "hyper",
  "path-tree",
  "qstring",
- "regex",
  "satex-core",
  "serde",
- "serde_yaml",
 ]
 
 [[package]]
@@ -987,7 +983,7 @@ name = "satex-serve"
 version = "0.1.0"
 dependencies = [
  "bytes",
- "futures-util",
+ "futures",
  "hyper",
  "hyper-util",
  "pin-project-lite",
@@ -1009,14 +1005,13 @@ name = "satex-service"
 version = "0.1.0"
 dependencies = [
  "bytes",
- "futures-util",
+ "futures",
  "hyper",
  "hyper-rustls",
  "hyper-util",
  "satex-core",
  "satex-discovery",
  "serde",
- "tokio",
  "tower",
  "tower-http",
  "tracing",

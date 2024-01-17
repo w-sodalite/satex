@@ -1,7 +1,7 @@
 use std::str::FromStr;
 use std::task::{Context, Poll};
 
-use futures_util::future::BoxFuture;
+use futures::future::BoxFuture;
 use hyper::header::HOST;
 use hyper::{Request, Response, Uri};
 use hyper_rustls::HttpsConnector;

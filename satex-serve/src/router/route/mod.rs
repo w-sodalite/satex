@@ -2,7 +2,7 @@ use std::fmt::{Debug, Formatter};
 use std::task::{Context, Poll};
 
 use bytes::Bytes;
-use futures_util::future::BoxFuture;
+use futures::future::BoxFuture;
 use hyper::{Request, Response};
 use tower::Service;
 use tracing::debug;

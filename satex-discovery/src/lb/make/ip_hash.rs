@@ -6,6 +6,7 @@ use std::sync::{Arc, Weak};
 use std::time::{Duration, Instant};
 
 use async_trait::async_trait;
+use tokio::spawn;
 use tokio::sync::RwLock;
 use tokio::time::sleep;
 use tracing::debug;
@@ -13,7 +14,6 @@ use tracing::debug;
 use satex_core::config::args::Args;
 use satex_core::endpoint::Endpoint;
 use satex_core::essential::Essential;
-use satex_core::task::spawn;
 use satex_core::Error;
 
 use crate::lb::make::MakeLoadBalance;

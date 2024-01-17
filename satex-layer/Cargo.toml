@@ -17,7 +17,6 @@ hyper-rustls = { workspace = true }
 leaky-bucket = { workspace = true }
 aho-corasick = { workspace = true }
 http-body-util = { workspace = true }
-pin-project-lite = { workspace = true }
 tower = { workspace = true, features = ["limit"] }
 serde = { workspace = true, features = ["derive"] }
 hyper-util = { workspace = true, features = ["client"] }

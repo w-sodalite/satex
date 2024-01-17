@@ -15,4 +15,4 @@ serde = { workspace = true, features = ["derive"] }
 tokio = { workspace = true, features = ["rt", "sync", "net", "time"] }
 
 [dev-dependencies]
-tokio = { workspace = true, features = ["macros", "io-util"] }
+tokio = { workspace = true, features = ["macros"] }
