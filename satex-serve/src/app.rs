@@ -23,6 +23,10 @@ impl App {
     }
 
     pub fn run(&self) -> Serves {
+        // 打印Banner
+        let banner = include_str!("../banner.txt");
+        println!("{}", banner);
+
         // 初始化日志
         let logging = self.config.tracing();
         tracing_subscriber::fmt()
