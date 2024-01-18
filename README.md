@@ -2,7 +2,8 @@
 
 使用`RUST`开发的轻量、高性能的HTTP网关，基于`tokio`、`hyper`、`tower`构建。
 
-[![Rust](https://github.com/w-sodalite/satex/actions/workflows/rust.yml/badge.svg?branch=master)](https://github.com/w-sodalite/satex/actions/workflows/rust.yml)
+[![Build Status](https://github.com/w-sodalite/satex/actions/workflows/rust.yml/badge.svg?branch=master)](https://github.com/w-sodalite/satex/actions/workflows/rust.yml)
+[![Crates.io](https://img.shields.io/crates/v/satex)](https://crates.io/crates/satex)
 
 ## 优势
 
@@ -63,15 +64,28 @@
         * `StandBy`：备用负载策略在主服务器故障时，将请求切换到备用服务器上。这种策略可以提高系统的可用性和可靠性。
         * `Weight`：权重负载策略根据服务器的性能或权重值来分配请求。权重值高的服务器将获得更多的请求，而权重值低的服务器将获得较少的请求。这种策略可以帮助平衡服务器的负载，提高系统的性能和效率。
 
-## 示例
+## 配置示例
 
 [examples](./examples)
 
-## 启动
+## 构建和启动
 
-```shell
-cargo run --release -- -c examples/satex.yaml
-```
+- ### 构建
+
+    - 安装`RUST`环境，按照[官方文档](https://www.rust-lang.org/zh-CN/learn/get-started)初始化环境。
+
+    - 使用`cargo`安装，执行命令：`cargo install satex`即可安装最新版本的`satex`。
+
+    - 或者使用源码进行构建，下载源码到本地，在根目录执行`cargo build --release`，编译成功后在`target/release`
+      目录下可以找到`satex`。
+
+- ### 启动
+
+  > 使用`-c`指定配置文件`satex.yaml`的路径
+
+    ```shell
+    satex -c exmaples/satex.yaml
+    ```
 
 ## License
 
