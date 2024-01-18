@@ -7,6 +7,11 @@ authors.workspace = true
 repository.workspace = true
 description = "Satex服务初始化库"
 
+[package.metadata.release]
+pre-release-replacements = [
+    { file = "banner.txt", search = "::v(.)+::", replace = "::v{{version}}::" },
+]
+
 [dependencies]
 satex-core = { workspace = true }
 satex-layer = { workspace = true }

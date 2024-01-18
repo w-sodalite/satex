@@ -50,12 +50,11 @@ lazy_static = { version = "1.4" }
 sync_wrapper = { version = "0.1" }
 leaky-bucket = { version = "1.0" }
 aho-corasick = { version = "1.1" }
+tokio-rustls = { version = "0.25" }
 hyper-rustls = { version = "0.26" }
 concat-idents = { version = "1.1" }
 rustls-pemfile = { version = "2.0" }
 http-body-util = { version = "0.1" }
-tokio-rustls = { version = "0.25.0" }
-tokio-openssl = { version = "0.6.3" }
 pin-project-lite = { version = "0.2" }
 rustls-pki-types = { version = "1.0" }
 tracing-subscriber = { version = "0.3" }
