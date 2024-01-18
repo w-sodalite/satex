@@ -73,6 +73,7 @@
 - ### 构建
 
     - 安装`RUST`环境，按照[官方文档](https://www.rust-lang.org/zh-CN/learn/get-started)初始化环境。
+        >  国内可以使用[rsproxy](https://rsproxy.cn/#getStarted)镜像加速下载。
 
     - 使用`cargo`安装，执行命令：`cargo install satex`即可安装最新版本的`satex`。
 
