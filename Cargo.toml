@@ -10,7 +10,7 @@ members = [
 ]
 
 [workspace.package]
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 license = "Apache-2.0"
 license-file = "LICENSE"
@@ -19,12 +19,12 @@ readme = "README.md"
 repository = "https://github.com/w-sodalite/satex.git"
 
 [workspace.dependencies]
-satex-core = { path = "satex-core", version = "0.2.0" }
-satex-serve = { path = "satex-serve", version = "0.2.0" }
-satex-layer = { path = "satex-layer", version = "0.2.0" }
-satex-matcher = { path = "satex-matcher", version = "0.2.0" }
-satex-service = { path = "satex-service", version = "0.2.0" }
-satex-discovery = { path = "satex-discovery", version = "0.2.0" }
+satex-core = { path = "satex-core", version = "0.2.1" }
+satex-serve = { path = "satex-serve", version = "0.2.1" }
+satex-layer = { path = "satex-layer", version = "0.2.1" }
+satex-matcher = { path = "satex-matcher", version = "0.2.1" }
+satex-service = { path = "satex-service", version = "0.2.1" }
+satex-discovery = { path = "satex-discovery", version = "0.2.1" }
 
 url = { version = "2.5" }
 rand = { version = "0.8" }
