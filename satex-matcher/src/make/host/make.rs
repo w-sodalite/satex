@@ -7,6 +7,7 @@ use crate::{MakeRouteMatcher, __make_matcher};
 
 __make_matcher! {
     Host,
+    TailSequence,
     values: Vec<Pattern>
 }
 
