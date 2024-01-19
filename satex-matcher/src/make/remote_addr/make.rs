@@ -12,7 +12,7 @@ __make_matcher! {
     RemoteAddr,
     SequenceFlag,
     sources: Vec<String>,
-    policy: Option<bool>
+    policy: Option<Policy>
 }
 
 fn make(args: Args) -> Result<RemoteAddrMatcher, Error> {
@@ -40,10 +40,7 @@ fn make(args: Args) -> Result<RemoteAddrMatcher, Error> {
             parse(&source).map(|source| sources.apply(|sources| sources.push(source)))
         })?;
     Ok(RemoteAddrMatcher::new(
-        config
-            .policy
-            .map(|flag| if flag { Policy::Accept } else { Policy::Reject })
-            .unwrap_or_default(),
+        config.policy.unwrap_or_default(),
         sources,
     ))
 }

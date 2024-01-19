@@ -1,4 +1,4 @@
-use satex_core::config::args::{Args, GatherMode};
+use satex_core::config::args::Args;
 use satex_core::pattern::Pattern;
 use satex_core::Error;
 
@@ -7,17 +7,12 @@ use crate::{MakeRouteMatcher, __make_matcher};
 
 __make_matcher! {
     Host,
-    values:Vec<Pattern>
+    values: Vec<Pattern>
 }
 
 fn make(args: Args<'_>) -> Result<HostMatcher, Error> {
-    match args {
-        Args::Shortcut(shortcut) => shortcut
-            .deserialize::<Config>(&["values"], GatherMode::TailSequence)
-            .map(|config| config.values),
-        Args::Complete(complete) => complete.deserialize::<Vec<Pattern>>(),
-    }
-    .map(|patterns| HostMatcher::new(patterns))
+    let config = Config::try_from(args)?;
+    Ok(HostMatcher::new(config.values))
 }
 
 #[cfg(test)]

@@ -41,12 +41,12 @@ impl ServerDiscovery for BuiltinDiscovery {
         server: &str,
     ) -> Result<Option<Endpoint>, Error> {
         match self.items.get(server) {
-            Some((selector, lb)) => {
+            Some((selector, load_balance)) => {
                 let endpoints = selector.select().await?;
                 match endpoints.len() {
                     0 => Ok(None),
                     1 => Ok(endpoints.into_iter().next().map(Endpoint::from)),
-                    _ => lb.choose(essential, endpoints).await,
+                    _ => load_balance.choose(essential, endpoints).await,
                 }
             }
             None => {

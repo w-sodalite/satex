@@ -16,6 +16,5 @@ satex:
 
   # 服务配置
   serves:
-    - examples/service/static.yaml
-    - examples/service/proxy.yaml
-    - examples/tls/tls.yaml
+    - examples/static.yaml
+    - examples/tls/static.yaml

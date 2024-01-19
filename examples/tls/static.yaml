@@ -1,0 +1,20 @@
+# 服务配置
+server:
+  # 服务端口
+  port: 8001
+  # TLS信息
+  tls:
+    # 是否开启TLS
+    enabled: true
+    # 证书地址
+    certs: examples/tls/cert.pem
+    # 密钥地址
+    private_key: examples/tls/private-key.pem
+
+# 路由配置
+router:
+  # 路由表
+  routes:
+    # 静态文件
+    - id: static
+      service: Static=examples/resources

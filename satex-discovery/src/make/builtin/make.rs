@@ -20,7 +20,7 @@ __make_discovery! {
     server: String,
     uris: Vec<Endpoint>,
     interval: Option<u64>,
-    lb: Option<Metadata>,
+    load_balance: Option<Metadata>,
 }
 
 fn make(args: Args) -> Result<BuiltinDiscovery, Error> {
@@ -31,13 +31,12 @@ fn make(args: Args) -> Result<BuiltinDiscovery, Error> {
     let capacity = configs.len();
     let mut items = HashMap::with_capacity(capacity);
     configs.into_iter().try_for_each(|config| {
-        match config.lb {
-            Some(lb) => {
-                MakeLoadBalanceRegistry::get(lb.kind()).and_then(|make| make.make(lb.args()))
-            }
+        match config.load_balance {
+            Some(load_balance) => MakeLoadBalanceRegistry::get(load_balance.kind())
+                .and_then(|make| make.make(load_balance.args())),
             None => Ok(NamedLoadBalance::default()),
         }
-        .map(|lb| {
+        .map(|load_balance| {
             let server = config.server;
             items.insert(
                 server.clone(),
@@ -47,7 +46,7 @@ fn make(args: Args) -> Result<BuiltinDiscovery, Error> {
                         config.uris,
                         Duration::from_secs(config.interval.unwrap_or(DEFAULT_INTERVAL)),
                     ),
-                    lb,
+                    load_balance,
                 ),
             );
         })

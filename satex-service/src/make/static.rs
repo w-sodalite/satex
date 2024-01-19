@@ -10,9 +10,9 @@ type StaticService = ServeDir;
 
 __make_service! {
     Static,
-    directory: String,
+    path: String,
 }
 
 fn make(args: Args) -> Result<StaticService, Error> {
-    Config::try_from(args).map(|config| ServeDir::new(config.directory))
+    Config::try_from(args).map(|config| ServeDir::new(config.path))
 }
