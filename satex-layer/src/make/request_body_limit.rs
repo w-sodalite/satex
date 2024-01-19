@@ -11,7 +11,7 @@ const DEFAULT_REQUEST_BODY_LIMIT: u64 = 10 * 1024;
 __make_layer! {
     RequestBodyLimit,
     #[serde(deserialize_with = "satex_core::serde::tot::as_u64", default = "Config::default_limit")]
-    limit: u64,
+    max: u64,
 }
 
 impl Config {
@@ -21,5 +21,5 @@ impl Config {
 }
 
 fn make(args: Args) -> Result<RequestBodyLimitLayer, Error> {
-    Config::try_from(args).map(|config| RequestBodyLimitLayer::new(config.limit as usize))
+    Config::try_from(args).map(|config| RequestBodyLimitLayer::new(config.max as usize))
 }

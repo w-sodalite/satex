@@ -1,7 +1,0 @@
-server:
-  port: 9000
-
-router:
-  routes:
-    - id: static-shortcut
-      service: Static=examples/resources

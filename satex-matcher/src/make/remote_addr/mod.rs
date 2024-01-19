@@ -23,7 +23,7 @@ impl Default for Policy {
 }
 
 impl Policy {
-    pub fn as_bool(&self) -> bool {
+    fn as_bool(&self) -> bool {
         match self {
             Policy::Accept => true,
             Policy::Reject => false,
