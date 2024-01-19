@@ -8,6 +8,8 @@
 |:-----|:-------:|:----:|:---:|:------|
 | path | `[str]` | `Y`  |     | 重写的路径 |
 
+备注：使用`{{variable}}`来使用[`Matcher - Path`]中绑定的变量。
+
 ## 配置示例
 
 - ### 简单模式
@@ -19,7 +21,7 @@
           matchers:
             - Path=/a/:x+
           layers:
-            - RewritePath=/b/{x}
+            - RewritePath=/b/{{x}}
           service: Static=examples/resources
     ```
 
@@ -34,6 +36,6 @@
           layers:
             - kind: RewritePath
               args:
-                path: /b/{x}
+                path: /b/{{x}}
           service: Static=examples/resources
     ```

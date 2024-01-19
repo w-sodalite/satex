@@ -2,7 +2,7 @@ satex:
   # 日志配置
   tracing:
     # 日志级别
-    max_level: info
+    max_level: warn
     # 是否使用ANSI
     ansi: true
     # 是否显示级别
