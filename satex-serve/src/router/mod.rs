@@ -83,10 +83,13 @@ where
                     match <Route as ServiceExt<Request<Body>>>::ready_oneshot(route).await {
                         Ok(mut route) => match route.call(request).await {
                             Ok(response) => Ok(response),
-                            Err(e) => Ok(make_response(
-                                format!("{e}"),
-                                StatusCode::INTERNAL_SERVER_ERROR,
-                            )),
+                            Err(e) => {
+                                warn!("[{:?}] call request error: {}", route, e);
+                                Ok(make_response(
+                                    format!("{e}"),
+                                    StatusCode::INTERNAL_SERVER_ERROR,
+                                ))
+                            }
                         },
                         Err(e) => Ok(make_response(
                             format!("{e}"),

@@ -36,9 +36,8 @@ where
     fn call(&mut self, mut req: Request<ReqBody>) -> Self::Future {
         let level = self.level;
         if level > 0 {
-            let uri = req.uri();
-            debug!("path strip source: {}", uri);
-            let mut path = uri
+            let source = req.uri();
+            let mut path = source
                 .path()
                 .split('/')
                 .filter(|segment| !segment.is_empty())
@@ -52,14 +51,14 @@ where
                 .map(|query| format!("{}?{}", path, query))
                 .unwrap_or(path);
             let mut builder = Uri::builder().path_and_query(path_and_query);
-            if let Some(schema) = uri.scheme_str() {
+            if let Some(schema) = source.scheme_str() {
                 builder = builder.scheme(schema);
             }
-            if let Some(authority) = uri.authority() {
+            if let Some(authority) = source.authority() {
                 builder = builder.authority(authority.as_str());
             }
             let uri = builder.build().expect("build uri error!");
-            debug!("path strip target: {}", uri);
+            debug!("Strip path: {} => {}", source, uri);
             *req.uri_mut() = uri;
         }
         self.inner.call(req)

@@ -40,6 +40,7 @@ tracing = { version = "0.1" }
 futures = { version = "0.3" }
 qstring = { version = "0.7" }
 cookie = { version = "0.18" }
+rustls = { version = "0.22.0" }
 path-tree = { version = "0.7" }
 serde_yaml = { version = "0.9" }
 hyper-util = { version = "0.1" }
@@ -83,8 +84,8 @@ satex-core = { workspace = true }
 satex-serve = { workspace = true }
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 
-[profile.release]
-opt-level = "z"
-panic = "abort"
-lto = true
-strip = true
+#[profile.release]
+#opt-level = "z"
+#panic = "abort"
+#lto = true
+#strip = true
