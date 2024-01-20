@@ -1,9 +1,10 @@
 use aho_corasick::AhoCorasick;
 use hyper::{Request, Uri};
 use tower::Service;
+use tracing::debug;
 
 pub use make::MakeRewritePathLayer;
-use satex_core::essential::PathVariables;
+use satex_core::essential::{Essential, PathVariables};
 
 mod layer;
 mod make;
@@ -18,6 +19,16 @@ impl<S> RewritePath<S> {
     pub fn new(path: String, inner: S) -> Self {
         Self { path, inner }
     }
+}
+
+fn make_variable_template(key: &str) -> String {
+    let mut variable = String::with_capacity(key.len() + 4);
+    variable.push('{');
+    variable.push('{');
+    variable.push_str(key);
+    variable.push('}');
+    variable.push('}');
+    variable
 }
 
 impl<S, ReqBody> Service<Request<ReqBody>> for RewritePath<S>
@@ -38,20 +49,24 @@ where
     }
 
     fn call(&mut self, mut req: Request<ReqBody>) -> Self::Future {
-        let variables = req.extensions().get::<PathVariables>();
+        let variables = req
+            .extensions()
+            .get::<Essential>()
+            .and_then(|essential| essential.extensions.get::<PathVariables>());
         let path = match variables {
             None => self.path.clone(),
             Some(variables) => {
                 let keys = variables
                     .0
                     .keys()
-                    .map(|key| format!("{{{}}}", key))
+                    .map(|key| make_variable_template(key))
                     .collect::<Vec<_>>();
                 let values = variables.0.values().collect::<Vec<_>>();
                 let corasick = AhoCorasick::new(keys).expect("Invalid path variable!");
                 corasick.replace_all(&self.path, values.as_slice())
             }
         };
+        debug!("Rewrite path: {} => {}", req.uri().path(), path);
         let uri = req.uri();
         let mut builder = Uri::builder();
         if let Some(schema) = uri.scheme_str() {
