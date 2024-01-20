@@ -18,16 +18,6 @@ use crate::{MakeRouteService, __make_service};
 ///
 const DEFAULT_KEEPALIVE: Duration = Duration::from_secs(60);
 
-///
-/// 连接池每个Host最大空闲连接
-///
-const DEFAULT_POOL_MAX_IDLE_PER_HOST: usize = 32;
-
-///
-/// 连接池空闲链接超时时间
-///
-const DEFAULT_POOL_IDLE_TIMEOUT_SECS: u64 = 60;
-
 __make_service! {
     Proxy,
     uri: String,

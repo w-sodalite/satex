@@ -84,8 +84,8 @@ satex-core = { workspace = true }
 satex-serve = { workspace = true }
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 
-#[profile.release]
-#opt-level = "z"
-#panic = "abort"
-#lto = true
-#strip = true
+[profile.release]
+opt-level = "z"
+panic = "abort"
+lto = true
+strip = true
