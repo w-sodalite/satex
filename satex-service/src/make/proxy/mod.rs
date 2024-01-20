@@ -39,11 +39,15 @@ type HttpClient = Client<HttpsConnector<HttpConnector>, Body>;
 #[derive(Clone)]
 pub struct ProxyService {
     uri: String,
+    client: HttpClient,
 }
 
 impl ProxyService {
-    pub fn new(uri: impl Into<String>) -> Self {
-        Self { uri: uri.into() }
+    pub fn new(uri: impl Into<String>, client: HttpClient) -> Self {
+        Self {
+            uri: uri.into(),
+            client,
+        }
     }
 }
 
@@ -58,11 +62,16 @@ impl Service<Request<Body>> for ProxyService {
 
     fn call(&mut self, req: Request<Body>) -> Self::Future {
         let uri = self.uri.clone();
-        Box::pin(async move { proxy(uri, req).await })
+        let client = self.client.clone();
+        Box::pin(async move { proxy(client, uri, req).await })
     }
 }
 
-async fn proxy(uri: String, mut request: Request<Body>) -> Result<Response<Body>, Error> {
+async fn proxy(
+    client: HttpClient,
+    uri: String,
+    mut request: Request<Body>,
+) -> Result<Response<Body>, Error> {
     let prefix = uri.strip_suffix('/').unwrap_or(&uri);
     let path = request
         .uri()
@@ -115,7 +124,6 @@ async fn proxy(uri: String, mut request: Request<Body>) -> Result<Response<Body>
     for name in REMOVE_HEADER_NAMES {
         headers.remove(name);
     }
-    let client = request.extensions_mut().remove::<HttpClient>().unwrap();
     let response = client.request(request).await.map_err(|e| satex_error!(e))?;
     Ok(response.map(Body::new))
 }

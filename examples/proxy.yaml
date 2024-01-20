@@ -1,0 +1,19 @@
+# 服务配置
+server:
+  # 服务端口
+  port: 8002
+
+# 路由配置
+router:
+  # 路由表
+  routes:
+    # 静态文件
+    - id: proxy
+      matchers:
+        - Path=/backend/+
+      layers:
+        - PathStrip=1
+      service:
+        kind: Proxy
+        args:
+          uri: http://127.0.0.1:3000

@@ -2,7 +2,6 @@ use satex_core::config::ServeConfig;
 use satex_core::{registry, Error};
 
 use crate::make::default::set_discovery::MakeSetDiscoveryLayer;
-use crate::make::default::set_http_client::MakeSetHttpClientLayer;
 use crate::make::default::trace::MakeTraceLayer;
 use crate::make::default::{ArcMakeDefaultRouteServiceLayer, MakeDefaultRouteServiceLayer};
 use crate::NamedRouteServiceLayer;
@@ -10,11 +9,7 @@ use crate::NamedRouteServiceLayer;
 registry!(
     MakeDefaultRouteServiceLayerRegistry,
     ArcMakeDefaultRouteServiceLayer,
-    [
-        MakeSetDiscoveryLayer,
-        MakeSetHttpClientLayer,
-        MakeTraceLayer
-    ]
+    [MakeSetDiscoveryLayer, MakeTraceLayer]
 );
 
 impl MakeDefaultRouteServiceLayerRegistry {

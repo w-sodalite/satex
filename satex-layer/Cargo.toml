@@ -15,13 +15,11 @@ hyper = { workspace = true }
 bytes = { workspace = true }
 tracing = { workspace = true }
 futures = { workspace = true }
-hyper-rustls = { workspace = true }
 leaky-bucket = { workspace = true }
 aho-corasick = { workspace = true }
 http-body-util = { workspace = true }
 tower = { workspace = true, features = ["limit"] }
 serde = { workspace = true, features = ["derive"] }
-hyper-util = { workspace = true, features = ["client"] }
 tower-http = { workspace = true, features = [
     "limit",
     "set-header",

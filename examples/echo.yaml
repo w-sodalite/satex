@@ -1,0 +1,14 @@
+# 服务配置
+server:
+  # 服务端口
+  port: 8003
+
+# 路由配置
+router:
+  # 路由表
+  routes:
+    # 静态文件
+    - id: echo
+      matchers:
+        - Path=/echo/+
+      service: Echo

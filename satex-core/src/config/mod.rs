@@ -134,12 +134,6 @@ pub struct ServeConfig {
     ///
     #[serde(default)]
     discovery: Vec<Metadata>,
-
-    ///
-    /// Http Client配置
-    ///
-    #[serde(default)]
-    client: Client,
 }
 
 impl ServeConfig {
@@ -154,9 +148,6 @@ impl ServeConfig {
     }
     pub fn discovery(&self) -> &[Metadata] {
         &self.discovery
-    }
-    pub fn client(&self) -> &Client {
-        &self.client
     }
     pub fn from_yaml<P: AsRef<Path>>(path: P) -> Result<Self, Error> {
         let display = path.as_ref().display();
@@ -381,59 +372,6 @@ impl Route {
     }
     pub fn service(&self) -> &Metadata {
         &self.service
-    }
-}
-
-#[derive(Debug, Clone, Deserialize)]
-pub struct Client {
-    #[serde(default = "Client::default_pool_max_idle_per_host")]
-    pool_max_idle_per_host: usize,
-
-    #[serde(default = "Client::default_pool_idle_timeout_secs")]
-    pool_idle_timeout_secs: u64,
-
-    #[serde(default = "Client::default_retry_canceled_requests")]
-    retry_canceled_requests: bool,
-
-    #[serde(default = "Client::default_set_host")]
-    set_host: bool,
-}
-
-impl Default for Client {
-    fn default() -> Self {
-        Self {
-            pool_max_idle_per_host: Self::default_pool_max_idle_per_host(),
-            pool_idle_timeout_secs: Self::default_pool_idle_timeout_secs(),
-            retry_canceled_requests: Self::default_retry_canceled_requests(),
-            set_host: Self::default_set_host(),
-        }
-    }
-}
-
-impl Client {
-    fn default_pool_max_idle_per_host() -> usize {
-        16
-    }
-    fn default_pool_idle_timeout_secs() -> u64 {
-        60
-    }
-    fn default_retry_canceled_requests() -> bool {
-        true
-    }
-    fn default_set_host() -> bool {
-        true
-    }
-    pub fn pool_max_idle_per_host(&self) -> usize {
-        self.pool_max_idle_per_host
-    }
-    pub fn pool_idle_timeout_secs(&self) -> u64 {
-        self.pool_idle_timeout_secs
-    }
-    pub fn retry_canceled_requests(&self) -> bool {
-        self.retry_canceled_requests
-    }
-    pub fn set_host(&self) -> bool {
-        self.set_host
     }
 }
 
