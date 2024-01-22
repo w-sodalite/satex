@@ -7,35 +7,35 @@ use satex_service::NamedRouteService;
 
 use crate::router::route::Route;
 
-pub struct MakeRoute<'a> {
-    id: &'a str,
+pub struct Builder<'a> {
+    id: String,
     matchers: Vec<NamedRouteMatcher>,
-    layers: Vec<NamedRouteServiceLayer>,
+    layers: Vec<&'a NamedRouteServiceLayer>,
     service: NamedRouteService,
 }
 
-impl<'a> MakeRoute<'a> {
-    pub fn new(id: &'a str, service: NamedRouteService) -> Self {
+impl<'a> Builder<'a> {
+    pub fn new(id: impl Into<String>, service: NamedRouteService) -> Self {
         Self {
-            id,
+            id: id.into(),
             matchers: vec![],
             layers: vec![],
             service,
         }
     }
 
-    pub fn add_matchers(mut self, matchers: Vec<NamedRouteMatcher>) -> Self {
+    pub fn matchers(mut self, matchers: Vec<NamedRouteMatcher>) -> Self {
         self.matchers.extend(matchers);
         self
     }
 
-    pub fn add_layers(mut self, layers: Vec<NamedRouteServiceLayer>) -> Self {
+    pub fn layers(mut self, layers: &'a [NamedRouteServiceLayer]) -> Self {
         self.layers.extend(layers);
         self
     }
 
-    pub fn make(self) -> Result<Route, Error> {
-        let MakeRoute {
+    pub fn build(self) -> Result<Route, Error> {
+        let Builder {
             matchers,
             layers,
             mut service,
