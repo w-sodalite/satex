@@ -6,17 +6,29 @@ use tracing_subscriber::fmt::format::FmtSpan;
 use satex_core::config::SatexConfig;
 use satex_core::Error;
 
-use crate::serve::{Serve, Serves};
+use crate::serve::{serve, Serves};
 
 pub struct App {
     config: SatexConfig,
 }
 
 impl App {
+    ///
+    /// 使用配置创建App
+    ///
+    /// # Arguments
+    ///
+    /// * `config`: 配置信息
+    ///
+    /// returns: App
     pub fn new(config: SatexConfig) -> Self {
         Self { config }
     }
 
+    ///
+    /// 自动检测配置，然后创建App。
+    ///
+    /// returns: Result<App,Error>
     pub fn detect() -> Result<Self, Error> {
         let config = SatexConfig::detect()?;
         Ok(Self::new(config))
@@ -39,13 +51,12 @@ impl App {
             .with_line_number(logging.line_number())
             .init();
 
-        let serves = self
-            .config
+        // 创建服务
+        self.config
             .load()
             .expect("Load all serve config error")
             .into_iter()
-            .map(|serve_config| Serve::new(serve_config))
-            .collect();
-        Serves::new(serves)
+            .map(serve)
+            .collect::<Serves>()
     }
 }

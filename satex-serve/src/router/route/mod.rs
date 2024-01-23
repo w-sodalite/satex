@@ -14,7 +14,9 @@ use satex_core::Error;
 use satex_matcher::{NamedRouteMatcher, RouteMatcher};
 use satex_service::NamedRouteService;
 
-pub mod make;
+use crate::router::route::builder::Builder;
+
+pub mod builder;
 
 #[derive(Clone)]
 pub struct Route {
@@ -30,13 +32,13 @@ impl Debug for Route {
 }
 
 impl Route {
-    pub fn new(
-        id: impl Into<String>,
-        matchers: Vec<NamedRouteMatcher>,
-        service: NamedRouteService,
-    ) -> Self {
+    pub fn builder<'a>(id: impl Into<String>, service: NamedRouteService) -> Builder<'a> {
+        Builder::new(id, service)
+    }
+
+    pub fn new(id: String, matchers: Vec<NamedRouteMatcher>, service: NamedRouteService) -> Self {
         Self {
-            id: id.into(),
+            id,
             matchers,
             service,
         }
@@ -67,7 +69,7 @@ impl Route {
                 break Ok(true);
             }
         };
-        debug!("{:?} match stream: {}", self, match_msg);
+        debug!("{:?} match chain: {}", self, match_msg);
         result
     }
 
