@@ -7,13 +7,6 @@ server:
 router:
   # 路由表
   routes:
-    - id: backend
-      matchers:
-        - Path=/backend/:path+
-      layers:
-        - RewritePath=/{{path}}
-      service: Proxy=http://127.0.0.1:3000
-
     # 静态文件
     - id: static
       service: Static=examples/resources
