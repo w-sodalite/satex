@@ -70,7 +70,11 @@ pub fn serve(config: ServeConfig) -> Serve {
 async fn start(config: ServeConfig) -> Result<(), Error> {
     let router = Router::try_from(&config)?;
     let tls_acceptor = make_tls_acceptor(&config)?;
-    let mut stream = pin!(bind_accept(config.server().bind_addr()));
+    let listener = TcpListener::bind(config.server().bind_addr())
+        .await
+        .map_err(|e| satex_error!(e))?;
+    info!("Serve [{}] start success!", config.id());
+    let mut stream = pin!(accept_stream(listener));
     while let Some(accepted) = stream.next().await {
         let router = router.clone();
         let tls_acceptor = tls_acceptor.clone();
@@ -118,11 +122,10 @@ async fn start(config: ServeConfig) -> Result<(), Error> {
 ///
 /// returns: impl Stream<Item=Result<(TcpStream, SocketAddr), Error>>+Sized
 ///
-fn bind_accept(
-    bind_addr: SocketAddr,
+fn accept_stream(
+    listener: TcpListener,
 ) -> impl Stream<Item = Result<(TcpStream, SocketAddr), Error>> {
     try_stream! {
-        let listener = TcpListener::bind(bind_addr).await.map_err(|e|satex_error!(e))?;
         loop {
             let (stream,client_addr) = listener.accept().await.map_err(|e|satex_error!(e))?;
             yield (stream,client_addr);
