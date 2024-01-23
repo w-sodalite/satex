@@ -1,5 +1,6 @@
 use satex_core::registry;
 
+use crate::make::compression::MakeCompressionLayer;
 use crate::make::concurrency_limit::MakeConcurrencyLimitLayer;
 use crate::make::cors::MakeCorsLayer;
 use crate::make::keep_host_header::MakeKeepHostHeaderLayer;
@@ -23,6 +24,7 @@ registry!(
         MakePathStripLayer,
         MakeRateLimitLayer,
         MakeRewritePathLayer,
+        MakeCompressionLayer,
         MakeKeepHostHeaderLayer,
         MakeConcurrencyLimitLayer,
         MakeSetRequestHeaderLayer,

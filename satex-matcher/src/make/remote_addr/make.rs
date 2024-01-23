@@ -5,10 +5,11 @@ use satex_core::config::args::Args;
 use satex_core::satex_error;
 use satex_core::Error;
 
+use crate::make::make_matcher;
 use crate::make::remote_addr::{Policy, RemoteAddrMatcher};
-use crate::{MakeRouteMatcher, __make_matcher};
+use crate::MakeRouteMatcher;
 
-__make_matcher! {
+make_matcher! {
     RemoteAddr,
     SequenceFlag,
     sources: Vec<String>,
@@ -51,14 +52,15 @@ mod test {
 
     use satex_core::config::args::{Args, Shortcut};
 
-    use crate::{MakeRouteMatcher, RouteMatcher, __assert_matcher};
+    use crate::make::assert_matcher;
+    use crate::{MakeRouteMatcher, RouteMatcher};
 
     use super::MakeRemoteAddrMatcher;
 
     #[test]
     fn test_match() {
         let args = Args::Shortcut(Shortcut::from("127.0.0.1/24"));
-        __assert_matcher!(
+        assert_matcher!(
             MakeRemoteAddrMatcher,
             args,
             [

@@ -1,12 +1,12 @@
 use satex_core::config::args::Args;
 use satex_core::Error;
 
-use crate::__make_layer;
+use crate::make::make_layer;
 use crate::make::x_forward::layer::XForwardLayer;
 use crate::make::x_forward::Mode;
 use crate::make::MakeRouteServiceLayer;
 
-__make_layer! {
+make_layer! {
     XForward,
     mode: Option<Mode>
 }

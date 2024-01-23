@@ -1,10 +1,11 @@
 use satex_core::{config::args::Args, Error};
 
-use crate::{MakeRouteServiceLayer, __make_layer};
+use crate::make::make_layer;
+use crate::MakeRouteServiceLayer;
 
 use super::layer::RewritePathLayer;
 
-__make_layer! {
+make_layer! {
     RewritePath,
     path:String
 }

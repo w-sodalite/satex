@@ -3,12 +3,11 @@ use tower_http::services::ServeDir;
 use satex_core::config::args::Args;
 use satex_core::Error;
 
-use crate::__make_service;
-use crate::make::MakeRouteService;
+use crate::make::{make_service, MakeRouteService};
 
 type StaticService = ServeDir;
 
-__make_service! {
+make_service! {
     Static,
     path: String,
 }

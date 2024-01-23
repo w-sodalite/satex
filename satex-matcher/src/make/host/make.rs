@@ -3,9 +3,10 @@ use satex_core::pattern::Pattern;
 use satex_core::Error;
 
 use crate::make::host::HostMatcher;
-use crate::{MakeRouteMatcher, __make_matcher};
+use crate::make::make_matcher;
+use crate::MakeRouteMatcher;
 
-__make_matcher! {
+make_matcher! {
     Host,
     TailSequence,
     values: Vec<Pattern>
@@ -22,13 +23,14 @@ mod test {
 
     use satex_core::config::args::{Args, Shortcut};
 
+    use crate::make::assert_matcher;
     use crate::make::host::MakeHostMatcher;
-    use crate::{MakeRouteMatcher, RouteMatcher, __assert_matcher};
+    use crate::{MakeRouteMatcher, RouteMatcher};
 
     #[test]
     fn test_match() {
         let args = Args::Shortcut(Shortcut::from("Regex,127.0.0.([1-9])"));
-        __assert_matcher!(
+        assert_matcher!(
             MakeHostMatcher,
             args,
             [

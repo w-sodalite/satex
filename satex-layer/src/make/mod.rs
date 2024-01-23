@@ -10,6 +10,7 @@ use satex_service::NamedRouteService;
 
 use crate::NamedRouteServiceLayer;
 
+pub mod compression;
 pub mod concurrency_limit;
 pub mod cors;
 pub mod default;
@@ -52,12 +53,7 @@ impl ArcMakeRouteServiceLayer {
     }
 }
 
-///
-/// 内部API
-///
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __make_layer {
+macro_rules! make_layer {
     ($name:ident $(,)?) => {
         satex_core::make_impl!(MakeRouteServiceLayer,Layer,$name);
     };
@@ -68,3 +64,5 @@ macro_rules! __make_layer {
         satex_core::make_impl!(MakeRouteServiceLayer,Layer,$name,$mode,$($(#[$meta])* $vis $field : $ty),*);
     };
 }
+
+pub(crate) use make_layer;

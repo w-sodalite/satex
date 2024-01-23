@@ -4,12 +4,13 @@ use satex_core::config::args::Args;
 use satex_core::satex_error;
 use satex_core::Error;
 
+use crate::make::make_matcher;
 use crate::make::time::{Mode, TimeMatcher};
-use crate::{MakeRouteMatcher, __make_matcher};
+use crate::MakeRouteMatcher;
 
 const DEFAULT_TIME_PATTERN: &str = "%Y-%m-%d %H:%M:%S";
 
-__make_matcher! {
+make_matcher! {
     Time,
     mode: Mode,
     time: String,

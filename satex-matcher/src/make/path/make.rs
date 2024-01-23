@@ -1,11 +1,12 @@
 use satex_core::config::args::Args;
 use satex_core::Error;
 
-use crate::{MakeRouteMatcher, __make_matcher};
+use crate::make::make_matcher;
+use crate::MakeRouteMatcher;
 
 use super::PathMatcher;
 
-__make_matcher! {
+make_matcher! {
     Path,
     Sequence,
     patterns: Vec<String>
@@ -22,14 +23,15 @@ mod test {
 
     use satex_core::config::args::{Args, Shortcut};
 
-    use crate::{MakeRouteMatcher, RouteMatcher, __assert_matcher};
+    use crate::make::assert_matcher;
+    use crate::{MakeRouteMatcher, RouteMatcher};
 
     use super::MakePathMatcher;
 
     #[test]
     fn test_match() {
         let args = Args::Shortcut(Shortcut::from("/a,/b/:x,/c/:x+"));
-        __assert_matcher!(
+        assert_matcher!(
             MakePathMatcher,
             args,
             [

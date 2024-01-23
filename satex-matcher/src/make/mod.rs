@@ -17,12 +17,8 @@ make! {
     (RouteMatcher),
     NamedRouteMatcher
 }
-///
-/// 内部API
-///
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __make_matcher {
+
+macro_rules! make_matcher {
     ($name:ident) => {
         satex_core::make_impl!(MakeRouteMatcher,Matcher,$name);
     };
@@ -34,9 +30,10 @@ macro_rules! __make_matcher {
     };
 }
 
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __assert_matcher {
+pub(crate) use make_matcher;
+
+#[cfg(test)]
+macro_rules! assert_matcher {
     ($make:ty,$args:expr,[$($result:pat => |$essential:ident|$block:block),* $(,)?]) => {
         let make = <$make>::default();
         let matcher = make.make($args).unwrap();
@@ -50,3 +47,6 @@ macro_rules! __assert_matcher {
         )*
     };
 }
+
+#[cfg(test)]
+pub(crate) use assert_matcher;
