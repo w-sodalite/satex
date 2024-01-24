@@ -22,7 +22,7 @@ make! {
 ///
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __make_load_balance {
+macro_rules! make_load_balance {
     ($name:ident $(,)?) => {
         satex_core::make_impl!(MakeLoadBalance,LoadBalance,$name);
     };
@@ -34,11 +34,11 @@ macro_rules! __make_load_balance {
     };
 }
 
+pub(crate) use make_load_balance;
+
 ///
 /// 内部API
 ///
-#[doc(hidden)]
-#[macro_export]
 macro_rules! valid_endpoints {
     ($endpoints:expr) => {{
         match $endpoints.len() {
@@ -47,6 +47,8 @@ macro_rules! valid_endpoints {
         }
     }};
 }
+
+pub(crate) use valid_endpoints;
 
 #[cfg(test)]
 mod test {

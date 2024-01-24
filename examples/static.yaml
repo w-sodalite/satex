@@ -9,4 +9,11 @@ router:
   routes:
     # 静态文件
     - id: static
+      layers:
+        - kind: Compression
+          args:
+            gzip: true
+            above_size: 32
+            exclude_content_types:
+              - application/json
       service: Static=examples/resources

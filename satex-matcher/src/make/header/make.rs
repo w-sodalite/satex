@@ -4,9 +4,10 @@ use satex_core::serde::http::SerdeHeaderName;
 use satex_core::Error;
 
 use crate::make::header::HeaderMatcher;
-use crate::{MakeRouteMatcher, __make_matcher};
+use crate::make::make_matcher;
+use crate::MakeRouteMatcher;
 
-__make_matcher! {
+make_matcher! {
     Header,
     TailSequence,
     name: SerdeHeaderName,
@@ -24,13 +25,14 @@ mod test {
 
     use satex_core::config::args::{Args, Shortcut};
 
+    use crate::make::assert_matcher;
     use crate::make::header::MakeHeaderMatcher;
-    use crate::{MakeRouteMatcher, RouteMatcher, __assert_matcher};
+    use crate::{MakeRouteMatcher, RouteMatcher};
 
     #[test]
     fn test_match() {
         let args = Args::Shortcut(Shortcut::from("k1,Exact,v1"));
-        __assert_matcher!(
+        assert_matcher!(
             MakeHeaderMatcher,
             args,
             [

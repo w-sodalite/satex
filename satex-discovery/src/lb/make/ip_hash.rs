@@ -17,9 +17,9 @@ use satex_core::essential::Essential;
 use satex_core::Error;
 
 use crate::lb::make::MakeLoadBalance;
+use crate::lb::make::{make_load_balance, valid_endpoints};
 use crate::lb::LoadBalance;
 use crate::selector::SortedEndpoint;
-use crate::{__make_load_balance, valid_endpoints};
 
 const DEFAULT_TIMEOUT_SECS: u64 = 1800;
 const DEFAULT_INTERVAL_SECS: u64 = 10;
@@ -133,7 +133,7 @@ impl LoadBalance for IpHashLoadBalance {
     }
 }
 
-__make_load_balance! {
+make_load_balance! {
     IpHash,
     #[serde(
         deserialize_with = "satex_core::serde::tot::as_u64",

@@ -334,11 +334,11 @@ impl Default for Trace {
 
 impl Trace {
     fn default_level() -> Level {
-        Level::DEBUG
+        Level::INFO
     }
 
     fn default_include_headers() -> bool {
-        true
+        false
     }
 
     pub fn level(&self) -> Level {

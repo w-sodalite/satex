@@ -41,9 +41,7 @@ impl ArcMakeRouteService {
 ///
 /// 内部API
 ///
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __make_service {
+macro_rules! make_service {
     ($name:ident $(,)?) => {
         satex_core::make_impl!(MakeRouteService,Service,$name);
     };
@@ -54,3 +52,5 @@ macro_rules! __make_service {
         satex_core::make_impl!(MakeRouteService,Service,$name,$mode,$($(#[$meta])* $vis $field : $ty),*);
     };
 }
+
+pub(crate) use make_service;

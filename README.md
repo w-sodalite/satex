@@ -40,19 +40,20 @@
 
 - #### Layer
 
-  | 名称                  | 描述           |                使用文档                |
-  |:--------------------|--------------|:----------------------------------:|
-  | `Cors`              | 处理跨域请求       |     [文档](docs/layers/cors.md)      |
-  | `KeepHostHeader`    | 保持原始的Host请求头 |    [文档](docs/matchers/query.md)    |
-  | `PathStrip`         | 从请求路径中删除特定部分 |   [文档](docs/matchers/header.md)    |
-  | `RateLimit`         | 限制请求频率       |    [文档](docs/matchers/host.md)     |
-  | `RewritePath`       | 重写请求的接口地址    |    [文档](docs/matchers/time.md)     |
-  | `SetRequestHeader`  | 设置请求头信息      |    [文档](docs/matchers/path.md)     |
-  | `SetResponseHeader` | 设置响应头信息      |    [文档](docs/matchers/path.md)     |
-  | `XForward`          | 设置XForward信息 |    [文档](docs/matchers/path.md)     |
-  | `ConcurrentcyLimit` | 限制同时处理的请求数量  | [文档](docs/matchers/remote_addr.md) |
-  | `RequestBodyLimit`  | 限制请求体的最大大小   |   [文档](docs/matchers/cookie.md)    |
-  | `SetStatus`         | 设置响应状态码      |    [文档](docs/matchers/time.md)     |
+  | 名称                  | 描述           |                   使用文档                   |
+  |:--------------------|--------------|:----------------------------------------:|
+  | `Cors`              | 处理跨域请求       |        [文档](docs/layers/cors.md)         |
+  | `KeepHostHeader`    | 保持原始的Host请求头 |  [文档](docs/layers/keep_host_header.md)   |
+  | `PathStrip`         | 从请求路径中删除特定部分 |     [文档](docs/layers/path_strip.md)      |
+  | `RateLimit`         | 限制请求频率       |     [文档](docs/layers/rate_limit.md)      |
+  | `RewritePath`       | 重写请求的接口地址    |    [文档](docs/layers/rewrite_path.md)     |
+  | `SetRequestHeader`  | 设置请求头信息      | [文档](docs/layers/set_request_header.md)  |
+  | `SetResponseHeader` | 设置响应头信息      | [文档](docs/layers/set_response_header.md) |
+  | `XForward`          | 设置XForward信息 |      [文档](docs/layers/x_forward.md)      |
+  | `ConcurrentcyLimit` | 限制同时处理的请求数量  |  [文档](docs/layers/concurrency_limit.md)  |
+  | `RequestBodyLimit`  | 限制请求体的大小     | [文档](docs/layers/request_body_limit.md)  |
+  | `SetStatus`         | 设置响应状态码      |     [文档](docs/layers/set_status.md)      |
+  | `Compression`       | 压缩响应包体       |     [文档](docs/layers/compression.md)     |
 
 - #### Service
 

@@ -5,9 +5,9 @@ use satex_core::endpoint::Endpoint;
 use satex_core::essential::Essential;
 use satex_core::Error;
 
+use crate::lb::make::{make_load_balance, valid_endpoints};
 use crate::lb::{LoadBalance, MakeLoadBalance};
 use crate::selector::SortedEndpoint;
-use crate::{__make_load_balance, valid_endpoints};
 
 #[derive(Default)]
 pub struct StandbyLoadBalance;
@@ -24,7 +24,7 @@ impl LoadBalance for StandbyLoadBalance {
     }
 }
 
-__make_load_balance!(Standby);
+make_load_balance!(Standby);
 
 fn make(_: Args) -> Result<StandbyLoadBalance, Error> {
     Ok(StandbyLoadBalance)

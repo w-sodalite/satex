@@ -6,9 +6,9 @@ use satex_core::endpoint::Endpoint;
 use satex_core::essential::Essential;
 use satex_core::Error;
 
+use crate::lb::make::{make_load_balance, valid_endpoints};
 use crate::lb::{LoadBalance, MakeLoadBalance};
 use crate::selector::SortedEndpoint;
-use crate::{__make_load_balance, valid_endpoints};
 
 pub struct RandomLoadBalance;
 
@@ -25,7 +25,7 @@ impl LoadBalance for RandomLoadBalance {
     }
 }
 
-__make_load_balance!(Random);
+make_load_balance!(Random);
 
 fn make(_: Args) -> Result<RandomLoadBalance, Error> {
     Ok(RandomLoadBalance)

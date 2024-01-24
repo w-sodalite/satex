@@ -11,12 +11,7 @@ make! {
     NamedServerDiscovery
 }
 
-///
-/// 内部API
-///
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __make_discovery {
+macro_rules! make_discovery {
     ($name:ident $(,)?) => {
         satex_core::make_impl!(MakeServerDiscovery,Discovery,$name);
     };
@@ -27,3 +22,5 @@ macro_rules! __make_discovery {
         satex_core::make_impl!(MakeServerDiscovery,Discovery,$name,$mode,$($(#[$meta])* $vis $field : $ty),*);
     };
 }
+
+pub(crate) use make_discovery;

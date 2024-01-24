@@ -9,12 +9,13 @@ use satex_core::Error;
 
 use crate::lb::{MakeLoadBalance, MakeLoadBalanceRegistry, NamedLoadBalance};
 use crate::make::builtin::BuiltinDiscovery;
+use crate::make::make_discovery;
 use crate::selector::Selector;
-use crate::{MakeServerDiscovery, __make_discovery};
+use crate::MakeServerDiscovery;
 
 const DEFAULT_INTERVAL: u64 = 10;
 
-__make_discovery! {
+make_discovery! {
     Builtin,
     Unsupported,
     server: String,

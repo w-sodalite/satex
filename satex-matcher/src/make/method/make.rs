@@ -6,10 +6,11 @@ use satex_core::config::args::Args;
 use satex_core::serde::http::SerdeMethod;
 use satex_core::Error;
 
+use crate::make::make_matcher;
 use crate::make::method::MethodMatcher;
-use crate::{MakeRouteMatcher, __make_matcher};
+use crate::MakeRouteMatcher;
 
-__make_matcher! {
+make_matcher! {
     Method,
     Sequence,
     methods: HashSet<SerdeMethod>,
@@ -28,14 +29,15 @@ mod test {
 
     use satex_core::config::args::{Args, Shortcut};
 
-    use crate::{MakeRouteMatcher, RouteMatcher, __assert_matcher};
+    use crate::make::assert_matcher;
+    use crate::{MakeRouteMatcher, RouteMatcher};
 
     use super::MakeMethodMatcher;
 
     #[test]
     fn test_match() {
         let args = Args::Shortcut(Shortcut::from("GET,POST"));
-        __assert_matcher!(
+        assert_matcher!(
             MakeMethodMatcher,
             args,
             [

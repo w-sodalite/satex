@@ -2,10 +2,11 @@ use satex_core::config::args::Args;
 use satex_core::pattern::Pattern;
 use satex_core::Error;
 
+use crate::make::make_matcher;
 use crate::make::query::QueryMatcher;
-use crate::{MakeRouteMatcher, __make_matcher};
+use crate::MakeRouteMatcher;
 
-__make_matcher! {
+make_matcher! {
     Query,
     TailSequence,
     name: String,
@@ -23,14 +24,15 @@ mod test {
 
     use satex_core::config::args::{Args, Shortcut};
 
-    use crate::{MakeRouteMatcher, RouteMatcher, __assert_matcher};
+    use crate::make::assert_matcher;
+    use crate::{MakeRouteMatcher, RouteMatcher};
 
     use super::MakeQueryMatcher;
 
     #[test]
     fn test_match() {
         let args = Args::Shortcut(Shortcut::from("k1,StartsWith,v1"));
-        __assert_matcher!(
+        assert_matcher!(
             MakeQueryMatcher,
             args,
             [

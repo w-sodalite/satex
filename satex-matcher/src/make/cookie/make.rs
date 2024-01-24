@@ -2,11 +2,12 @@ use satex_core::config::args::Args;
 use satex_core::pattern::Pattern;
 use satex_core::Error;
 
-use crate::{MakeRouteMatcher, __make_matcher};
+use crate::make::make_matcher;
+use crate::MakeRouteMatcher;
 
 use super::CookieMatcher;
 
-__make_matcher! {
+make_matcher! {
     Cookie,
     TailSequence,
     name: String,
@@ -24,13 +25,15 @@ mod test {
 
     use satex_core::config::args::{Args, Shortcut};
 
+    use crate::make::assert_matcher;
     use crate::make::cookie::make::MakeCookieMatcher;
-    use crate::{MakeRouteMatcher, RouteMatcher, __assert_matcher};
+    use crate::MakeRouteMatcher;
+    use crate::RouteMatcher;
 
     #[test]
     fn test_match() {
         let args = Args::Shortcut(Shortcut::from("k1,Exact,v1"));
-        __assert_matcher!(
+        assert_matcher!(
             MakeCookieMatcher,
             args,
             [

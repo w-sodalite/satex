@@ -1,10 +1,11 @@
 use satex_core::config::args::Args;
 use satex_core::Error;
 
+use crate::make::make_layer;
 use crate::make::path_strip::layer::PathStripLayer;
-use crate::{MakeRouteServiceLayer, __make_layer};
+use crate::MakeRouteServiceLayer;
 
-__make_layer! {
+make_layer! {
     PathStrip,
     #[serde(deserialize_with = "satex_core::serde::tot::as_u64")]
     level: u64,
@@ -21,11 +22,12 @@ mod test {
     use bytes::Buf;
     use http_body_util::BodyExt;
     use hyper::{Request, Response};
+    use tower::{service_fn, Layer, Service};
+
     use satex_core::{
         config::args::{Args, Shortcut},
         http::Body,
     };
-    use tower::{service_fn, Layer, Service};
 
     use crate::MakeRouteServiceLayer;
 

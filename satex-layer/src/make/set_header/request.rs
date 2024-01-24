@@ -2,12 +2,13 @@ use satex_core::config::args::Args;
 use satex_core::serde::http::{SerdeHeaderName, SerdeHeaderValue};
 use satex_core::Error;
 
+use crate::make::make_layer;
 use crate::make::set_header::common::{FixedMakeHeaderValue, InsertHeaderMode};
-use crate::{MakeRouteServiceLayer, __make_layer};
+use crate::MakeRouteServiceLayer;
 
 type SetRequestHeaderLayer = tower_http::set_header::SetRequestHeaderLayer<FixedMakeHeaderValue>;
 
-__make_layer! {
+make_layer! {
     SetRequestHeader,
     name: SerdeHeaderName,
     value: SerdeHeaderValue,
@@ -34,11 +35,12 @@ mod test {
     use bytes::Buf;
     use http_body_util::BodyExt;
     use hyper::{Request, Response};
+    use tower::{service_fn, Layer, Service};
+
     use satex_core::{
         config::args::{Args, Shortcut},
         http::Body,
     };
-    use tower::{service_fn, Layer, Service};
 
     use crate::{make::set_header::MakeSetRequestHeaderLayer, MakeRouteServiceLayer};
 

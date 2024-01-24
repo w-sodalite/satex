@@ -3,11 +3,12 @@ use std::time::Duration;
 use satex_core::config::args::Args;
 use satex_core::Error;
 
+use crate::make::make_layer;
 use crate::make::rate_limit::layer::RateLimitLayer;
 use crate::make::rate_limit::Policy;
-use crate::{MakeRouteServiceLayer, __make_layer};
+use crate::MakeRouteServiceLayer;
 
-__make_layer! {
+make_layer! {
     RateLimit,
 
     policy: Policy,

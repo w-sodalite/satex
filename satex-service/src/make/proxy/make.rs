@@ -10,15 +10,16 @@ use serde::Deserialize;
 use satex_core::config::args::Args;
 use satex_core::Error;
 
+use crate::make::make_service;
 use crate::make::proxy::{HttpClient, ProxyService};
-use crate::{MakeRouteService, __make_service};
+use crate::MakeRouteService;
 
 ///
 /// Keepalive超时时间
 ///
 const DEFAULT_KEEPALIVE: Duration = Duration::from_secs(60);
 
-__make_service! {
+make_service! {
     Proxy,
     uri: String,
     #[serde(default)]
