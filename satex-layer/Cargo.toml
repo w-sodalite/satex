@@ -26,7 +26,8 @@ tower-http = { workspace = true, features = [
     "trace",
     "add-extension",
     "cors",
-    "compression-full"
+    "compression-full",
+    "timeout"
 ] }
 
 [dev-dependencies]
