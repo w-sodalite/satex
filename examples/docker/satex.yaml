@@ -16,4 +16,4 @@ satex:
 
   # 服务配置
   serves:
-    - servers/static.yaml
+    - /satex/conf/static.yaml

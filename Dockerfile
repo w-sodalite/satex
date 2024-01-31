@@ -44,18 +44,18 @@ RUN cargo build --release
 
 FROM alpine:latest
 
-WORKDIR /app
+WORKDIR /satex
 
 # 复制构建文件
-COPY --from=build-env /satex/target/release/satex .
+COPY --from=build-env /satex/target/release/satex ./bin/
 
 # 复制配置文件
-COPY examples/docker/satex.yaml .
-COPY examples/docker/static.yaml ./servers
-COPY examples/resources ./resources
+COPY examples/docker/satex.yaml ./conf/
+COPY examples/docker/static.yaml ./conf/
+COPY examples/resources ./static/
 
 # 暴露端口
 EXPOSE 80
 
 # 启动
-ENTRYPOINT ["./satex", "-c", "./satex.yaml"]
+ENTRYPOINT ["/satex/bin/satex","-c","/satex/conf/satex.yaml"]
