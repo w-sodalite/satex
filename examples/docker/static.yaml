@@ -1,0 +1,12 @@
+# 服务配置
+server:
+  # 服务端口
+  port: 80
+
+# 路由配置
+router:
+  # 路由表
+  routes:
+    # 静态文件
+    - id: static
+      service: Static=/satex/static

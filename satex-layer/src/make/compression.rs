@@ -69,7 +69,7 @@ impl MakeRouteServiceLayer for MakeCompressionLayer {
                 ));
                 if let Some(exclude_content_types) = config.exclude_content_types {
                     for exclude_content_type in exclude_content_types {
-                        variants.push(Variant::ExcludeContentType(exclude_content_type));
+                        variants.push(Variant::exclude_content_type(exclude_content_type));
                     }
                 }
                 Ok(layer.compress_when(variants))

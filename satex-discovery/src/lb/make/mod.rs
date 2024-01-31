@@ -20,8 +20,6 @@ make! {
 ///
 /// 内部API
 ///
-#[doc(hidden)]
-#[macro_export]
 macro_rules! make_load_balance {
     ($name:ident $(,)?) => {
         satex_core::make_impl!(MakeLoadBalance,LoadBalance,$name);

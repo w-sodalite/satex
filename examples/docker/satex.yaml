@@ -1,0 +1,19 @@
+satex:
+  # 日志配置
+  tracing:
+    # 日志级别
+    max_level: info
+    # 是否使用ANSI
+    ansi: true
+    # 是否显示级别
+    level: true
+    # 是否显示文件
+    file: false
+    # 是否显示线程名称
+    thread_names: true
+    # 是否显示行号
+    line_number: true
+
+  # 服务配置
+  serves:
+    - /satex/conf/static.yaml
