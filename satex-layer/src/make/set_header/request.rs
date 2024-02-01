@@ -3,7 +3,8 @@ use satex_core::serde::http::{SerdeHeaderName, SerdeHeaderValue};
 use satex_core::Error;
 
 use crate::make::make_layer;
-use crate::make::set_header::common::{FixedMakeHeaderValue, InsertHeaderMode};
+use crate::make::set_header::common::FixedMakeHeaderValue;
+use crate::make::set_mode::SetMode;
 use crate::MakeRouteServiceLayer;
 
 type SetRequestHeaderLayer = tower_http::set_header::SetRequestHeaderLayer<FixedMakeHeaderValue>;
@@ -12,7 +13,8 @@ make_layer! {
     SetRequestHeader,
     name: SerdeHeaderName,
     value: SerdeHeaderValue,
-    mode: Option<InsertHeaderMode>,
+    #[serde(default)]
+    mode: SetMode,
 }
 
 fn make(args: Args) -> Result<SetRequestHeaderLayer, Error> {
@@ -20,10 +22,8 @@ fn make(args: Args) -> Result<SetRequestHeaderLayer, Error> {
     let make = FixedMakeHeaderValue::new(config.value.into());
     let header_name = config.name.into();
     match config.mode {
-        Some(InsertHeaderMode::Append) => Ok(SetRequestHeaderLayer::appending(header_name, make)),
-        Some(InsertHeaderMode::IfNotPresent) => {
-            Ok(SetRequestHeaderLayer::if_not_present(header_name, make))
-        }
+        SetMode::Append => Ok(SetRequestHeaderLayer::appending(header_name, make)),
+        SetMode::IfNotPresent => Ok(SetRequestHeaderLayer::if_not_present(header_name, make)),
         _ => Ok(SetRequestHeaderLayer::overriding(header_name, make)),
     }
 }

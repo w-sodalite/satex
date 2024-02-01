@@ -49,6 +49,7 @@
   | `RewritePath`       | 重写请求的接口地址    |    [文档](docs/layers/rewrite_path.md)     |
   | `SetRequestHeader`  | 设置请求头信息      | [文档](docs/layers/set_request_header.md)  |
   | `SetResponseHeader` | 设置响应头信息      | [文档](docs/layers/set_response_header.md) |
+  | `SetQuery`          | 设置请求Query参数  |      [文档](docs/layers/set_query.md)      |
   | `XForward`          | 设置XForward信息 |      [文档](docs/layers/x_forward.md)      |
   | `ConcurrentcyLimit` | 限制同时处理的请求数量  |  [文档](docs/layers/concurrency_limit.md)  |
   | `RequestBodyLimit`  | 限制请求体的大小     | [文档](docs/layers/request_body_limit.md)  |

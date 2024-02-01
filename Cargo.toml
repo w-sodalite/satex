@@ -26,7 +26,6 @@ satex-matcher = { path = "satex-matcher", version = "0.2.2" }
 satex-service = { path = "satex-service", version = "0.2.2" }
 satex-discovery = { path = "satex-discovery", version = "0.2.2" }
 
-url = { version = "2.5" }
 rand = { version = "0.8" }
 hyper = { version = "1.0" }
 bytes = { version = "1.5" }

@@ -1062,6 +1062,7 @@ dependencies = [
  "http-body-util",
  "hyper",
  "leaky-bucket",
+ "qstring",
  "satex-core",
  "satex-discovery",
  "satex-service",

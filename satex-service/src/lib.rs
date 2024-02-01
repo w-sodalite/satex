@@ -72,3 +72,14 @@ where
         self.inner.call(req.map(Body::new))
     }
 }
+
+#[cfg(test)]
+mod test {
+    use hyper::Uri;
+
+    use url::Url;
+
+    fn test() {
+        let uri = Uri::builder().build().unwrap();
+    }
+}
