@@ -42,7 +42,7 @@ mod test {
         let make = MakeSetQueryLayer::default();
         let layer = make.make(args).unwrap();
         let request = Request::new(Body::empty());
-        let service = service_fn(|mut request: Request<Body>| async move {
+        let service = service_fn(|request: Request<Body>| async move {
             let query = request.uri().query().unwrap_or("").to_string();
             Ok::<_, Infallible>(Response::new(Body::from(query)))
         });
