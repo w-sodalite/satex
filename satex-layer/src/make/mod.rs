@@ -20,6 +20,8 @@ pub mod rate_limit;
 pub mod request_body_limit;
 pub mod rewrite_path;
 pub mod set_header;
+mod set_mode;
+mod set_query;
 pub mod set_status;
 pub mod timeout;
 pub mod x_forward;
