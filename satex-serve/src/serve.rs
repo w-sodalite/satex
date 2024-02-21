@@ -67,6 +67,7 @@ pub fn serve(config: ServeConfig) -> Serve {
 ///
 /// returns: Result<(), Error>
 ///
+#[inline]
 async fn start(config: ServeConfig) -> Result<(), Error> {
     let router = Router::try_from(&config)?;
     let tls_acceptor = make_tls_acceptor(&config)?;
@@ -122,6 +123,7 @@ async fn start(config: ServeConfig) -> Result<(), Error> {
 ///
 /// returns: impl Stream<Item=Result<(TcpStream, SocketAddr), Error>>+Sized
 ///
+#[inline]
 fn accept_stream(
     listener: TcpListener,
 ) -> impl Stream<Item = Result<(TcpStream, SocketAddr), Error>> {
@@ -143,6 +145,7 @@ fn accept_stream(
 ///
 /// returns: Result<Vec<CertificateDer, Global>, Error>
 ///
+#[inline]
 fn load_certs(tls: &Tls) -> Result<Vec<CertificateDer<'static>>, Error> {
     let certs = tls
         .certs()
@@ -165,6 +168,7 @@ fn load_certs(tls: &Tls) -> Result<Vec<CertificateDer<'static>>, Error> {
 /// returns: Result<PrivateKeyDer, Error>
 ///
 ///
+#[inline]
 fn load_private_key(tls: &Tls) -> Result<PrivateKeyDer<'static>, Error> {
     let private_key = tls
         .private_key()
@@ -187,6 +191,7 @@ fn load_private_key(tls: &Tls) -> Result<PrivateKeyDer<'static>, Error> {
 ///
 /// returns: Result<ServerConfig, Error>
 ///
+#[inline]
 fn make_tls_acceptor(config: &ServeConfig) -> Result<Option<TlsAcceptor>, Error> {
     let tls = config.server().tls();
     if tls.enabled() {
@@ -214,6 +219,7 @@ fn make_tls_acceptor(config: &ServeConfig) -> Result<Option<TlsAcceptor>, Error>
 ///
 /// returns: Pin<Box<dyn Future<Output=Result<(), Error>>+Send, Global>>
 ///
+#[inline]
 fn spawn_stream<S>(stream: S, router: Router, client_addr: SocketAddr)
 where
     S: AsyncRead + AsyncWrite + Send + Unpin + 'static,
