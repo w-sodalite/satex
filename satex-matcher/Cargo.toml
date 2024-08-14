@@ -9,6 +9,7 @@ description = "Satex请求匹配接口定义和通用实现"
 
 [dependencies]
 satex-core = { workspace = true }
+time = { workspace = true }
 hyper = { workspace = true }
 cookie = { workspace = true }
 chrono = { workspace = true }
