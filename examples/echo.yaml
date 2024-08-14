@@ -7,7 +7,7 @@ server:
 router:
   # 路由表
   routes:
-    # 静态文件
+    # Echo
     - id: echo
       matchers:
         - Path=/echo/+

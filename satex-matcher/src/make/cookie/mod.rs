@@ -27,8 +27,7 @@ impl RouteMatcher for CookieMatcher {
                 let cookie = cookie.to_str().map_err(|e| satex_error!(e))?;
                 Cookie::split_parse(cookie)
                     .flatten()
-                    .filter(|cookie| cookie.name() == self.name)
-                    .next()
+                    .find(|cookie| cookie.name() == self.name)
             }
             None => None,
         };

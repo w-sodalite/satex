@@ -63,12 +63,12 @@ fn set_uri_query(uri: &mut Uri, name: &str, value: &str, mode: SetMode) -> Resul
             }
         },
         SetMode::IfNotPresent => {
-            if let None = params.get(name) {
+            if params.get(name).is_none() {
                 params.add_pair((name, value));
             }
         }
         SetMode::Override => {
-            if let Some(_) = params.get(name) {
+            if params.get(name).is_some() {
                 let mut pairs = params
                     .to_pairs()
                     .into_iter()

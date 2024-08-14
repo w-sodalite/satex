@@ -56,7 +56,7 @@ impl Pattern {
 
     pub fn regex(regex: &str) -> Result<Self, Error> {
         Regex::new(regex)
-            .map(|regex| Self::Regex(regex))
+            .map(Self::Regex)
             .map_err(|e| satex_error!(e))
     }
 
@@ -140,7 +140,7 @@ impl Serialize for Pattern {
         ) {
             data.insert("mode", StrOrBool::from(mode));
             if let Some(value) = value {
-                data.insert("value", StrOrBool::from(value.as_ref()));
+                data.insert("value", StrOrBool::from(value));
             }
             if let Some(sensitive) = sensitive {
                 data.insert("sensitive", StrOrBool::from(sensitive));

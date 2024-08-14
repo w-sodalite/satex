@@ -8,7 +8,7 @@ use crate::MakeRouteServiceLayer;
 make_layer!(KeepHostHeader);
 
 fn make(_: Args) -> Result<KeepHostHeaderLayer, Error> {
-    Ok(KeepHostHeaderLayer::default())
+    Ok(KeepHostHeaderLayer)
 }
 
 #[cfg(test)]
@@ -34,7 +34,7 @@ mod test {
     #[tokio::test]
     async fn test_layer() {
         let args = Args::Shortcut(Shortcut::none());
-        let make = MakeKeepHostHeaderLayer::default();
+        let make = MakeKeepHostHeaderLayer;
         let layer = make.make(args).unwrap();
         let service = service_fn(|mut request: Request<Body>| async move {
             Ok::<_, Infallible>(Response::new(Body::from(format!(

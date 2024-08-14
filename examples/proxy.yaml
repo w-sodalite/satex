@@ -7,7 +7,7 @@ server:
 router:
   # 路由表
   routes:
-    # 静态文件
+    # 反向代理
     - id: proxy
       matchers:
         - Path=/backend/+

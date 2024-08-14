@@ -13,19 +13,15 @@ use satex_core::satex_error;
 mod layer;
 mod make;
 
-const X_FORWARDED_FOR: HeaderName = HeaderName::from_static("x-forwarded-for");
+static X_FORWARDED_FOR: HeaderName = HeaderName::from_static("x-forwarded-for");
+
 const FORWARD_NODE_SEP: &str = " , ";
 
-#[derive(Debug, Copy, Clone, Deserialize)]
+#[derive(Debug, Copy, Clone, Default, Deserialize)]
 pub enum Mode {
+    #[default]
     Append,
     Override,
-}
-
-impl Default for Mode {
-    fn default() -> Self {
-        Mode::Append
-    }
 }
 
 #[derive(Debug, Clone)]
@@ -59,7 +55,7 @@ where
             .map(|essential| essential.client_addr)
         {
             let headers = req.headers_mut();
-            let value = match (headers.remove(X_FORWARDED_FOR), self.mode) {
+            let value = match (headers.remove(&X_FORWARDED_FOR), self.mode) {
                 (Some(value), Mode::Append) => String::from_utf8(value.as_bytes().to_vec())
                     .map_err(|e| satex_error!(e))
                     .map(|value| {
@@ -77,7 +73,7 @@ where
                 _ => HeaderValue::try_from(addr.ip().to_string()).map_err(|e| satex_error!(e)),
             }
             .expect("Illegal header value!");
-            headers.insert(X_FORWARDED_FOR, value);
+            headers.insert(&X_FORWARDED_FOR, value);
         }
         self.inner.call(req)
     }

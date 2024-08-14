@@ -57,7 +57,7 @@ impl RouteMatcher for PathMatcher {
                 } else {
                     let variables = names
                         .into_iter()
-                        .zip(raws.into_iter())
+                        .zip(raws)
                         .map(|(name, value)| (name, value.to_string()))
                         .collect::<HashMap<_, _>>();
                     essential.extensions.insert(PathVariables(variables));

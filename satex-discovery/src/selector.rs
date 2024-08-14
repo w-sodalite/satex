@@ -188,10 +188,9 @@ impl Selector {
 
                     // 更新有效的节点下标
                     {
-                        let mut actives = actives.write().expect(&format!(
-                            "Selector(server={}) get write lock error!",
-                            server
-                        ));
+                        let mut actives = actives.write().unwrap_or_else(|_| {
+                            panic!("Selector(server={}) get write lock error!", server)
+                        });
                         *actives = snapshots;
                     }
 

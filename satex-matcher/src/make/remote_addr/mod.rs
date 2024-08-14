@@ -10,16 +10,11 @@ use crate::RouteMatcher;
 
 mod make;
 
-#[derive(Deserialize, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Default, Deserialize)]
 pub enum Policy {
+    #[default]
     Accept,
     Reject,
-}
-
-impl Default for Policy {
-    fn default() -> Self {
-        Policy::Accept
-    }
 }
 
 impl Policy {

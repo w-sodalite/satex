@@ -41,7 +41,7 @@ mod test {
         let service = service_fn(|request: Request<Body>| async move {
             let value = request
                 .headers()
-                .get(X_FORWARDED_FOR)
+                .get(&X_FORWARDED_FOR)
                 .map(|value| value.to_str().unwrap().to_string())
                 .unwrap_or_default();
             Ok::<_, Infallible>(Response::new(Body::from(value)))
@@ -53,7 +53,7 @@ mod test {
         );
         request
             .headers_mut()
-            .insert(X_FORWARDED_FOR, HeaderValue::from_static("192.168.90.1"));
+            .insert(&X_FORWARDED_FOR, HeaderValue::from_static("192.168.90.1"));
         let response = service.call(request).await.unwrap();
         let collected = response.into_body().collect().await.unwrap();
         let buf = collected.aggregate();
@@ -72,7 +72,7 @@ mod test {
         let service = service_fn(|request: Request<Body>| async move {
             let value = request
                 .headers()
-                .get(X_FORWARDED_FOR)
+                .get(&X_FORWARDED_FOR)
                 .map(|value| value.to_str().unwrap().to_string())
                 .unwrap_or_default();
             Ok::<_, Infallible>(Response::new(Body::from(value)))
@@ -84,7 +84,7 @@ mod test {
         );
         request
             .headers_mut()
-            .insert(X_FORWARDED_FOR, HeaderValue::from_static("192.168.90.1"));
+            .insert(&X_FORWARDED_FOR, HeaderValue::from_static("192.168.90.1"));
         let response = service.call(request).await.unwrap();
         let collected = response.into_body().collect().await.unwrap();
         let buf = collected.aggregate();
