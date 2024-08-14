@@ -65,7 +65,7 @@ impl Essential {
 
     pub fn display(&self) -> Display {
         Display {
-            version: self.version.clone(),
+            version: self.version,
             method: self.method.clone(),
             uri: self.uri.clone(),
             client_addr: self.client_addr,

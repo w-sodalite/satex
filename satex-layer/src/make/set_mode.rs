@@ -1,14 +1,9 @@
 use serde::Deserialize;
 
-#[derive(Copy, Clone, Deserialize)]
+#[derive(Debug, Copy, Clone, Default, Deserialize)]
 pub enum SetMode {
     Append,
     IfNotPresent,
+    #[default]
     Override,
-}
-
-impl Default for SetMode {
-    fn default() -> Self {
-        SetMode::Override
-    }
 }

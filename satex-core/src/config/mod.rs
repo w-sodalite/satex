@@ -71,7 +71,7 @@ impl SatexConfig {
     }
 
     pub fn detect() -> Result<Self, Error> {
-        Self::detect_path().and_then(|path| Self::from_yaml(path))
+        Self::detect_path().and_then(Self::from_yaml)
     }
 
     fn detect_path() -> Result<PathBuf, Error> {
@@ -91,7 +91,7 @@ impl SatexConfig {
         };
         match path {
             Some(path) => {
-                if path.starts_with("/") {
+                if path.starts_with('/') {
                     Ok(PathBuf::new().apply(|buf| buf.push(path)))
                 } else {
                     current_dir()
@@ -308,7 +308,7 @@ impl Global {
         self.layers.as_slice()
     }
     pub fn matchers(&self) -> &[Metadata] {
-        &self.matchers.as_slice()
+        self.matchers.as_slice()
     }
 }
 

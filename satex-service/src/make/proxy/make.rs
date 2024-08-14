@@ -140,7 +140,7 @@ fn make_connector(client_config: &ClientConfig) -> HttpsConnector<HttpConnector>
     connector.set_keepalive_interval(
         client_config
             .keepalive_interval_secs
-            .map(|secs| Duration::from_secs(secs)),
+            .map(Duration::from_secs),
     );
     connector.set_keepalive_retries(client_config.keepalive_retries);
     connector.set_nodelay(client_config.nodelay.unwrap_or(true));

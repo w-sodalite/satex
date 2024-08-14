@@ -43,15 +43,15 @@ impl<'a> Shortcut<'a> {
         let mut values = self.into_iter().collect::<Vec<_>>();
         match mode {
             GatherMode::Default => {
-                for index in 0..len {
+                (0..len).for_each(|index| {
                     if let Some(value) = values.get(index) {
                         mapping.insert(Value::from(fields[index]), Value::from(*value));
                     }
-                }
+                });
             }
             GatherMode::Tail | GatherMode::TailSequence => {
                 if values.len() > fields.len() {
-                    for index in 0..len {
+                    (0..len).for_each(|index| {
                         let key = Value::from(fields[index]);
                         let value = if index == len - 1 {
                             if GatherMode::Tail == mode {
@@ -63,7 +63,7 @@ impl<'a> Shortcut<'a> {
                             Value::from(values.remove(index))
                         };
                         mapping.insert(key, value);
-                    }
+                    });
                 } else {
                     return self.deserialize(fields, GatherMode::Default);
                 }
@@ -84,7 +84,7 @@ impl<'a> Shortcut<'a> {
                 }
                 if !values.is_empty() {
                     let last = values.remove(values.len() - 1);
-                    if let Some(flag) = last.parse::<bool>().ok() {
+                    if let Ok(flag) = last.parse::<bool>() {
                         mapping.insert(Value::from(fields[1]), Value::from(flag));
                     } else {
                         values.push(last);

@@ -46,6 +46,7 @@ impl RouteMatcher for NamedRouteMatcher {
 }
 
 #[derive(Clone)]
+#[allow(dead_code)]
 pub(crate) struct MatchFn<F> {
     f: F,
 }
