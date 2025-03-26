@@ -23,19 +23,13 @@ RUN ln -s $HOME/.cargo/bin/rustup /usr/local/bin/rustup
 RUN ln -s $HOME/.cargo/bin/cargo /usr/local/bin/cargo
 
 # 导入cargo配置
-COPY proxy_config /
-RUN mv /proxy_config $HOME/.cargo/config
+COPY proxy_config $HOME/.cargo/config
 
 WORKDIR /satex
 
 # 复制文件
 COPY src ./src
-COPY satex-core ./satex-core
-COPY satex-serve ./satex-serve
-COPY satex-matcher ./satex-matcher
-COPY satex-layer ./satex-layer
-COPY satex-service ./satex-service
-COPY satex-discovery ./satex-discovery
+COPY crates ./crates
 COPY Cargo.toml .
 COPY Cargo.lock .
 
@@ -58,4 +52,4 @@ COPY examples/resources ./static/
 EXPOSE 80
 
 # 启动
-ENTRYPOINT ["/satex/bin/satex","-c","/satex/conf/satex.yaml"]
+ENTRYPOINT ["/satex/bin/satex", "-c", "/satex/conf/satex.yaml"]
