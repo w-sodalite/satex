@@ -5,8 +5,7 @@ use chrono::{Local, NaiveDateTime};
 use http::request::Parts;
 use satex_core::component::{Args, Configurable};
 use satex_core::Error;
-use satex_macro::{Configurable, Make};
-use serde::Deserialize;
+use satex_macro::make;
 
 pub struct BeforeRouteMatcher {
     date_time: NaiveDateTime,
@@ -26,15 +25,10 @@ impl RouteMatcher for BeforeRouteMatcher {
     }
 }
 
-#[derive(Deserialize, Configurable)]
-#[configurable(companion = "MakeBeforeRouteMatcher")]
-struct Config {
+#[make(kind = Before)]
+pub struct MakeBeforeRouteMatcher {
     date_time: NaiveDateTime,
 }
-
-#[derive(Debug, Clone, Copy, Default, Make)]
-#[make(name = "Before")]
-pub struct MakeBeforeRouteMatcher;
 
 impl MakeRouteMatcher for MakeBeforeRouteMatcher {
     type Matcher = BeforeRouteMatcher;

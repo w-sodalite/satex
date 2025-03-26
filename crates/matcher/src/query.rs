@@ -6,8 +6,7 @@ use qstring::QString;
 use satex_core::component::{Args, Configurable};
 use satex_core::expression::Expression;
 use satex_core::Error;
-use satex_macro::{Configurable, Make};
-use serde::Deserialize;
+use satex_macro::make;
 
 #[derive(Debug, Clone)]
 pub struct QueryRouteMatcher {
@@ -32,16 +31,11 @@ impl RouteMatcher for QueryRouteMatcher {
     }
 }
 
-#[derive(Deserialize, Configurable)]
-#[configurable(companion = "MakeQueryRouteMatcher")]
-struct Config {
+#[make(kind = Query)]
+pub struct MakeQueryRouteMatcher {
     name: String,
     value: Expression,
 }
-
-#[derive(Debug, Clone, Make)]
-#[make(name = "Query")]
-pub struct MakeQueryRouteMatcher;
 
 impl MakeRouteMatcher for MakeQueryRouteMatcher {
     type Matcher = QueryRouteMatcher;

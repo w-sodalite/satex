@@ -6,7 +6,7 @@ use satex_core::component::{Args, Configurable};
 use satex_core::extension::ClientAddr;
 use satex_core::util::With;
 use satex_core::Error;
-use satex_macro::{Configurable, Make};
+use satex_macro::make;
 use serde::Deserialize;
 use std::net::IpAddr;
 
@@ -78,19 +78,11 @@ fn in_addrs(client_addr: &ClientAddr, addrs: &[(IpAddr, u16)]) -> bool {
     false
 }
 
-#[derive(Deserialize, Configurable)]
-#[configurable(
-    companion = "MakeRemoteAddrRouteMatcher",
-    shortcut_mode = "TailingSequence"
-)]
-struct Config {
+#[make(kind = TailingSequence, shortcut_mode = "TailingSequence")]
+struct MakeRemoteAddrRouteMatcher {
     policy: Policy,
     addrs: Vec<String>,
 }
-
-#[derive(Debug, Clone, Copy, Make)]
-#[make(name = "RemoteAddr")]
-pub struct MakeRemoteAddrRouteMatcher;
 
 impl MakeRouteMatcher for MakeRemoteAddrRouteMatcher {
     type Matcher = RemoteAddrRouteMatcher;

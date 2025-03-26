@@ -8,19 +8,13 @@ use crate::make::MakeRouteMatcher;
 use satex_core::component::{Args, Configurable};
 use satex_core::util::With;
 use satex_core::Error;
-use satex_macro::{Configurable, Make};
-use serde::Deserialize;
+use satex_macro::make;
 use std::str::FromStr;
 
-#[derive(Deserialize, Configurable)]
-#[configurable(companion = "MakeMethodRouteMatcher", shortcut_mode = "Sequence")]
-struct Config {
+#[make(kind = Method)]
+struct MakeMethodRouteMatcher {
     methods: Vec<String>,
 }
-
-#[derive(Debug, Clone, Copy, Default, Make)]
-#[make(name = "Method")]
-pub struct MakeMethodRouteMatcher;
 
 impl MakeRouteMatcher for MakeMethodRouteMatcher {
     type Matcher = MethodRouteMatcher;

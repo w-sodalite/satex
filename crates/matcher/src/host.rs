@@ -6,8 +6,7 @@ use http::request::Parts;
 use satex_core::component::{Args, Configurable};
 use satex_core::expression::Expression;
 use satex_core::Error;
-use satex_macro::{Configurable, Make};
-use serde::Deserialize;
+use satex_macro::make;
 
 pub struct HostRouteMatcher {
     value: Expression,
@@ -30,15 +29,10 @@ impl RouteMatcher for HostRouteMatcher {
     }
 }
 
-#[derive(Deserialize, Configurable)]
-#[configurable(companion = "MakeHostRouteMatcher")]
-struct Config {
+#[make(kind = Host)]
+pub struct MakeHostRouteMatcher {
     value: Expression,
 }
-
-#[derive(Debug, Clone, Copy, Default, Make)]
-#[make(name = "Host")]
-pub struct MakeHostRouteMatcher;
 
 impl MakeRouteMatcher for MakeHostRouteMatcher {
     type Matcher = HostRouteMatcher;

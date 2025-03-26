@@ -2,13 +2,12 @@ use crate::make::MakeRouteService;
 use http::{Request, Response};
 use satex_core::component::Args;
 use satex_core::Error;
-use satex_macro::Make;
+use satex_macro::make;
 use std::future::{ready, Ready};
 use std::task::{Context, Poll};
 use tower::Service;
 
-#[derive(Debug, Clone, Copy, Make)]
-#[make(name = "Echo")]
+#[make(kind = Echo)]
 pub struct MakeEchoRouteService;
 
 impl MakeRouteService for MakeEchoRouteService {
