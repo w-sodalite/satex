@@ -12,6 +12,11 @@ members = [
 [workspace.package]
 edition = "2024"
 version = "0.3.0"
+license = "MIT"
+license-file = "LICENSE"
+authors = ["w-sodalite@hotmail.com"]
+readme = "README.md"
+repository = "https://github.com/w-sodalite/satex.git"
 
 [workspace.dependencies]
 #
@@ -19,10 +24,10 @@ version = "0.3.0"
 #
 satex-core = { path = "crates/core" }
 satex-layer = { path = "crates/layer" }
-satex-matcher = { path = "crates/matcher" }
-satex-service = { path = "crates/service" }
 satex-macro = { path = "crates/macro" }
+satex-matcher = { path = "crates/matcher" }
 satex-server = { path = "crates/server" }
+satex-service = { path = "crates/service" }
 
 #
 # third-party dependencies
@@ -30,6 +35,7 @@ satex-server = { path = "crates/server" }
 actix-server = { version = "2.5" }
 actix-service = { version = "2.0" }
 actix-tls = { version = "3.4" }
+async-stream = { version = "0.3" }
 async-trait = { version = "0.1" }
 bytes = { version = "1.10" }
 chrono = { version = "0.4" }
@@ -59,23 +65,33 @@ tower = { version = "0.5" }
 tower-http = { version = "0.5" }
 tracing = { version = "0.1" }
 tracing-subscriber = { version = "0.3" }
-async-stream = { version = "*" }
+
+[workspace.metadata.release]
+registry = "crates-io"
+shared-version = true
+consolidate-commits = true
+pre-release-commit-message = "Release {{version}}"
+tag-name = "v{{version}}"
+allow-branch = ["master"]
 
 [package]
 name = "satex"
 version.workspace = true
 edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
 
 [dependencies]
 satex-core = { workspace = true }
-satex-matcher = { workspace = true }
 satex-layer = { workspace = true }
-satex-service = { workspace = true }
+satex-matcher = { workspace = true }
 satex-server = { workspace = true }
+satex-service = { workspace = true }
 
 async-stream = { workspace = true }
-futures = { workspace = true }
 bytes = { workspace = true }
+futures = { workspace = true }
 http = { workspace = true }
 http-body = { workspace = true }
 serde = { workspace = true, features = ["derive"] }

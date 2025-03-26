@@ -2,7 +2,9 @@
 name = "satex-macro"
 version.workspace = true
 edition.workspace = true
-description = "satex macro library"
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
 
 [lib]
 proc-macro = true
