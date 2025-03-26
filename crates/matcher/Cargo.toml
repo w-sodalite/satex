@@ -1,0 +1,19 @@
+[package]
+name = "satex-matcher"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+satex-core = { workspace = true }
+satex-macro = { workspace = true }
+async-trait = { workspace = true }
+
+chrono = { workspace = true, features = ["serde"] }
+cookie = { workspace = true }
+http = { workspace = true }
+matchit = { workspace = true }
+qstring = { workspace = true }
+serde = { workspace = true, features = ["derive"] }

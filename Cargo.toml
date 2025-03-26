@@ -1,65 +1,70 @@
 [workspace]
 resolver = "2"
 members = [
-    "satex-core",
-    "satex-serve",
-    "satex-layer",
-    "satex-matcher",
-    "satex-service",
-    "satex-discovery",
+    "crates/core",
+    "crates/layer",
+    "crates/macro",
+    "crates/matcher",
+    "crates/server",
+    "crates/service",
 ]
 
 [workspace.package]
-version = "0.2.2"
-edition = "2021"
-license = "Apache-2.0"
+edition = "2024"
+version = "0.3.0"
+license = "MIT"
 license-file = "LICENSE"
 authors = ["w-sodalite@hotmail.com"]
 readme = "README.md"
 repository = "https://github.com/w-sodalite/satex.git"
 
 [workspace.dependencies]
-satex-core = { path = "satex-core", version = "0.2.2" }
-satex-serve = { path = "satex-serve", version = "0.2.2" }
-satex-layer = { path = "satex-layer", version = "0.2.2" }
-satex-matcher = { path = "satex-matcher", version = "0.2.2" }
-satex-service = { path = "satex-service", version = "0.2.2" }
-satex-discovery = { path = "satex-discovery", version = "0.2.2" }
+#
+# satex dependencies
+#
+satex-core = { path = "crates/core" }
+satex-layer = { path = "crates/layer" }
+satex-macro = { path = "crates/macro" }
+satex-matcher = { path = "crates/matcher" }
+satex-server = { path = "crates/server" }
+satex-service = { path = "crates/service" }
 
-time = { version = "0.3.36" }
-rand = { version = "0.8" }
-hyper = { version = "1.0" }
-bytes = { version = "1.5" }
-tower = { version = "0.4" }
-serde = { version = "1.0" }
-tokio = { version = "1.34" }
-regex = { version = "1.10" }
-anyhow = { version = "1.0" }
-chrono = { version = "0.4" }
-tracing = { version = "0.1" }
-futures = { version = "0.3" }
-qstring = { version = "0.7" }
-cookie = { version = "0.18" }
-rustls = { version = "0.22.0" }
-path-tree = { version = "0.7" }
-serde_yaml = { version = "0.9" }
-hyper-util = { version = "0.1" }
-tower-http = { version = "0.5" }
-http-serde = { version = "2.0" }
+#
+# third-party dependencies
+#
+actix-server = { version = "2.5" }
+actix-service = { version = "2.0" }
+actix-tls = { version = "3.4" }
+async-stream = { version = "0.3" }
 async-trait = { version = "0.1" }
-lazy_static = { version = "1.4" }
-sync_wrapper = { version = "0.1" }
-leaky-bucket = { version = "1.0" }
-aho-corasick = { version = "1.1" }
-tokio-rustls = { version = "0.25" }
-hyper-rustls = { version = "0.26" }
-concat-idents = { version = "1.1" }
-rustls-pemfile = { version = "2.0" }
+bytes = { version = "1.10" }
+chrono = { version = "0.4" }
+cookie = { version = "0.18" }
+futures = { version = "0.3" }
+futures-util = { version = "0.3" }
+http = { version = "1.0" }
+http-body = { version = "1.0" }
 http-body-util = { version = "0.1" }
+hyper = { version = "1.6" }
+hyper-rustls = { version = "0.27" }
+hyper-util = { version = "0.1" }
+matchit = { version = "0.8" }
+percent-encoding = { version = "2.3" }
 pin-project-lite = { version = "0.2" }
-rustls-pki-types = { version = "1.0" }
+qstring = { version = "0.7" }
+regex = { version = "1.11" }
+rustls = { version = "0.23" }
+rustls-pemfile = { version = "2.2" }
+rustls-pki-types = { version = "1.11" }
+serde = { version = "1.0" }
+serde_yaml = { version = "0.9" }
+sync_wrapper = { version = "1.0" }
+tokio = { version = "1.44" }
+tokio-util = { version = "0.7" }
+tower = { version = "0.5" }
+tower-http = { version = "0.5" }
+tracing = { version = "0.1" }
 tracing-subscriber = { version = "0.3" }
-serde-this-or-that = { version = "0.4" }
 
 [workspace.metadata.release]
 registry = "crates-io"
@@ -76,13 +81,25 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-description = "使用`RUST`开发的轻量、高性能的HTTP网关，基于`tokio`、`hyper`、`tower`构建。"
-keywords = ["Gateway", "Router", "Http", "Proxy"]
 
 [dependencies]
 satex-core = { workspace = true }
-satex-serve = { workspace = true }
-tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+satex-layer = { workspace = true }
+satex-matcher = { workspace = true }
+satex-server = { workspace = true }
+satex-service = { workspace = true }
+
+async-stream = { workspace = true }
+bytes = { workspace = true }
+futures = { workspace = true }
+http = { workspace = true }
+http-body = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_yaml = { workspace = true }
+tokio = { workspace = true, features = ["rt", "macros"] }
+tower = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
 
 [profile.release]
 opt-level = "z"

@@ -1,0 +1,24 @@
+[package]
+name = "satex-service"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+satex-core = { workspace = true }
+satex-macro = { workspace = true }
+
+bytes = { workspace = true }
+futures = { workspace = true }
+http = { workspace = true }
+http-body = { workspace = true }
+hyper = { workspace = true }
+hyper-rustls = { workspace = true, features = ["http1", "http2"] }
+hyper-util = { workspace = true, features = ["client", "http1", "http2"] }
+rustls = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+tower = { workspace = true, features = ["util"] }
+tower-http = { workspace = true, features = ["fs"] }
+tracing = { workspace = true }
