@@ -1,0 +1,22 @@
+[package]
+name = "satex-core"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+bytes = { workspace = true }
+futures = { workspace = true }
+futures-util = { workspace = true }
+hyper = { workspace = true }
+http = { workspace = true }
+http-body = { workspace = true }
+http-body-util = { workspace = true }
+matchit = { workspace = true }
+percent-encoding = { workspace = true }
+pin-project-lite = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_yaml = { workspace = true }
+sync_wrapper = { workspace = true }
+tokio = { workspace = true, features = ["rt"] }
+tower = { workspace = true, features = ["util"] }
+regex = { workspace = true }

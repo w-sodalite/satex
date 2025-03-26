@@ -1,0 +1,18 @@
+[package]
+name = "satex-layer"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+satex-core = { workspace = true }
+satex-macro = { workspace = true }
+satex-service = { workspace = true }
+
+bytes = { workspace = true }
+futures = { workspace = true }
+http = { workspace = true }
+http-body = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+tower = { workspace = true, features = ["limit"] }
+tower-http = { workspace = true, features = ["trace", "set-header", "timeout"] }
+tracing = { workspace = true }

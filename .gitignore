@@ -2,6 +2,7 @@
 
 # IDEA
 /.idea/
+/*.iml
 
 # VSCode
 /.vscode/

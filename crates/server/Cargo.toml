@@ -1,0 +1,27 @@
+[package]
+name = "satex-server"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+satex-core = { workspace = true }
+satex-layer = { workspace = true }
+satex-matcher = { workspace = true }
+satex-service = { workspace = true }
+
+actix-server = { workspace = true }
+actix-service = { workspace = true }
+actix-tls = { workspace = true, features = ["rustls-0_23", "accept"] }
+async-trait = { workspace = true }
+bytes = { workspace = true }
+futures = { workspace = true }
+http = { workspace = true }
+http-body = { workspace = true }
+hyper = { workspace = true, features = ["server"] }
+hyper-util = { workspace = true, features = ["server-auto", "tokio"] }
+rustls-pemfile = { workspace = true }
+rustls-pki-types = { workspace = true }
+tokio = { workspace = true, features = ["net", "macros", "rt-multi-thread"] }
+tokio-util = { workspace = true }
+tower = { workspace = true }
+tracing = { workspace = true }
