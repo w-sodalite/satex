@@ -4,6 +4,7 @@ use http::{Request, Response};
 use satex_core::body::Body;
 use satex_core::BoxError;
 use satex_layer::concurrency_limit::MakeConcurrencyLimitRouteLayer;
+use satex_layer::cors::MakeCorsRouteLayer;
 use satex_layer::make::{ArcMakeRouteLayer, MakeRouteLayer};
 use satex_layer::remove_header::MakeRemoveHeaderRouteLayer;
 use satex_layer::set_header::{MakeSetRequestHeaderRouteLayer, MakeSetResponseHeaderRouteLayer};
@@ -38,7 +39,8 @@ impl MakeRouteLayerRegistry {
             MakeTraceRouteLayer,
             MakeTimeoutRouteLayer,
             MakeConcurrencyLimitRouteLayer,
-            MakeSetPrefixRouteLayer
+            MakeSetPrefixRouteLayer,
+            MakeCorsRouteLayer
         }
         registry
     }
