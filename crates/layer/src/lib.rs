@@ -9,6 +9,7 @@ use tower::layer::layer_fn;
 use tower::{Layer, Service};
 
 pub mod concurrency_limit;
+pub mod cors;
 pub mod make;
 pub mod remove_header;
 pub mod set_header;

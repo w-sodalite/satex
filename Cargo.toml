@@ -7,6 +7,9 @@ members = [
     "crates/matcher",
     "crates/server",
     "crates/service",
+    #
+    # Internal
+    "examples"
 ]
 
 [workspace.package]
@@ -22,6 +25,7 @@ repository = "https://github.com/w-sodalite/satex.git"
 #
 # satex dependencies
 #
+satex = { path = "." }
 satex-core = { path = "crates/core" }
 satex-layer = { path = "crates/layer" }
 satex-macro = { path = "crates/macro" }
