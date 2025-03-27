@@ -54,6 +54,9 @@ fn in_addrs(client_addr: &ClientAddr, addrs: &[(IpAddr, u16)]) -> bool {
     match client_addr.ip() {
         IpAddr::V4(client_ip) => {
             for (addr, cidr) in addrs {
+                if *cidr == 0 {
+                    return true;
+                }
                 match addr {
                     IpAddr::V4(addr) => {
                         let mask: [u8; 4] = (-1_i32 << (32 - cidr)).to_be_bytes();
@@ -65,6 +68,9 @@ fn in_addrs(client_addr: &ClientAddr, addrs: &[(IpAddr, u16)]) -> bool {
         }
         IpAddr::V6(client_ip) => {
             for (addr, cidr) in addrs {
+                if *cidr == 0 {
+                    return true;
+                }
                 match addr {
                     IpAddr::V4(_) => continue,
                     IpAddr::V6(addr) => {

@@ -17,3 +17,7 @@ http = { workspace = true }
 matchit = { workspace = true }
 qstring = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
+
+[dev-dependencies]
+serde_yaml = { workspace = true }
+tokio = { workspace = true, features = ["rt", "macros"] }
