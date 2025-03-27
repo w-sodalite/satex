@@ -28,6 +28,12 @@ impl MakeRouteService for MakeStatusCodeRouteService {
 #[derive(Debug, Clone, Copy)]
 pub struct StatusCodeRouteService(StatusCode);
 
+impl StatusCodeRouteService {
+    pub fn new(status_code: StatusCode) -> Self {
+        Self(status_code)
+    }
+}
+
 impl<Req> Service<Req> for StatusCodeRouteService {
     type Response = Response<Body>;
     type Error = Infallible;
