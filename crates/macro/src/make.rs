@@ -1,8 +1,8 @@
-use crate::util::{ExprArg, LitStrArg};
+use crate::util::ExprArg;
 use proc_macro2::{Ident, Span, TokenStream, TokenTree};
 use quote::quote;
 use syn::parse::{Parse, ParseStream};
-use syn::{Error, ItemStruct, LitStr, Token};
+use syn::{Error, ItemStruct, Token};
 
 ///
 /// 默认的快捷参数模式: [ShortcutMode::Object]
@@ -16,7 +16,6 @@ pub(crate) fn expand(args: Args, input: ItemStruct) -> syn::Result<TokenStream> 
 
     let shortcut_mode = args
         .shortcut_mode
-        .map(|lit| Ident::new(lit.value().as_str(), Span::call_site()))
         .unwrap_or_else(|| Ident::new(DEFAULT_SHORTCUT_MODE, Span::call_site()));
 
     // 字段名集合
@@ -59,7 +58,7 @@ pub(crate) fn expand(args: Args, input: ItemStruct) -> syn::Result<TokenStream> 
 #[derive(Default)]
 pub struct Args {
     kind: Option<Ident>,
-    shortcut_mode: Option<LitStr>,
+    shortcut_mode: Option<Ident>,
 }
 
 impl Parse for Args {
@@ -77,8 +76,8 @@ impl Parse for Args {
                 if args.shortcut_mode.is_some() {
                     return Err(input.error("duplicate attribute `shortcut_mode`"));
                 }
-                let arg = input.parse::<LitStrArg<kw::shortcut_mode>>()?;
-                args.shortcut_mode = Some(arg.value);
+                let arg = input.parse::<ExprArg<kw::shortcut_mode>>()?;
+                args.shortcut_mode = Some(arg.require_ident()?);
             } else if lookahead.peek(Token![,]) {
                 let _ = input.parse::<Token![,]>()?;
             } else {
