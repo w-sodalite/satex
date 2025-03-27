@@ -1,11 +1,10 @@
 use crate::make::MakeRouteLayer;
 use satex_core::component::Args;
 use satex_core::Error;
-use satex_macro::Make;
+use satex_macro::make;
 use tower_http::trace::{HttpMakeClassifier, TraceLayer};
 
-#[derive(Debug, Clone, Copy, Default, Make)]
-#[make(name = "Trace")]
+#[make(kind = "Trace")]
 pub struct MakeTraceRouteLayer;
 
 impl MakeRouteLayer for MakeTraceRouteLayer {

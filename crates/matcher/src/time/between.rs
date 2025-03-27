@@ -5,8 +5,7 @@ use chrono::{Local, NaiveDateTime};
 use http::request::Parts;
 use satex_core::component::{Args, Configurable};
 use satex_core::Error;
-use satex_macro::{Configurable, Make};
-use serde::Deserialize;
+use satex_macro::make;
 
 pub struct BetweenRouteMatcher {
     start: NaiveDateTime,
@@ -27,16 +26,11 @@ impl RouteMatcher for BetweenRouteMatcher {
     }
 }
 
-#[derive(Deserialize, Configurable)]
-#[configurable(companion = "")]
-struct Config {
+#[make(kind = Between)]
+pub struct MakeBetweenRouteMatcher {
     start: NaiveDateTime,
     end: NaiveDateTime,
 }
-
-#[derive(Debug, Clone, Copy, Default, Make)]
-#[make(name = "Between")]
-pub struct MakeBetweenRouteMatcher;
 
 impl MakeRouteMatcher for MakeBetweenRouteMatcher {
     type Matcher = BetweenRouteMatcher;

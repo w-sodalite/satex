@@ -7,18 +7,12 @@ use satex_core::component::{Args, Configurable};
 use satex_core::extension::insert_url_params;
 use satex_core::util::With;
 use satex_core::Error;
-use satex_macro::{Configurable, Make};
-use serde::Deserialize;
+use satex_macro::make;
 
-#[derive(Deserialize, Configurable)]
-#[configurable(companion = "MakePathRouteMatcher", shortcut_mode = "Sequence")]
-struct Config {
+#[make(kind = Path)]
+struct MakePathRouteMatcher {
     patterns: Vec<String>,
 }
-
-#[derive(Debug, Clone, Copy, Default, Make)]
-#[make(name = "Path")]
-pub struct MakePathRouteMatcher;
 
 impl MakeRouteMatcher for MakePathRouteMatcher {
     type Matcher = PathRouteMatcher;

@@ -5,8 +5,7 @@ use http::request::Parts;
 use satex_core::component::{Args, Configurable};
 use satex_core::expression::Expression;
 use satex_core::Error;
-use satex_macro::{Configurable, Make};
-use serde::Deserialize;
+use satex_macro::make;
 
 pub struct HeaderRouteMatcher {
     name: String,
@@ -30,16 +29,11 @@ impl RouteMatcher for HeaderRouteMatcher {
     }
 }
 
-#[derive(Deserialize, Configurable)]
-#[configurable(companion = "")]
-struct Config {
+#[make(kind = Header)]
+struct MakeHeaderRouteMatcher {
     name: String,
     value: Expression,
 }
-
-#[derive(Debug, Clone, Copy, Default, Make)]
-#[make(name = "Header")]
-pub struct MakeHeaderRouteMatcher;
 
 impl MakeRouteMatcher for MakeHeaderRouteMatcher {
     type Matcher = HeaderRouteMatcher;

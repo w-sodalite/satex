@@ -2,18 +2,12 @@ use crate::make::MakeRouteLayer;
 use crate::strip_prefix::layer::StripPrefixRouteLayer;
 use satex_core::component::{Args, Configurable};
 use satex_core::Error;
-use satex_macro::{Configurable, Make};
-use serde::Deserialize;
+use satex_macro::make;
 
-#[derive(Deserialize, Configurable)]
-#[configurable(companion = "MakeStripPrefixRouteLayer")]
-struct Config {
+#[make(kind = StripPrefix)]
+pub struct MakeStripPrefixRouteLayer {
     level: usize,
 }
-
-#[derive(Debug, Clone, Copy, Default, Make)]
-#[make(name = "StripPrefix")]
-pub struct MakeStripPrefixRouteLayer;
 
 impl MakeRouteLayer for MakeStripPrefixRouteLayer {
     type Layer = StripPrefixRouteLayer;

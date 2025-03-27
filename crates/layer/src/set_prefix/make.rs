@@ -2,18 +2,12 @@ use crate::make::MakeRouteLayer;
 use crate::set_prefix::layer::SetPrefixLayer;
 use satex_core::component::{Args, Configurable};
 use satex_core::Error;
-use satex_macro::{Configurable, Make};
-use serde::Deserialize;
+use satex_macro::make;
 
-#[derive(Deserialize, Configurable)]
-#[configurable(companion = "")]
-struct Config {
+#[make(kind = SetPrefix)]
+pub struct MakeSetPrefixRouteLayer {
     prefix: String,
 }
-
-#[derive(Debug, Clone, Copy, Make)]
-#[make(name = "SetPrefix")]
-pub struct MakeSetPrefixRouteLayer;
 
 impl MakeRouteLayer for MakeSetPrefixRouteLayer {
     type Layer = SetPrefixLayer;

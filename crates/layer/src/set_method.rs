@@ -2,21 +2,15 @@ use crate::make::MakeRouteLayer;
 use http::{Method, Request};
 use satex_core::component::{Args, Configurable};
 use satex_core::Error;
-use satex_macro::{Configurable, Make};
-use serde::Deserialize;
+use satex_macro::make;
 use std::str::FromStr;
 use std::task::{Context, Poll};
 use tower::{Layer, Service};
 
-#[derive(Deserialize, Configurable)]
-#[configurable(companion = "MakeSetMethodRouteLayer")]
-struct Config {
+#[make(kind = SetMethod)]
+struct MakeSetMethodRouteLayer {
     method: String,
 }
-
-#[derive(Debug, Clone, Copy, Default, Make)]
-#[make(name = "SetMethod")]
-pub struct MakeSetMethodRouteLayer;
 
 impl MakeRouteLayer for MakeSetMethodRouteLayer {
     type Layer = SetMethodRouteLayer;

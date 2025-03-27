@@ -4,19 +4,13 @@ use crate::make::MakeRouteLayer;
 use http::{HeaderName, Request};
 use satex_core::component::Args;
 use satex_core::{component::Configurable, Error};
-use satex_macro::{Configurable, Make};
-use serde::Deserialize;
+use satex_macro::make;
 use tower::{Layer, Service};
 
-#[derive(Deserialize, Configurable)]
-#[configurable(companion = "MakeRemoveHeaderRouteLayer")]
-struct Config {
+#[make(kind = RemoveHeader)]
+pub struct MakeRemoveHeaderRouteLayer {
     name: String,
 }
-
-#[derive(Debug, Clone, Copy, Default, Make)]
-#[make(name = "RemoveHeader")]
-pub struct MakeRemoveHeaderRouteLayer;
 
 impl MakeRouteLayer for MakeRemoveHeaderRouteLayer {
     type Layer = RemoveHeaderRouteLayer;

@@ -1,20 +1,14 @@
 use crate::make::MakeRouteLayer;
 use satex_core::component::{Args, Configurable};
 use satex_core::Error;
-use satex_macro::{Configurable, Make};
-use serde::Deserialize;
+use satex_macro::make;
 use std::time::Duration;
 use tower_http::timeout::TimeoutLayer;
 
-#[derive(Deserialize, Configurable)]
-#[configurable(companion = "")]
-struct Config {
+#[make(kind = Timeout)]
+struct MakeTimeoutRouteLayer {
     timeout: u64,
 }
-
-#[derive(Debug, Clone, Copy, Make)]
-#[make(name = "Timeout")]
-pub struct MakeTimeoutRouteLayer;
 
 impl MakeRouteLayer for MakeTimeoutRouteLayer {
     type Layer = TimeoutLayer;
