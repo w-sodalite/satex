@@ -1,3 +1,5 @@
+#![doc = include_str!("../../docs/set_prefix.md")]
+
 mod layer;
 mod make;
 pub use layer::*;
