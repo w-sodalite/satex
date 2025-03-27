@@ -1,6 +1,7 @@
 mod util;
 
 use crate::util::parts;
+use http::header::COOKIE;
 use http::request::Parts;
 use http::{HeaderValue, Method};
 use satex_core::component::Args;
@@ -37,7 +38,7 @@ async fn make_with_shortcut() {
     let mut parts = parts("/?name=admin&age=12", Method::GET);
     parts
         .headers
-        .insert("cookie", HeaderValue::from_static("x-data=hello world"));
+        .insert(COOKIE, HeaderValue::from_static("x-data=hello world"));
 
     matches_shortcut(&mut parts, "x-data", "Equals(hello world)").await;
     matches_shortcut(&mut parts, "x-data", "NotEquals(HELLO WORLD)").await;
@@ -49,7 +50,7 @@ async fn make_with_shortcut() {
     matches_shortcut(&mut parts, "x-data", "NotContains(Hello)").await;
     matches_shortcut(&mut parts, "x-data", "Exists").await;
 
-    parts.headers.remove("x-data");
+    parts.headers.remove(COOKIE);
     matches_shortcut(&mut parts, "x-data", "NotExists").await;
 }
 
@@ -58,7 +59,7 @@ async fn make_with_full() {
     let mut parts = parts("/?name=admin&age=12", Method::GET);
     parts
         .headers
-        .insert("cookie", HeaderValue::from_static("x-data=hello world"));
+        .insert(COOKIE, HeaderValue::from_static("x-data=hello world"));
 
     make_full(&mut parts, "x-data", "Equals(hello world)").await;
     make_full(&mut parts, "x-data", "NotEquals(HELLO WORLD)").await;
@@ -70,6 +71,6 @@ async fn make_with_full() {
     make_full(&mut parts, "x-data", "NotContains(Hello)").await;
     make_full(&mut parts, "x-data", "Exists").await;
 
-    parts.headers.remove("x-data");
+    parts.headers.remove(COOKIE);
     matches_shortcut(&mut parts, "x-data", "NotExists").await;
 }
