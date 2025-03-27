@@ -11,4 +11,4 @@ tokio = { workspace = true, features = ["rt-multi-thread"] }
 
 [[example]]
 name = "layer-cors"
-path = "layer/cors.rs"
+path = "layer/cors/main.rs"
