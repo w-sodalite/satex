@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use proc_macro2::Ident;
 use quote::format_ident;
 use std::marker::PhantomData;
