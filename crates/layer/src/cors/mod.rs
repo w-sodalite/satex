@@ -5,14 +5,12 @@ use crate::make::MakeRouteLayer;
 use http::{HeaderName, HeaderValue, Method};
 use satex_core::component::{Args, Configurable};
 use satex_core::Error;
-use satex_macro::{Configurable, Make};
-use serde::Deserialize;
+use satex_macro::make;
 use std::time::Duration;
 use tower_http::cors::CorsLayer;
 
-#[derive(Deserialize, Configurable)]
-#[configurable(companion = "MakeCorsRouteLayer", shortcut_mode = "Unsupported")]
-struct Config {
+#[make(kind = "Cors", shortcut_mode = "Unsupported")]
+struct MakeCorsRouteLayer {
     max_age_secs: Option<u64>,
     allow_credentials: Option<bool>,
     allow_private_network: Option<bool>,
@@ -27,10 +25,6 @@ struct Config {
     #[serde(default)]
     vary: Value<HeaderName>,
 }
-
-#[derive(Debug, Clone, Copy, Make)]
-#[make(name = "Cors")]
-pub struct MakeCorsRouteLayer;
 
 impl MakeRouteLayer for MakeCorsRouteLayer {
     type Layer = CorsLayer;
