@@ -23,7 +23,7 @@ pub(crate) fn expand(args: Args, input: ItemStruct) -> syn::Result<TokenStream> 
         .fields
         .iter()
         .flat_map(|field| &field.ident)
-        .map(|ident| ident.to_string());
+        .map(|field| field.to_string().replace("_", "-"));
 
     let make_name = &input.ident;
     let generics = input.generics;

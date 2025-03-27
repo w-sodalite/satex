@@ -15,8 +15,11 @@ pub struct QueryRouteMatcher {
 }
 
 impl QueryRouteMatcher {
-    pub fn new(name: String, value: Expression) -> Self {
-        Self { name, value }
+    pub fn new(name: impl Into<String>, value: Expression) -> Self {
+        Self {
+            name: name.into(),
+            value,
+        }
     }
 }
 

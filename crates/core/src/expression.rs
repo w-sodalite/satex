@@ -11,7 +11,9 @@ pub enum Expression {
     Equals(Value),
     NotEquals(Value),
     StartsWith(Value),
+    NotStartsWith(Value),
     EndsWith(Value),
+    NotEndsWith(Value),
     Contains(Value),
     NotContains(Value),
     Exists,
@@ -32,8 +34,16 @@ impl Expression {
         Expression::StartsWith(Value::new(value, sensitive))
     }
 
+    pub fn not_starts_with(value: impl AsRef<str>, sensitive: bool) -> Self {
+        Expression::NotStartsWith(Value::new(value, sensitive))
+    }
+
     pub fn ends_with(value: impl AsRef<str>, sensitive: bool) -> Self {
         Expression::EndsWith(Value::new(value, sensitive))
+    }
+
+    pub fn not_ends_with(value: impl AsRef<str>, sensitive: bool) -> Self {
+        Expression::NotEndsWith(Value::new(value, sensitive))
     }
 
     pub fn contains(value: impl AsRef<str>, sensitive: bool) -> Self {
@@ -50,12 +60,22 @@ impl Expression {
             .map_err(Error::new)
     }
 
+    pub fn exists() -> Self {
+        Self::Exists
+    }
+
+    pub fn not_exists() -> Self {
+        Self::NotExists
+    }
+
     pub fn matches(&self, text: Option<&str>) -> bool {
         match self {
             Expression::Equals(value) => value.equals(text),
             Expression::NotEquals(value) => value.not_equals(text),
             Expression::StartsWith(value) => value.starts_with(text),
+            Expression::NotStartsWith(value) => value.not_starts_with(text),
             Expression::EndsWith(value) => value.ends_with(text),
+            Expression::NotEndsWith(value) => value.not_ends_with(text),
             Expression::Contains(value) => value.contains(text),
             Expression::NotContains(value) => value.not_contains(text),
             Expression::Exists => text.is_some(),
@@ -83,8 +103,16 @@ impl Display for Expression {
                 f.write_str("StartsWith")?;
                 <Value as Display>::fmt(value, f)
             }
+            Expression::NotStartsWith(value) => {
+                f.write_str("NotStartWith")?;
+                <Value as Display>::fmt(value, f)
+            }
             Expression::EndsWith(value) => {
                 f.write_str("EndsWith")?;
+                <Value as Display>::fmt(value, f)
+            }
+            Expression::NotEndsWith(value) => {
+                f.write_str("NotEndsWith")?;
                 <Value as Display>::fmt(value, f)
             }
             Expression::Contains(value) => {
@@ -121,8 +149,12 @@ impl FromStr for Expression {
                         "?NotEquals" => Ok(Expression::not_equals(value, false)),
                         "StartsWith" => Ok(Expression::starts_with(value, true)),
                         "?StartsWith" => Ok(Expression::starts_with(value, false)),
+                        "NotStartsWith" => Ok(Expression::not_starts_with(value, true)),
+                        "?NotStartsWith" => Ok(Expression::not_starts_with(value, false)),
                         "EndsWith" => Ok(Expression::ends_with(value, true)),
                         "?EndsWith" => Ok(Expression::ends_with(value, false)),
+                        "NotEndsWith" => Ok(Expression::not_ends_with(value, true)),
+                        "?NotEndsWith" => Ok(Expression::not_ends_with(value, false)),
                         "Contains" => Ok(Expression::contains(value, true)),
                         "?Contains" => Ok(Expression::contains(value, false)),
                         "NotContains" => Ok(Expression::not_contains(value, true)),
@@ -200,51 +232,50 @@ impl Value {
     }
 
     pub fn not_equals(&self, value: Option<&str>) -> bool {
-        match value {
-            Some(value) => {
-                if self.sensitive {
-                    self.raw.as_ref() != value
-                } else {
-                    !self.raw.as_ref().eq_ignore_ascii_case(value)
-                }
-            }
-            None => true,
-        }
+        !self.equals(value)
     }
 
     pub fn starts_with(&self, value: Option<&str>) -> bool {
         match value {
             Some(value) => {
                 if self.sensitive {
-                    self.raw.starts_with(value)
+                    value.starts_with(self.raw.as_ref())
                 } else {
-                    self.raw.starts_with(&value.to_lowercase())
+                    value.to_lowercase().starts_with(self.raw.as_ref())
                 }
             }
             None => false,
         }
+    }
+
+    pub fn not_starts_with(&self, value: Option<&str>) -> bool {
+        !self.starts_with(value)
     }
 
     pub fn ends_with(&self, value: Option<&str>) -> bool {
         match value {
             Some(value) => {
                 if self.sensitive {
-                    self.raw.ends_with(value)
+                    value.ends_with(self.raw.as_ref())
                 } else {
-                    self.raw.ends_with(&value.to_lowercase())
+                    value.to_lowercase().ends_with(self.raw.as_ref())
                 }
             }
             None => false,
         }
     }
 
+    pub fn not_ends_with(&self, value: Option<&str>) -> bool {
+        !self.ends_with(value)
+    }
+
     pub fn contains(&self, value: Option<&str>) -> bool {
         match value {
             Some(value) => {
                 if self.sensitive {
-                    self.raw.contains(value)
+                    value.contains(self.raw.as_ref())
                 } else {
-                    self.raw.contains(&value.to_lowercase())
+                    value.to_lowercase().contains(self.raw.as_ref())
                 }
             }
             None => false,
@@ -252,15 +283,6 @@ impl Value {
     }
 
     pub fn not_contains(&self, value: Option<&str>) -> bool {
-        match value {
-            Some(value) => {
-                if self.sensitive {
-                    !self.raw.contains(value)
-                } else {
-                    !self.raw.contains(&value.to_lowercase())
-                }
-            }
-            None => true,
-        }
+        !self.contains(value)
     }
 }

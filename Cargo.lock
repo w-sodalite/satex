@@ -1193,6 +1193,8 @@ dependencies = [
  "satex-core",
  "satex-macro",
  "serde",
+ "serde_yaml",
+ "tokio",
 ]
 
 [[package]]

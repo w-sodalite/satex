@@ -26,4 +26,6 @@ tracing = { workspace = true }
 [dev-dependencies]
 serde_yaml = { workspace = true }
 http-body-util = { workspace = true }
+hyper = { workspace = true, features = ["server"] }
+hyper-util = { workspace = true, features = ["server"] }
 tokio = { workspace = true, features = ["rt", "macros"] }
