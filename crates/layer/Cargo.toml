@@ -19,3 +19,7 @@ serde = { workspace = true, features = ["derive"] }
 tower = { workspace = true, features = ["limit"] }
 tower-http = { workspace = true, features = ["trace", "set-header", "timeout", "cors"] }
 tracing = { workspace = true }
+
+[dev-dependencies]
+serde_yaml = { workspace = true }
+tokio = { workspace = true, features = ["rt", "macros"] }
