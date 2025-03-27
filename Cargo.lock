@@ -1166,6 +1166,8 @@ dependencies = [
  "satex-macro",
  "satex-service",
  "serde",
+ "serde_yaml",
+ "tokio",
  "tower",
  "tower-http",
  "tracing",
