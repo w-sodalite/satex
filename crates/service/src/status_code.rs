@@ -4,22 +4,16 @@ use satex_core::body::Body;
 use satex_core::component::{Args, Configurable};
 use satex_core::util::ResponseExt;
 use satex_core::Error;
-use satex_macro::{Configurable, Make};
-use serde::Deserialize;
+use satex_macro::make;
 use std::convert::Infallible;
 use std::future::{ready, Ready};
 use std::task::{Context, Poll};
 use tower::Service;
 
-#[derive(Debug, Clone, Copy, Configurable, Deserialize)]
-#[configurable(companion = "MakeStatusCodeRouteService")]
-struct Config {
+#[make(kind = StatusCode)]
+pub struct MakeStatusCodeRouteService {
     status_code: u16,
 }
-
-#[derive(Debug, Clone, Copy, Make)]
-#[make(name = "StatusCode")]
-pub struct MakeStatusCodeRouteService;
 
 impl MakeRouteService for MakeStatusCodeRouteService {
     type Service = StatusCodeRouteService;

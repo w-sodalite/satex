@@ -2,21 +2,15 @@ use crate::make::MakeRouteLayer;
 use http::StatusCode;
 use satex_core::component::{Args, Configurable};
 use satex_core::Error;
-use satex_macro::{Configurable, Make};
-use serde::Deserialize;
+use satex_macro::make;
 use tower_http::set_status::SetStatusLayer;
 
-#[derive(Deserialize, Configurable)]
-#[configurable(companion = "MakeSetResponseStatusCodeRouteLayer")]
-struct Config {
+#[make(kind = SetStatusCode)]
+struct MakeSetStatusCodeRouteLayer {
     status: u16,
 }
 
-#[derive(Debug, Clone, Copy, Default, Make)]
-#[make(name = "SetResponseStatusCode")]
-pub struct MakeSetResponseStatusCodeRouteLayer;
-
-impl MakeRouteLayer for MakeSetResponseStatusCodeRouteLayer {
+impl MakeRouteLayer for MakeSetStatusCodeRouteLayer {
     type Layer = SetStatusLayer;
 
     fn make(&self, args: Args) -> Result<Self::Layer, Error> {

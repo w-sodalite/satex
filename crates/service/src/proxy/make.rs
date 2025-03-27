@@ -4,21 +4,15 @@ use crate::proxy::service::ProxyRouteService;
 use http::Uri;
 use satex_core::component::{Args, Configurable};
 use satex_core::Error;
-use satex_macro::{Configurable, Make};
-use serde::Deserialize;
+use satex_macro::make;
 use std::str::FromStr;
 
-#[derive(Deserialize, Configurable)]
-#[configurable(companion = "MakeProxyRouteService")]
-struct Config {
+#[make(kind = Proxy)]
+struct MakeProxyRouteService {
     uri: String,
     #[serde(default)]
     client: ClientConfig,
 }
-
-#[derive(Debug, Clone, Make)]
-#[make(name = "Proxy")]
-pub struct MakeProxyRouteService;
 
 impl MakeRouteService for MakeProxyRouteService {
     type Service = ProxyRouteService;

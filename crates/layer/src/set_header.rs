@@ -1,29 +1,17 @@
-use crate::make::MakeRouteLayer;
-use crate::util::SetPolicy;
-use http::{HeaderName, HeaderValue};
-use satex_core::component::{Args, Configurable};
-use satex_core::Error;
-use satex_macro::{Configurable, Make};
-use serde::Deserialize;
-use std::str::FromStr;
-use tower_http::set_header::{SetRequestHeaderLayer, SetResponseHeaderLayer};
-
-#[derive(Deserialize, Configurable)]
-#[configurable(companion = "SetRequestHeader", shortcut_mode = "Object")]
-struct Config {
-    name: String,
-    value: String,
-    #[serde(default)]
-    policy: SetPolicy,
-}
+pub use request::MakeSetRequestHeaderRouteLayer;
+pub use response::MakeSetResponseHeaderRouteLayer;
 
 macro_rules! make_set_header {
-    ($name:ident,$ident:ident,$layer:ident) => {
-        #[derive(Debug, Clone, Copy, Default, Make)]
-        #[make(name = stringify!($name))]
-        pub struct $ident;
+    ($name:ident, $make:ident, $layer:ident) => {
+        #[make(kind = $name)]
+        pub struct $make {
+            name: String,
+            value: String,
+            #[serde(default)]
+            policy: SetPolicy,
+        }
 
-        impl MakeRouteLayer for $ident {
+        impl MakeRouteLayer for $make {
             type Layer = $layer<HeaderValue>;
 
             fn make(&self, args: Args) -> Result<Self::Layer, Error> {
@@ -40,14 +28,36 @@ macro_rules! make_set_header {
     };
 }
 
-make_set_header!(
-    SetRequestHeader,
-    MakeSetRequestHeaderRouteLayer,
-    SetRequestHeaderLayer
-);
+mod request {
+    use crate::make::MakeRouteLayer;
+    use crate::util::SetPolicy;
+    use http::{HeaderName, HeaderValue};
+    use satex_core::component::{Args, Configurable};
+    use satex_core::Error;
+    use satex_macro::make;
+    use std::str::FromStr;
+    use tower_http::set_header::SetRequestHeaderLayer;
 
-make_set_header!(
-    SetResponseHeader,
-    MakeSetResponseHeaderRouteLayer,
-    SetResponseHeaderLayer
-);
+    make_set_header!(
+        SetRequestHeader,
+        MakeSetRequestHeaderRouteLayer,
+        SetRequestHeaderLayer
+    );
+}
+
+mod response {
+    use crate::make::MakeRouteLayer;
+    use crate::util::SetPolicy;
+    use http::{HeaderName, HeaderValue};
+    use satex_core::component::{Args, Configurable};
+    use satex_core::Error;
+    use satex_macro::make;
+    use std::str::FromStr;
+    use tower_http::set_header::SetResponseHeaderLayer;
+
+    make_set_header!(
+        SetResponseHeader,
+        MakeSetResponseHeaderRouteLayer,
+        SetResponseHeaderLayer
+    );
+}

@@ -1,20 +1,14 @@
 use crate::make::MakeRouteService;
 use satex_core::component::{Args, Configurable};
 use satex_core::Error;
-use satex_macro::{Configurable, Make};
-use serde::{Deserialize, Serialize};
+use satex_macro::make;
 
 pub use tower_http::services::ServeDir;
 
-#[derive(Debug, Clone, Default, Deserialize, Serialize, Configurable)]
-#[configurable(companion = "MakeServeDirRouteService")]
-struct Config {
+#[make(kind = ServeDir)]
+struct MakeServeDirRouteService {
     path: String,
 }
-
-#[derive(Debug, Copy, Clone, Make)]
-#[make(name = "ServeDir")]
-pub struct MakeServeDirRouteService;
 
 impl MakeRouteService for MakeServeDirRouteService {
     type Service = ServeDir;

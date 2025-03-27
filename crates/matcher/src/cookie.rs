@@ -7,8 +7,7 @@ use http::request::Parts;
 use satex_core::component::{Args, Configurable};
 use satex_core::expression::Expression;
 use satex_core::Error;
-use satex_macro::{Configurable, Make};
-use serde::Deserialize;
+use satex_macro::make;
 
 pub struct CookieRouteMatcher {
     name: String,
@@ -44,16 +43,11 @@ impl RouteMatcher for CookieRouteMatcher {
     }
 }
 
-#[derive(Deserialize, Configurable)]
-#[configurable(companion = "MakeCookieRouteMatcher")]
-struct Config {
+#[make(kind = Cookie)]
+struct MakeCookieRouteMatcher {
     name: String,
     value: Expression,
 }
-
-#[derive(Debug, Clone, Copy, Make)]
-#[make(name = "Cookie")]
-pub struct MakeCookieRouteMatcher;
 
 impl MakeRouteMatcher for MakeCookieRouteMatcher {
     type Matcher = CookieRouteMatcher;
