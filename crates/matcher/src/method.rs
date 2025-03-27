@@ -11,7 +11,7 @@ use satex_core::Error;
 use satex_macro::make;
 use std::str::FromStr;
 
-#[make(kind = Method)]
+#[make(kind = Method, shortcut_mode = Sequence)]
 struct MakeMethodRouteMatcher {
     methods: Vec<String>,
 }

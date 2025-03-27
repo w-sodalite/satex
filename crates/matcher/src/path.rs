@@ -9,7 +9,7 @@ use satex_core::util::With;
 use satex_core::Error;
 use satex_macro::make;
 
-#[make(kind = Path)]
+#[make(kind = Path, shortcut_mode = Sequence)]
 struct MakePathRouteMatcher {
     patterns: Vec<String>,
 }
