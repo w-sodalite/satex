@@ -1,49 +1,48 @@
 use std::{str::FromStr, sync::Arc};
 
 use crate::make::MakeRouteLayer;
-use http::{HeaderName, Request};
+use crate::remove_header::Removable;
+use http::HeaderName;
 use satex_core::component::Args;
 use satex_core::{component::Configurable, Error};
 use satex_macro::make;
 use tower::{Layer, Service};
 
-#[make(kind = RemoveHeader)]
-pub struct MakeRemoveHeaderRouteLayer {
+#[make(kind = RemoveRequestHeader)]
+pub struct MakeRemoveRequestHeaderRouteLayer {
     name: String,
 }
 
-impl MakeRouteLayer for MakeRemoveHeaderRouteLayer {
-    type Layer = RemoveHeaderRouteLayer;
+impl MakeRouteLayer for MakeRemoveRequestHeaderRouteLayer {
+    type Layer = RemoveRequestHeaderLayer;
 
     fn make(&self, args: Args) -> Result<Self::Layer, Error> {
         Config::with_args(args).and_then(|config| {
             HeaderName::from_str(&config.name)
                 .map_err(Error::new)
-                .map(|name| RemoveHeaderRouteLayer {
-                    name: Arc::new(name),
-                })
+                .map(RemoveRequestHeaderLayer::new)
         })
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct RemoveHeaderRouteLayer {
+pub struct RemoveRequestHeaderLayer {
     name: Arc<HeaderName>,
 }
 
-impl RemoveHeaderRouteLayer {
-    pub fn new(name: &str) -> Self {
+impl RemoveRequestHeaderLayer {
+    pub fn new(name: HeaderName) -> Self {
         Self {
-            name: Arc::new(HeaderName::from_str(name).unwrap()),
+            name: Arc::new(name),
         }
     }
 }
 
-impl<S> Layer<S> for RemoveHeaderRouteLayer {
-    type Service = RemoveHeader<S>;
+impl<S> Layer<S> for RemoveRequestHeaderLayer {
+    type Service = RemoveRequestHeader<S>;
 
     fn layer(&self, inner: S) -> Self::Service {
-        RemoveHeader {
+        RemoveRequestHeader {
             name: self.name.clone(),
             inner,
         }
@@ -51,14 +50,15 @@ impl<S> Layer<S> for RemoveHeaderRouteLayer {
 }
 
 #[derive(Debug, Clone)]
-pub struct RemoveHeader<S> {
+pub struct RemoveRequestHeader<S> {
     inner: S,
     name: Arc<HeaderName>,
 }
 
-impl<S, ReqBody> Service<Request<ReqBody>> for RemoveHeader<S>
+impl<S, Req> Service<Req> for RemoveRequestHeader<S>
 where
-    S: Service<Request<ReqBody>>,
+    S: Service<Req>,
+    Req: Removable,
 {
     type Response = S::Response;
 
@@ -73,9 +73,8 @@ where
         self.inner.poll_ready(cx)
     }
 
-    fn call(&mut self, mut request: Request<ReqBody>) -> Self::Future {
-        let headers = request.headers_mut();
-        headers.remove(self.name.as_ref());
-        self.inner.call(request)
+    fn call(&mut self, mut req: Req) -> Self::Future {
+        req.remove(self.name.as_ref());
+        self.inner.call(req)
     }
 }

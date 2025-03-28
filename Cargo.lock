@@ -1162,6 +1162,7 @@ dependencies = [
  "futures",
  "http",
  "http-body",
+    "pin-project-lite",
  "satex-core",
  "satex-macro",
  "satex-service",
