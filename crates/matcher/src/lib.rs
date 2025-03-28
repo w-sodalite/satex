@@ -5,7 +5,6 @@ pub mod make;
 pub mod method;
 pub mod path;
 pub mod query;
-pub mod registry;
 pub mod remote_addr;
 pub mod time;
 
