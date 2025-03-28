@@ -2,6 +2,7 @@ use satex_core::util::{canonicalize, remove_end_sep, remove_start_sep};
 
 #[test]
 fn test_canonicalize() {
+    assert_eq!("/api/v1/resource", canonicalize("api/v1/resource"));
     assert_eq!("/api/v1/resource", canonicalize("/api/v1/resource"));
     assert_eq!("/api/resource", canonicalize("/api/v1/../resource"));
     assert_eq!("/api/v1/resource", canonicalize("/api/v1/./resource"));

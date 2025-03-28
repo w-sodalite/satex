@@ -30,7 +30,16 @@ pub fn canonicalize(path: &str) -> Cow<'_, str> {
         .map(|(_, component)| component)
         .collect::<Vec<_>>();
     match legal {
-        true => Cow::from(path),
+        true => {
+            if path.starts_with('/') {
+                path.into()
+            } else {
+                let mut value = String::with_capacity(path.len() + 1);
+                value.push_str(SEP);
+                value.push_str(path);
+                value.into()
+            }
+        }
         false => {
             let mut parts = Vec::with_capacity(components.len());
             for component in components.into_iter() {
