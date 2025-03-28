@@ -1,5 +1,8 @@
 # Satex
 
+[![Build Status](https://github.com/w-sodalite/satex/actions/workflows/rust.yml/badge.svg?branch=master)](https://github.com/w-sodalite/satex/actions/workflows/rust.yml)
+[![Crates.io](https://img.shields.io/crates/v/satex)](https://crates.io/crates/satex)
+
 一个轻量级、高性能的HTTP网关，使用Rust语言开发，项目灵感来自于`Spring Cloud Gateway`。
 
 > NOTICE(🫡): v0.3版本将以前的代码完全重构，有一些v0.2的功能暂时还未完全实现，目前也在积极开发中。
@@ -29,6 +32,18 @@
 | TLS    | [rustls](https://github.com/rustls/rustls)                                                |
 | HTTP协议 | [hyper](https://github.com/hyperium/hyper)                                                |
 | 中间件    | [tower](https://crates.io/crates/tower) [tower-http](https://crates.io/crates/tower-http) |
+
+## 运行
+
+```shell
+# 使用当前目录的satex.yaml文件
+cargo run 
+```
+
+```shell
+# 指定配置文件路径
+cargo run -- -c ./satex.yaml
+```
 
 ## 文档
 

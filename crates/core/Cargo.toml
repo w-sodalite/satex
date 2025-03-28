@@ -23,3 +23,10 @@ serde_yaml = { workspace = true }
 sync_wrapper = { workspace = true }
 tokio = { workspace = true, features = ["rt"] }
 tower = { workspace = true, features = ["util"] }
+
+[dev-dependencies]
+criterion = { workspace = true }
+
+[[bench]]
+name = "canonicalize"
+harness = false
