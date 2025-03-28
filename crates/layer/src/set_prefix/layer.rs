@@ -1,4 +1,5 @@
 use crate::set_prefix::SetPrefix;
+use satex_core::util::canonicalize;
 use std::sync::Arc;
 use tower::Layer;
 
@@ -8,9 +9,9 @@ pub struct SetPrefixLayer {
 }
 
 impl SetPrefixLayer {
-    pub fn new(prefix: String) -> Self {
+    pub fn new(prefix: impl AsRef<str>) -> Self {
         Self {
-            prefix: Arc::from(prefix),
+            prefix: Arc::from(canonicalize(prefix.as_ref())),
         }
     }
 }
