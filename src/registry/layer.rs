@@ -6,7 +6,9 @@ use satex_core::BoxError;
 use satex_layer::concurrency_limit::MakeConcurrencyLimitRouteLayer;
 use satex_layer::cors::MakeCorsRouteLayer;
 use satex_layer::make::{ArcMakeRouteLayer, MakeRouteLayer};
-use satex_layer::remove_header::MakeRemoveHeaderRouteLayer;
+use satex_layer::remove_header::{
+    MakeRemoveRequestHeaderRouteLayer, MakeRemoveResponseHeaderRouteLayer,
+};
 use satex_layer::set_header::{MakeSetRequestHeaderRouteLayer, MakeSetResponseHeaderRouteLayer};
 use satex_layer::set_method::MakeSetMethodRouteLayer;
 use satex_layer::set_prefix::MakeSetPrefixRouteLayer;
@@ -34,7 +36,8 @@ impl MakeRouteLayerRegistry {
             MakeSetMethodRouteLayer,
             MakeSetRequestHeaderRouteLayer,
             MakeSetResponseHeaderRouteLayer,
-            MakeRemoveHeaderRouteLayer,
+            MakeRemoveRequestHeaderRouteLayer,
+            MakeRemoveResponseHeaderRouteLayer,
             MakeStripPrefixRouteLayer,
             MakeTraceRouteLayer,
             MakeTimeoutRouteLayer,
