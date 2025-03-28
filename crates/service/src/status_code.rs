@@ -12,7 +12,7 @@ use tower::Service;
 
 #[make(kind = StatusCode)]
 pub struct MakeStatusCodeRouteService {
-    status_code: u16,
+    status: u16,
 }
 
 impl MakeRouteService for MakeStatusCodeRouteService {
@@ -20,7 +20,7 @@ impl MakeRouteService for MakeStatusCodeRouteService {
 
     fn make(&self, args: Args) -> Result<Self::Service, Error> {
         Config::with_args(args)
-            .and_then(|config| StatusCode::from_u16(config.status_code).map_err(Error::new))
+            .and_then(|config| StatusCode::from_u16(config.status).map_err(Error::new))
             .map(StatusCodeRouteService)
     }
 }
