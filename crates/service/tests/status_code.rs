@@ -41,7 +41,7 @@ async fn make_with_shortcut() {
 
 #[tokio::test]
 async fn make_with_full() {
-    let value = serde_yaml::from_str::<Value>(r#"status-code: 404"#).unwrap();
+    let value = serde_yaml::from_str::<Value>(r#"status: 404"#).unwrap();
     let args = Args::full(&value);
     let service = MakeStatusCodeRouteService.make(args).unwrap();
     let status_code = call(service).await;
