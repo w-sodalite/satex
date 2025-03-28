@@ -3,6 +3,7 @@ use crate::proxy::client::{Client, ClientConfig};
 use crate::proxy::service::ProxyRouteService;
 use http::Uri;
 use satex_core::component::{Args, Configurable};
+use satex_core::util::remove_end_sep;
 use satex_core::Error;
 use satex_macro::make;
 use std::str::FromStr;
@@ -19,7 +20,7 @@ impl MakeRouteService for MakeProxyRouteService {
 
     fn make(&self, args: Args) -> Result<Self::Service, Error> {
         Config::with_args(args).and_then(|config| {
-            Uri::from_str(&config.uri)
+            Uri::from_str(remove_end_sep(&config.uri))
                 .map_err(Error::new)
                 .map(|uri| ProxyRouteService::new(uri, Client::from(config.client)))
         })

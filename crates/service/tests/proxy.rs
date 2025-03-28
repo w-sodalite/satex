@@ -60,7 +60,7 @@ async fn make_with_shortcut() {
         sleep(Duration::from_secs(1)).await;
 
         let service = MakeProxyRouteService
-            .make(Args::Shortcut(Some("http://127.0.0.1:34567")))
+            .make(Args::Shortcut(Some("http://127.0.0.1:34567/")))
             .unwrap();
         call(service).await
     });
