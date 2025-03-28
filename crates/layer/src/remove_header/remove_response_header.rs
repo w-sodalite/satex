@@ -80,7 +80,7 @@ where
 
 pin_project! {
     #[project = ResponseFutureProj]
-    #[project_replace = MapProjReplace]
+    #[project_replace = ResponseFutureProjReplace]
     pub enum ResponseFuture<F> {
         Incomplete {
             name: Arc<HeaderName>,
@@ -108,11 +108,11 @@ where
         match self.as_mut().project() {
             ResponseFutureProj::Incomplete { future, .. } => match ready!(future.poll(cx)) {
                 Ok(mut res) => match self.project_replace(ResponseFuture::Complete) {
-                    MapProjReplace::Incomplete { name, .. } => {
+                    ResponseFutureProjReplace::Incomplete { name, .. } => {
                         res.remove(name.as_ref());
                         Poll::Ready(Ok(res))
                     }
-                    MapProjReplace::Complete => unreachable!(),
+                    ResponseFutureProjReplace::Complete => unreachable!(),
                 },
                 Err(e) => Poll::Ready(Err(e)),
             },
