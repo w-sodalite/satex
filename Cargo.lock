@@ -1392,6 +1392,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "satex-discovery"
+version = "0.3.0"
+dependencies = [
+    "async-trait",
+    "futures",
+    "http",
+    "satex-core",
+    "tokio",
+]
+
+[[package]]
 name = "satex-layer"
 version = "0.3.0"
 dependencies = [
