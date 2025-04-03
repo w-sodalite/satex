@@ -2,6 +2,17 @@ server:
   host: 0.0.0.0
   port: 3000
 
+upstreams:
+  - name: app-1
+    kind: Static
+    args:
+      policy: Random
+      addrs:
+        - 127.0.0.1:8080
+        - 127.0.0.1:8081
+  - name: app-2
+    kind: Nacos
+
 router:
   global:
     layers:
@@ -13,3 +24,7 @@ router:
       layers:
         - StripPrefix=1
       service: ServeDir=./
+
+    - id: proxy
+      service:
+        kind: Proxy=https://app-1

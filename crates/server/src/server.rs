@@ -7,6 +7,7 @@ use http::{Request, Response};
 use hyper::body::Incoming;
 use hyper::service::Service as HyperService;
 use rustls_pki_types::{CertificateDer, PrivateKeyDer};
+use satex_core::background::BackgroundTask;
 use satex_core::{BoxError, Error};
 use std::fs::File;
 use std::io::BufReader;

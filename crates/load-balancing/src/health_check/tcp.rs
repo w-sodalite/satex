@@ -1,47 +1,41 @@
-use crate::backend::Backend;
+use crate::health_check::{HealthCheck, HealthStatusObserve};
+use crate::Backend;
 use async_trait::async_trait;
 use satex_core::Error;
-use std::sync::Arc;
 use std::time::Duration;
 use tokio::net::TcpStream;
 use tokio::time::timeout;
 
-pub type BoxHealthStatusObserve = Box<dyn HealthStatusObserve + Send + Sync>;
-
-#[async_trait]
-pub trait HealthStatusObserve {
-    async fn observe(&self, backend: &Backend, success: bool);
-}
-
-pub type ArcHealthCheck = Arc<dyn HealthCheck + Send + Sync>;
-
-#[async_trait]
-pub trait HealthCheck {
-    async fn check(&self, backend: &Backend) -> Result<(), Error>;
-    async fn status_change(&self, backend: &Backend, success: bool);
-    fn threshold(&self, success: bool) -> usize;
-}
-
-pub struct AlwaysActiveHealthCheck;
-
-#[async_trait]
-impl HealthCheck for AlwaysActiveHealthCheck {
-    async fn check(&self, _backend: &Backend) -> Result<(), Error> {
-        Ok(())
-    }
-
-    async fn status_change(&self, _backend: &Backend, _success: bool) {}
-
-    fn threshold(&self, _success: bool) -> usize {
-        1
-    }
-}
-
 pub struct TcpHealthCheck {
-    pub connect_timeout: Duration,
-    pub consecutive_success: usize,
-    pub consecutive_failure: usize,
-    pub status_observe: Option<BoxHealthStatusObserve>,
+    connect_timeout: Duration,
+    consecutive_success: usize,
+    consecutive_failure: usize,
+    status_observe: Option<Box<dyn HealthStatusObserve + Send + Sync>>,
+}
+
+impl TcpHealthCheck {
+    pub fn with_connect_timeout(mut self, connect_timeout: Duration) -> Self {
+        self.connect_timeout = connect_timeout;
+        self
+    }
+
+    pub fn with_consecutive_success(mut self, consecutive_success: usize) -> Self {
+        self.consecutive_success = consecutive_success;
+        self
+    }
+
+    pub fn with_consecutive_failure(mut self, consecutive_failure: usize) -> Self {
+        self.consecutive_failure = consecutive_failure;
+        self
+    }
+
+    pub fn with_status_observe(
+        mut self,
+        status_observe: impl HealthStatusObserve + Send + Sync + 'static,
+    ) -> Self {
+        self.status_observe = Some(Box::new(status_observe));
+        self
+    }
 }
 
 impl Default for TcpHealthCheck {

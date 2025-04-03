@@ -9,7 +9,9 @@ repository.workspace = true
 [dependencies]
 satex-core = { workspace = true }
 satex-macro = { workspace = true }
+satex-load-balancing = { workspace = true }
 
+url = { workspace = true }
 bytes = { workspace = true }
 futures = { workspace = true }
 http = { workspace = true }

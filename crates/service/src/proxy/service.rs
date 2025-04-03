@@ -2,11 +2,15 @@ use crate::proxy::client::Client;
 use futures::future::LocalBoxFuture;
 use http::{HeaderName, Request, Response, Uri};
 use satex_core::body::Body;
+use satex_core::digest::Digester;
 use satex_core::Error;
+use satex_load_balancing::LoadBalancer;
 use std::future::ready;
+use std::sync::Arc;
 use std::task::{Context, Poll};
 use tower::Service;
 use tracing::debug;
+use url::Url;
 
 const REMOVE_HEADERS: [HeaderName; 9] = [
     HeaderName::from_static("connection"),
@@ -20,19 +24,34 @@ const REMOVE_HEADERS: [HeaderName; 9] = [
     HeaderName::from_static("upgrade"),
 ];
 
-#[derive(Debug, Clone)]
-pub struct ProxyRouteService {
-    uri: Uri,
+#[derive(Clone)]
+pub struct ProxyRouteService<D> {
+    url: Url,
     client: Client,
+    digester: Arc<D>,
+    load_balancer: Option<Arc<LoadBalancer>>,
 }
 
-impl ProxyRouteService {
-    pub fn new(uri: Uri, client: Client) -> Self {
-        Self { uri, client }
+impl<D> ProxyRouteService<D> {
+    pub fn new(
+        url: Url,
+        client: Client,
+        digester: D,
+        load_balancer: Option<Arc<LoadBalancer>>,
+    ) -> Self {
+        Self {
+            url,
+            client,
+            digester: Arc::new(digester),
+            load_balancer,
+        }
     }
 }
 
-impl Service<Request<Body>> for ProxyRouteService {
+impl<D> Service<Request<Body>> for ProxyRouteService<D>
+where
+    D: Digester<Request<Body>>,
+{
     type Response = Response<Body>;
     type Error = Error;
     type Future = LocalBoxFuture<'static, Result<Self::Response, Self::Error>>;
@@ -42,23 +61,37 @@ impl Service<Request<Body>> for ProxyRouteService {
     }
 
     fn call(&mut self, mut request: Request<Body>) -> Self::Future {
-        // 替换请求uri中的host和port,只保留path和query
-        let uri = request.uri();
-        match uri.path_and_query() {
-            Some(path_and_query) => {
-                let mut parts = self.uri.clone().into_parts();
-                parts.path_and_query = Some(path_and_query.clone());
-                match Uri::from_parts(parts) {
-                    Ok(uri) => {
-                        *request.uri_mut() = uri;
-                    }
-                    Err(e) => {
-                        return Box::pin(ready(Err(Error::new(e))));
+        let host = match &self.load_balancer {
+            Some(load_balancer) => {
+                let key = self.digester.digest(&request);
+                match load_balancer.select(&key) {
+                    Some(backend) => backend.addr.to_string(),
+                    None => {
+                        return Box::pin(ready(Err(Error::new("no backend found!"))));
                     }
                 }
             }
-            None => {
-                *request.uri_mut() = self.uri.clone();
+            None => match self.url.host_str() {
+                Some(host) => host.to_string(),
+                None => {
+                    return Box::pin(ready(Err(Error::new(format!(
+                        "not found host for url: {}",
+                        self.url
+                    )))));
+                }
+            },
+        };
+
+        // 重新构造请求的uri
+        let uri = request.uri();
+        let path = uri.path();
+        let query = uri.query();
+        match reconstruct(self.url.clone(), &host, path, query) {
+            Ok(uri) => {
+                *request.uri_mut() = uri;
+            }
+            Err(e) => {
+                return Box::pin(ready(Err(Error::new(e))));
             }
         }
 
@@ -79,4 +112,12 @@ impl Service<Request<Body>> for ProxyRouteService {
                 .map(|response| response.map(Body::new))
         })
     }
+}
+
+fn reconstruct(mut url: Url, host: &str, path: &str, query: Option<&str>) -> Result<Uri, Error> {
+    url.set_host(Some(host))
+        .map_err(|_| Error::new("set host error!"))?;
+    url.set_path(path);
+    url.set_query(query);
+    Uri::from_maybe_shared(String::from(url)).map_err(|_| Error::new("reconstruct url error!"))
 }
