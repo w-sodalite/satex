@@ -1,6 +1,6 @@
+use crate::Backend;
 use crate::selector::algorithm::Algorithm;
 use crate::selector::{BackendIter, Selector};
-use crate::Backend;
 use arc_swap::ArcSwap;
 use fnv::FnvHasher;
 use std::collections::BTreeSet;
@@ -64,7 +64,7 @@ pub struct WeightedIterator<H> {
 
 impl<H> WeightedIterator<H> {
     /// Constructs a new [WeightedIterator].
-    pub fn new(index: u64, inner: Arc<Inner<H>>) -> Self {
+    fn new(index: u64, inner: Arc<Inner<H>>) -> Self {
         Self {
             index,
             inner,

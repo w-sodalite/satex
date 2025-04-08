@@ -1,5 +1,4 @@
 pub mod health;
-pub mod http;
 pub mod tcp;
 
 use crate::Backend;

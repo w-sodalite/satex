@@ -1,4 +1,4 @@
-use http::{Method, Request, StatusCode};
+use http::{Extensions, Method, Request, StatusCode};
 use satex_core::body::Body;
 use satex_core::component::Args;
 use satex_service::make::MakeRouteService;
@@ -34,7 +34,9 @@ async fn call_404() {
 #[tokio::test]
 async fn make_with_shortcut() {
     let args = Args::shortcut("200");
-    let service = MakeStatusCodeRouteService.make(args).unwrap();
+    let service = MakeStatusCodeRouteService
+        .make(args, &Extensions::default())
+        .unwrap();
     let status_code = call(service).await;
     assert_eq!(status_code, StatusCode::OK);
 }
@@ -43,7 +45,9 @@ async fn make_with_shortcut() {
 async fn make_with_full() {
     let value = serde_yaml::from_str::<Value>(r#"status: 404"#).unwrap();
     let args = Args::full(&value);
-    let service = MakeStatusCodeRouteService.make(args).unwrap();
+    let service = MakeStatusCodeRouteService
+        .make(args, &Extensions::default())
+        .unwrap();
     let status_code = call(service).await;
     assert_eq!(status_code, StatusCode::NOT_FOUND);
 }

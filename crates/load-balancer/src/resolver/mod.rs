@@ -1,5 +1,8 @@
-pub mod fixed;
-pub mod make;
+mod fixed;
+mod make;
+
+pub use fixed::*;
+pub use make::*;
 
 use crate::LoadBalancer;
 use std::sync::Arc;
@@ -26,10 +29,11 @@ impl LoadBalancerResolver for ArcLoadBalancerResolver {
     }
 }
 
+#[derive(Default)]
 pub struct CompositeLoadBalancerResolver(Vec<ArcLoadBalancerResolver>);
 
 impl CompositeLoadBalancerResolver {
-    pub fn register<R>(mut self, resolver: R) -> Self
+    pub fn push<R>(mut self, resolver: R) -> Self
     where
         R: LoadBalancerResolver + Send + Sync + 'static,
     {

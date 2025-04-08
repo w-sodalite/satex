@@ -1,8 +1,8 @@
 use satex_core::background::background_task;
-use satex_load_balancing::discovery::FixedDiscovery;
-use satex_load_balancing::health_check::tcp::TcpHealthCheck;
-use satex_load_balancing::selector::Random;
-use satex_load_balancing::{Backend, Backends, LoadBalancer};
+use satex_load_balancer::discovery::FixedDiscovery;
+use satex_load_balancer::health_check::tcp::TcpHealthCheck;
+use satex_load_balancer::selector::Random;
+use satex_load_balancer::{Backend, Backends, LoadBalancer};
 use std::collections::BTreeSet;
 use std::str::FromStr;
 use std::sync::Arc;

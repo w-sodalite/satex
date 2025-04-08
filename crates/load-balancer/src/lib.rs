@@ -28,6 +28,7 @@ use std::sync::Arc;
 use tokio::spawn;
 use tracing::{info, warn};
 
+/// 后端服务
 #[derive(Derivative)]
 #[derivative(Clone, Hash, PartialEq, PartialOrd, Eq, Ord, Debug)]
 pub struct Backend {
@@ -52,10 +53,12 @@ pub struct Backend {
 }
 
 impl Backend {
+    /// 创建后端服务实例
     pub fn new(addr: impl Into<SocketAddr>) -> Self {
         Self::new_with_weight(addr.into(), 1)
     }
 
+    /// 创建后端服务实例
     pub fn new_with_weight(addr: impl Into<SocketAddr>, weight: usize) -> Self {
         Self {
             addr: addr.into(),
@@ -64,12 +67,14 @@ impl Backend {
         }
     }
 
+    /// 计算后端服务的哈希值
     pub(crate) fn key(&self) -> u64 {
         let mut hasher = DefaultHasher::new();
         self.hash(&mut hasher);
         hasher.finish()
     }
 }
+
 impl FromStr for Backend {
     type Err = AddrParseError;
 
@@ -86,6 +91,7 @@ impl<'a> TryFrom<(&'a str, usize)> for Backend {
         Ok(Backend::new_with_weight(addr, weight))
     }
 }
+
 
 pub struct Backends {
     discovery: Box<dyn Discovery + Send + Sync>,
@@ -114,9 +120,9 @@ impl Backends {
         }
     }
 
-    /// Updates backends when the new is different from the current set,
-    /// the callback will be invoked when the new set of backend is different
-    /// from the current one so that the caller can update the selector accordingly.
+    /// 当新的后端集合与当前集合不同时更新后端，
+    /// 当新的后端集合与当前集合不同时，回调函数将被调用，
+    /// 以便调用者可以相应地更新选择器。
     fn do_update<F>(
         &self,
         new_backends: BTreeSet<Backend>,
@@ -140,10 +146,9 @@ impl Backends {
                 new_health.insert(key, health);
             }
 
-            // TODO: put this all under 1 ArcSwap so the update is atomic
-            // It's important the `callback()` executes first since computing selector backends might
-            // be expensive. For example, if a caller checks `backends` to see if any are available
-            // they may encounter false positives if the selector isn't ready yet.
+            // 确保 `callback()` 首先执行是很重要的，因为计算选择器后端可能会很耗时。
+            // 例如，如果调用者检查 `backends` 以查看是否有可用的后端，
+            // 如果选择器尚未准备好，他们可能会遇到误报。
             let new_backends = Arc::new(new_backends);
             callback(new_backends.clone());
             self.backends.store(new_backends);
@@ -160,12 +165,13 @@ impl Backends {
         }
     }
 
-    /// Whether a certain [Backend] is ready to serve traffic.
+    /// 检查指定的后端服务是否可以接收流量
     ///
-    /// This function returns true when the backend is both healthy and enabled.
-    /// This function returns true when the health check is unset but the backend is enabled.
-    /// When the health check is set, this function will return false for the `backend` it
-    /// doesn't know.
+    /// 在以下情况下返回 true:
+    /// - 后端服务既健康又启用时
+    /// - 未配置健康检查但后端服务已启用时
+    ///
+    /// 当配置了健康检查时，对于任何未知的后端服务都将返回 false
     pub fn ready(&self, backend: &Backend) -> bool {
         self.health
             .load()
@@ -175,12 +181,11 @@ impl Backends {
             .map_or(self.health_check.is_none(), |h| h.ready())
     }
 
-    /// Manually set if a [Backend] is ready to serve traffic.
+    /// 手动设置一个 [Backend] 是否可以接收流量。
     ///
-    /// This method does not override the health of the backend. It is meant to be used
-    /// to stop a backend from accepting traffic when it is still healthy.
+    /// 此方法不会覆盖后端的健康状态。它的目的是在后端仍然健康时，停止其接受流量。
     ///
-    /// This method is noop when the given backend doesn't exist in the service discovery.
+    /// 如果给定的后端不存在于服务发现中，此方法将无操作。
     pub fn set_enable(&self, backend: &Backend, enabled: bool) {
         // this should always be Some(_) because health is always populated during update
         if let Some(health) = self.health.load().get(&backend.key()) {

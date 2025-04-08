@@ -2,7 +2,7 @@
 resolver = "2"
 members = [
     "crates/core",
-    "crates/load-balancing",
+    "crates/load-balancer",
     "crates/layer",
     "crates/macro",
     "crates/matcher",
@@ -33,7 +33,7 @@ satex-macro = { path = "crates/macro" }
 satex-matcher = { path = "crates/matcher" }
 satex-server = { path = "crates/server" }
 satex-service = { path = "crates/service" }
-satex-load-balancing = { path = "crates/load-balancing" }
+satex-load-balancer = { path = "crates/load-balancer" }
 
 #
 # third-party dependencies
@@ -101,6 +101,7 @@ satex-layer = { workspace = true }
 satex-matcher = { workspace = true }
 satex-server = { workspace = true }
 satex-service = { workspace = true }
+satex-load-balancer = { workspace = true }
 
 async-stream = { workspace = true }
 bytes = { workspace = true }

@@ -1,10 +1,10 @@
 use crate::make::MakeRouteService;
-use http::{Request, Response};
+use http::{Extensions, Request, Response};
+use satex_core::Error;
 use satex_core::body::Body;
 use satex_core::component::{Args, Configurable};
-use satex_core::Error;
 use satex_macro::make;
-use std::future::{ready, Ready};
+use std::future::{Ready, ready};
 use std::task::{Context, Poll};
 use tower::Service;
 
@@ -17,7 +17,7 @@ pub struct MakeEchoRouteService {
 impl MakeRouteService for MakeEchoRouteService {
     type Service = EchoRouteService;
 
-    fn make(&self, args: Args) -> Result<Self::Service, Error> {
+    fn make(&self, args: Args, _: &Extensions) -> Result<Self::Service, Error> {
         Config::with_args(args).map(|config| EchoRouteService::new(config.text))
     }
 }

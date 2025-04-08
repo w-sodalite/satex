@@ -1,11 +1,12 @@
 use crate::proxy::client::Client;
 use futures::future::LocalBoxFuture;
 use http::{HeaderName, Request, Response, Uri};
+use satex_core::Error;
 use satex_core::body::Body;
 use satex_core::digest::Digester;
-use satex_core::Error;
-use satex_load_balancing::LoadBalancer;
+use satex_load_balancer::LoadBalancer;
 use std::future::ready;
+use std::net::SocketAddr;
 use std::sync::Arc;
 use std::task::{Context, Poll};
 use tower::Service;
@@ -61,32 +62,16 @@ where
     }
 
     fn call(&mut self, mut request: Request<Body>) -> Self::Future {
-        let host = match &self.load_balancer {
-            Some(load_balancer) => {
-                let key = self.digester.digest(&request);
-                match load_balancer.select(&key) {
-                    Some(backend) => backend.addr.to_string(),
-                    None => {
-                        return Box::pin(ready(Err(Error::new("no backend found!"))));
-                    }
-                }
-            }
-            None => match self.url.host_str() {
-                Some(host) => host.to_string(),
-                None => {
-                    return Box::pin(ready(Err(Error::new(format!(
-                        "not found host for url: {}",
-                        self.url
-                    )))));
-                }
-            },
-        };
+        let addr = self.load_balancer.as_deref().and_then(|load_balancer| {
+            let key = self.digester.digest(&request);
+            load_balancer.select(&key).map(|backend| backend.addr)
+        });
 
         // 重新构造请求的uri
         let uri = request.uri();
         let path = uri.path();
         let query = uri.query();
-        match reconstruct(self.url.clone(), &host, path, query) {
+        match reconstruct(self.url.clone(), addr, path, query) {
             Ok(uri) => {
                 *request.uri_mut() = uri;
             }
@@ -101,7 +86,7 @@ where
             headers.remove(header);
         });
 
-        debug!("Proxy send request:\n{:#?}", request);
+        debug!("proxy send request:\n{:#?}", request);
 
         // 发送请求到后端
         let future = self.client.request(request);
@@ -114,9 +99,18 @@ where
     }
 }
 
-fn reconstruct(mut url: Url, host: &str, path: &str, query: Option<&str>) -> Result<Uri, Error> {
-    url.set_host(Some(host))
-        .map_err(|_| Error::new("set host error!"))?;
+fn reconstruct(
+    mut url: Url,
+    addr: Option<SocketAddr>,
+    path: &str,
+    query: Option<&str>,
+) -> Result<Uri, Error> {
+    if let Some(addr) = addr {
+        url.set_ip_host(addr.ip())
+            .map_err(|_| Error::new("set ip host error!"))?;
+        url.set_port(Some(addr.port()))
+            .map_err(|_| Error::new("set port error!"))?;
+    }
     url.set_path(path);
     url.set_query(query);
     Uri::from_maybe_shared(String::from(url)).map_err(|_| Error::new("reconstruct url error!"))
