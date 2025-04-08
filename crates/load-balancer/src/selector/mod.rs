@@ -5,7 +5,6 @@ mod weighted;
 use crate::selector::weighted::Weighted;
 use crate::Backend;
 use std::collections::BTreeSet;
-use std::sync::Arc;
 
 /// Random selection on weighted backends
 pub type Random = Weighted<algorithm::Random>;
@@ -60,19 +59,19 @@ where
     }
 }
 
-pub struct ArcSelector(Arc<dyn Selector<Iter=BoxBackendIter> + Send + Sync>);
+pub struct BoxSelector(Box<dyn Selector<Iter = BoxBackendIter> + Send + Sync>);
 
-impl ArcSelector {
+impl BoxSelector {
     pub fn new<S>(selector: S) -> Self
     where
         S: Selector + Send + Sync + 'static,
         S::Iter: Send + Sync + 'static,
     {
-        Self(Arc::new(Map::new(selector)))
+        Self(Box::new(Map::new(selector)))
     }
 }
 
-impl Selector for ArcSelector {
+impl Selector for BoxSelector {
     type Iter = BoxBackendIter;
 
     fn update(&self, backends: &BTreeSet<Backend>) {

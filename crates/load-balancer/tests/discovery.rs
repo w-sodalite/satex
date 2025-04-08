@@ -1,5 +1,5 @@
 use satex_core::background::background_task;
-use satex_load_balancing::discovery::Static;
+use satex_load_balancing::discovery::FixedDiscovery;
 use satex_load_balancing::health_check::tcp::TcpHealthCheck;
 use satex_load_balancing::selector::Random;
 use satex_load_balancing::{Backend, Backends, LoadBalancer};
@@ -15,7 +15,7 @@ async fn call() {
     let mut backends = BTreeSet::new();
     backends.insert(Backend::from_str("127.0.0.1:3000").unwrap());
     backends.insert(Backend::from_str("127.0.0.1:3001").unwrap());
-    let discovery = Static::new(backends);
+    let discovery = FixedDiscovery::new(backends);
     let backends = Backends::new(discovery);
     let policy = Random::new(&backends.items());
     let load_balancer = Arc::new(

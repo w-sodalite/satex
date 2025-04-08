@@ -1,4 +1,4 @@
-use crate::LoadBalancer;
+use crate::load_balancer::LoadBalancer;
 use async_trait::async_trait;
 use satex_core::background::BackgroundTask;
 use std::time::{Duration, Instant};

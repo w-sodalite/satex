@@ -10,11 +10,11 @@ pub trait Discovery {
     async fn discover(&self) -> Result<(BTreeSet<Backend>, HashMap<u64, bool>), Error>;
 }
 
-pub struct Static {
+pub struct FixedDiscovery {
     backends: ArcSwap<BTreeSet<Backend>>,
 }
 
-impl Static {
+impl FixedDiscovery {
     pub fn new(backends: BTreeSet<Backend>) -> Self {
         Self {
             backends: ArcSwap::new(Arc::new(backends)),
@@ -23,7 +23,7 @@ impl Static {
 }
 
 #[async_trait]
-impl Discovery for Static {
+impl Discovery for FixedDiscovery {
     async fn discover(&self) -> Result<(BTreeSet<Backend>, HashMap<u64, bool>), Error> {
         Ok((BTreeSet::clone(&self.backends.load()), HashMap::new()))
     }
