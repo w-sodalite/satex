@@ -8,9 +8,6 @@ members = [
     "crates/matcher",
     "crates/server",
     "crates/service",
-    #
-    # Internal
-    "examples"
 ]
 
 [workspace.package]

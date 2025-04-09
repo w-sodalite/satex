@@ -532,15 +532,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "examples"
-version = "0.0.0"
-dependencies = [
- "satex",
- "satex-core",
- "tokio",
-]
-
-[[package]]
 name = "fnv"
 version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
