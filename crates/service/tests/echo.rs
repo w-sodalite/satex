@@ -1,5 +1,5 @@
 use bytes::Bytes;
-use http::Request;
+use http::{Extensions, Request};
 use http_body_util::BodyExt;
 use satex_core::body::Body;
 use satex_core::component::Args;
@@ -32,7 +32,9 @@ async fn call_respond_body() {
 #[tokio::test]
 async fn make_with_shortcut() {
     let args = Args::shortcut("Hello World!");
-    let service = MakeEchoRouteService.make(args).unwrap();
+    let service = MakeEchoRouteService
+        .make(args, &Extensions::default())
+        .unwrap();
     let bytes = call(service).await;
     assert_eq!(&bytes[..], b"Hello World!")
 }
@@ -41,7 +43,9 @@ async fn make_with_shortcut() {
 async fn make_with_full() {
     let value = serde_yaml::from_str::<Value>(r#"text: "Hello World!""#).unwrap();
     let args = Args::full(&value);
-    let service = MakeEchoRouteService.make(args).unwrap();
+    let service = MakeEchoRouteService
+        .make(args, &Extensions::default())
+        .unwrap();
     let bytes = call(service).await;
     assert_eq!(&bytes[..], b"Hello World!")
 }

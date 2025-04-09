@@ -2,14 +2,12 @@
 resolver = "2"
 members = [
     "crates/core",
+    "crates/load-balancer",
     "crates/layer",
     "crates/macro",
     "crates/matcher",
     "crates/server",
     "crates/service",
-    #
-    # Internal
-    "examples"
 ]
 
 [workspace.package]
@@ -32,6 +30,7 @@ satex-macro = { path = "crates/macro" }
 satex-matcher = { path = "crates/matcher" }
 satex-server = { path = "crates/server" }
 satex-service = { path = "crates/service" }
+satex-load-balancer = { path = "crates/load-balancer" }
 
 #
 # third-party dependencies
@@ -39,12 +38,15 @@ satex-service = { path = "crates/service" }
 actix-server = { version = "2.5" }
 actix-service = { version = "2.0" }
 actix-tls = { version = "3.4" }
+arc-swap = { version = "1.7" }
 async-stream = { version = "0.3" }
 async-trait = { version = "0.1" }
 bytes = { version = "1.10" }
 chrono = { version = "0.4" }
 cookie = { version = "0.18" }
 criterion = { version = "0.5" }
+derivative = { version = "2.2" }
+fnv = { version = "1.0" }
 futures = { version = "0.3" }
 futures-util = { version = "0.3" }
 http = { version = "1.0" }
@@ -57,6 +59,7 @@ matchit = { version = "0.8" }
 percent-encoding = { version = "2.3" }
 pin-project-lite = { version = "0.2" }
 qstring = { version = "0.7" }
+rand = { version = "0.9" }
 regex = { version = "1.11" }
 rustls = { version = "0.23" }
 rustls-pemfile = { version = "2.2" }
@@ -70,6 +73,8 @@ tower = { version = "0.5" }
 tower-http = { version = "0.5" }
 tracing = { version = "0.1" }
 tracing-subscriber = { version = "0.3" }
+pingora-ketama = { version = "0.4.0" }
+url = { version = "*" }
 
 [workspace.metadata.release]
 registry = "crates-io"
@@ -93,6 +98,7 @@ satex-layer = { workspace = true }
 satex-matcher = { workspace = true }
 satex-server = { workspace = true }
 satex-service = { workspace = true }
+satex-load-balancer = { workspace = true }
 
 async-stream = { workspace = true }
 bytes = { workspace = true }

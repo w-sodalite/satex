@@ -7,6 +7,7 @@ authors.workspace = true
 repository.workspace = true
 
 [dependencies]
+async-trait = { workspace = true }
 bytes = { workspace = true }
 futures = { workspace = true }
 futures-util = { workspace = true }
@@ -23,6 +24,7 @@ serde_yaml = { workspace = true }
 sync_wrapper = { workspace = true }
 tokio = { workspace = true, features = ["rt"] }
 tower = { workspace = true, features = ["util"] }
+tracing = { workspace = true }
 
 [dev-dependencies]
 criterion = { workspace = true }

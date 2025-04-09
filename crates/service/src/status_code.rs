@@ -1,12 +1,12 @@
 use crate::make::MakeRouteService;
-use http::{Response, StatusCode};
+use http::{Extensions, Response, StatusCode};
+use satex_core::Error;
 use satex_core::body::Body;
 use satex_core::component::{Args, Configurable};
 use satex_core::util::ResponseExt;
-use satex_core::Error;
 use satex_macro::make;
 use std::convert::Infallible;
-use std::future::{ready, Ready};
+use std::future::{Ready, ready};
 use std::task::{Context, Poll};
 use tower::Service;
 
@@ -18,7 +18,7 @@ pub struct MakeStatusCodeRouteService {
 impl MakeRouteService for MakeStatusCodeRouteService {
     type Service = StatusCodeRouteService;
 
-    fn make(&self, args: Args) -> Result<Self::Service, Error> {
+    fn make(&self, args: Args, _: &Extensions) -> Result<Self::Service, Error> {
         Config::with_args(args)
             .and_then(|config| StatusCode::from_u16(config.status).map_err(Error::new))
             .map(StatusCodeRouteService)

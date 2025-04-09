@@ -1,7 +1,7 @@
+use satex::App;
 use satex::config::Config;
 use satex::registry::Registry;
 use satex::watch::ConfigFileWatchEvents;
-use satex::App;
 use satex_core::Error;
 use std::collections::VecDeque;
 use std::env::current_dir;

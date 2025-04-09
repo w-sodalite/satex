@@ -1,0 +1,26 @@
+[package]
+name = "satex-load-balancer"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+satex-core = { workspace = true }
+satex-macro = { workspace = true }
+
+arc-swap = { workspace = true }
+async-trait = { workspace = true }
+derivative = { workspace = true }
+fnv = { workspace = true }
+futures = { workspace = true }
+http = { workspace = true }
+rand = { workspace = true }
+tokio = { workspace = true, features = ["net", "time"] }
+tracing = { workspace = true }
+pingora-ketama = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros", "rt"] }

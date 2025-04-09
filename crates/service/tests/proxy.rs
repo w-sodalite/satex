@@ -1,10 +1,11 @@
-use http::{Method, Request, Response, StatusCode};
+use http::{Extensions, Method, Request, Response, StatusCode};
 use http_body_util::BodyExt;
 use hyper::service::service_fn;
 use hyper_util::rt::TokioIo;
 use hyper_util::server::conn::auto::Builder;
 use satex_core::body::Body;
 use satex_core::component::Args;
+use satex_core::digest::DefaultDigester;
 use satex_core::executor::SpawnLocalExecutor;
 use satex_service::make::MakeRouteService;
 use satex_service::proxy::{MakeProxyRouteService, ProxyRouteService};
@@ -13,7 +14,7 @@ use std::convert::Infallible;
 use std::net::Ipv4Addr;
 use std::time::Duration;
 use tokio::net::TcpListener;
-use tokio::task::{spawn_local, JoinHandle, LocalSet};
+use tokio::task::{JoinHandle, LocalSet, spawn_local};
 use tokio::time::sleep;
 use tower::Service;
 
@@ -37,7 +38,7 @@ fn start_server() -> JoinHandle<()> {
     })
 }
 
-async fn call(mut service: ProxyRouteService) {
+async fn call(mut service: ProxyRouteService<DefaultDigester>) {
     let request = Request::builder()
         .uri("/")
         .method(Method::GET)
@@ -60,7 +61,7 @@ async fn make_with_shortcut() {
         sleep(Duration::from_secs(1)).await;
 
         let service = MakeProxyRouteService
-            .make(Args::Shortcut(Some("http://127.0.0.1:34567/")))
+            .make(Args::Shortcut(Some("http://127.0.0.1:34567/")), &Extensions::default())
             .unwrap();
         call(service).await
     });
@@ -75,7 +76,7 @@ async fn make_with_full() {
 
         let value = serde_yaml::from_str::<Value>(r#"uri: http://127.0.0.1:34567"#).unwrap();
         let args = Args::Full(&value);
-        let service = MakeProxyRouteService.make(args).unwrap();
+        let service = MakeProxyRouteService.make(args, &Extensions::default()).unwrap();
         call(service).await
     });
 }

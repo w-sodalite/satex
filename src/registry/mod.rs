@@ -1,19 +1,22 @@
 pub mod layer;
 pub mod matcher;
+pub mod resolver;
 pub mod service;
 
 use crate::registry::layer::MakeRouteLayerRegistry;
 use crate::registry::matcher::MakeRouteMatcherRegistry;
+use crate::registry::resolver::MakeLoadBalancerResolverRegistry;
 use crate::registry::service::MakeRouteServiceRegistry;
 use bytes::Bytes;
 use http::{Request, Response};
-use satex_core::body::Body;
 use satex_core::BoxError;
+use satex_core::body::Body;
 use satex_layer::make::{ArcMakeRouteLayer, MakeRouteLayer};
-use satex_matcher::make::{ArcMakeRouteMatcher, MakeRouteMatcher};
+use satex_load_balancer::resolver::{ArcMakeLoadBalancerResolver, MakeLoadBalancerResolver};
 use satex_matcher::RouteMatcher;
-use satex_service::make::{ArcMakeRouteService, MakeRouteService};
+use satex_matcher::make::{ArcMakeRouteMatcher, MakeRouteMatcher};
 use satex_service::RouteService;
+use satex_service::make::{ArcMakeRouteService, MakeRouteService};
 use tower::{Layer, Service};
 
 #[derive(Clone)]
@@ -21,6 +24,7 @@ pub struct Registry {
     matchers: MakeRouteMatcherRegistry,
     layers: MakeRouteLayerRegistry,
     services: MakeRouteServiceRegistry,
+    resolvers: MakeLoadBalancerResolverRegistry,
 }
 
 impl Registry {
@@ -42,11 +46,17 @@ impl Registry {
         self
     }
 
+    pub fn without_default_resolver(&mut self) -> &mut Self {
+        self.resolvers = MakeLoadBalancerResolverRegistry::without_default();
+        self
+    }
+
     #[inline]
     pub fn without_additions(&mut self) -> &mut Self {
         self.without_default_matchers()
             .without_default_layers()
             .without_default_services()
+            .without_default_resolver()
     }
 
     #[inline]
@@ -62,15 +72,15 @@ impl Registry {
     #[inline]
     pub fn with_layer<M, L, S, E, ResBody>(&mut self, make: M) -> &mut Self
     where
-        M: MakeRouteLayer<Layer=L> + Send + Sync + 'static,
-        L: Layer<RouteService, Service=S> + Send + Sync + 'static,
-        S: Service<Request<Body>, Response=Response<ResBody>, Error=E>
-        + Clone
-        + Send
-        + Sync
-        + 'static,
+        M: MakeRouteLayer<Layer = L> + Send + Sync + 'static,
+        L: Layer<RouteService, Service = S> + Send + Sync + 'static,
+        S: Service<Request<Body>, Response = Response<ResBody>, Error = E>
+            + Clone
+            + Send
+            + Sync
+            + 'static,
         E: Into<BoxError>,
-        ResBody: http_body::Body<Data=Bytes> + Send + 'static,
+        ResBody: http_body::Body<Data = Bytes> + Send + 'static,
         ResBody::Error: Into<BoxError>,
     {
         self.layers.push(make);
@@ -80,17 +90,27 @@ impl Registry {
     #[inline]
     pub fn with_service<M, S, E, ResBody>(&mut self, make: M) -> &mut Self
     where
-        M: MakeRouteService<Service=S> + Send + Sync + 'static,
-        S: Service<Request<Body>, Response=Response<ResBody>, Error=E>
-        + Clone
-        + Send
-        + Sync
-        + 'static,
+        M: MakeRouteService<Service = S> + Send + Sync + 'static,
+        S: Service<Request<Body>, Response = Response<ResBody>, Error = E>
+            + Clone
+            + Send
+            + Sync
+            + 'static,
         E: Into<BoxError>,
-        ResBody: http_body::Body<Data=Bytes> + Send + 'static,
+        ResBody: http_body::Body<Data = Bytes> + Send + 'static,
         ResBody::Error: Into<BoxError>,
     {
         self.services.push(make);
+        self
+    }
+
+    #[inline]
+    pub fn with_resolver<M>(&mut self, make: M) -> &mut Self
+    where
+        M: MakeLoadBalancerResolver + Send + Sync + 'static,
+        M::Resolver: Send + Sync + 'static,
+    {
+        self.resolvers.push(make);
         self
     }
 
@@ -105,6 +125,10 @@ impl Registry {
     pub fn get_service(&self, kind: &str) -> Option<ArcMakeRouteService> {
         self.services.get(kind)
     }
+
+    pub fn get_resolver(&self, kind: &str) -> Option<ArcMakeLoadBalancerResolver> {
+        self.resolvers.get(kind)
+    }
 }
 
 impl Default for Registry {
@@ -113,6 +137,7 @@ impl Default for Registry {
             matchers: MakeRouteMatcherRegistry::with_default(),
             layers: MakeRouteLayerRegistry::with_default(),
             services: MakeRouteServiceRegistry::with_default(),
+            resolvers: MakeLoadBalancerResolverRegistry::with_default(),
         }
     }
 }
