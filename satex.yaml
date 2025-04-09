@@ -2,23 +2,14 @@ server:
   host: 0.0.0.0
   port: 3000
 
-discoveries:
-  - kind: Fixed
-    args:
-      upstreams:
-        - name: work-manage-server
-          addrs:
-            - 192.168.90.101:8888
-          health-check:
-            enabled: true
-
 router:
   global:
     layers:
       - Trace
   routes:
-    - id: work
+    - id: serve-dir
       matchers:
         - Method=GET
-        - Path=/work-manage-server/{*ignore}
-      service: Proxy=http://work-manage-server
+      layers:
+        - StripPrefix=1
+      service: ServeDir=./
