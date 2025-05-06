@@ -23,7 +23,7 @@ repository = "https://github.com/w-sodalite/satex.git"
 #
 # satex dependencies
 #
-satex = { path = "." }
+satex = { path = ".", version = "0.3.0" }
 satex-core = { path = "crates/core", version = "0.3.0" }
 satex-layer = { path = "crates/layer", version = "0.3.0" }
 satex-macro = { path = "crates/macro", version = "0.3.0" }
