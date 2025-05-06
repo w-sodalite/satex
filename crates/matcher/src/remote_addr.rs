@@ -1,3 +1,5 @@
+#![doc = include_str!("../docs/remote_addr.md")]
+
 use crate::make::MakeRouteMatcher;
 use crate::RouteMatcher;
 use async_trait::async_trait;

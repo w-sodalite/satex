@@ -5,7 +5,7 @@ use identify::Identify;
 use satex_core::body::Body;
 use satex_core::component::Args;
 use satex_layer::make::MakeRouteLayer;
-use satex_layer::set_status_code::MakeSetStatusCodeRouteLayer;
+use satex_layer::set_status::MakeSetStatusRouteLayer;
 use serde_yaml::Value;
 use tower::{Layer, Service};
 use tower_http::set_status::SetStatusLayer;
@@ -20,7 +20,7 @@ async fn _layer(layer: SetStatusLayer) {
 #[tokio::test]
 async fn make_with_shortcut() {
     let args = Args::shortcut("200");
-    let layer = MakeSetStatusCodeRouteLayer.make(args).unwrap();
+    let layer = MakeSetStatusRouteLayer.make(args).unwrap();
     _layer(layer).await;
 }
 
@@ -29,6 +29,6 @@ async fn make_with_full() {
     let yaml = "status: 200";
     let value = serde_yaml::from_str::<Value>(yaml).unwrap();
     let args = Args::full(&value);
-    let layer = MakeSetStatusCodeRouteLayer.make(args).unwrap();
+    let layer = MakeSetStatusRouteLayer.make(args).unwrap();
     _layer(layer).await;
 }

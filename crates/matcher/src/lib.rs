@@ -1,3 +1,5 @@
+#![doc = include_str!("../README.md")]
+
 pub mod cookie;
 pub mod header;
 pub mod host;

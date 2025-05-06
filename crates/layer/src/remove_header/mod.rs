@@ -1,3 +1,6 @@
+#![doc = include_str!("../../docs/remove_request_header.md")]
+#![doc = include_str!("../../docs/remove_response_header.md")]
+
 mod remove_request_header;
 mod remove_response_header;
 

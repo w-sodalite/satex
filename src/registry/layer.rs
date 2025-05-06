@@ -12,7 +12,7 @@ use satex_layer::remove_header::{
 use satex_layer::set_header::{MakeSetRequestHeaderRouteLayer, MakeSetResponseHeaderRouteLayer};
 use satex_layer::set_method::MakeSetMethodRouteLayer;
 use satex_layer::set_prefix::MakeSetPrefixRouteLayer;
-use satex_layer::set_status_code::MakeSetStatusCodeRouteLayer;
+use satex_layer::set_status::MakeSetStatusRouteLayer;
 use satex_layer::strip_prefix::MakeStripPrefixRouteLayer;
 use satex_layer::timeout::MakeTimeoutRouteLayer;
 use satex_layer::trace::MakeTraceRouteLayer;
@@ -32,7 +32,7 @@ impl MakeRouteLayerRegistry {
         let mut registry = Self::without_default();
         push! {
             registry,
-            MakeSetStatusCodeRouteLayer,
+            MakeSetStatusRouteLayer,
             MakeSetMethodRouteLayer,
             MakeSetRequestHeaderRouteLayer,
             MakeSetResponseHeaderRouteLayer,

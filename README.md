@@ -45,9 +45,18 @@ cargo run
 cargo run -- -c ./satex.yaml
 ```
 
+```shell
+# 访问静态文件
+curl 127.0.0.1:3000/satex.yaml
+```
+
 ## 文档
 
-TODO
+- [Layer](crates/layer/README.md)
+
+- [Matcher](crates/matcher/README.md)
+
+- [Service](crates/service/README.md)
 
 ## License
 

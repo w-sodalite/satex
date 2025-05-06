@@ -1,3 +1,5 @@
+#![doc = include_str!("../../docs/cors.md")]
+
 mod value;
 
 use crate::cors::value::Value;

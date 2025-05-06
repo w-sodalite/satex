@@ -1,3 +1,5 @@
+#![doc = include_str!("../../docs/before.md")]
+
 use crate::make::MakeRouteMatcher;
 use crate::RouteMatcher;
 use async_trait::async_trait;

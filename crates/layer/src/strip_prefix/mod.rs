@@ -1,3 +1,5 @@
+#![doc = include_str!("../../docs/strip_prefix.md")]
+
 mod layer;
 mod make;
 
