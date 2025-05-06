@@ -23,14 +23,14 @@ repository = "https://github.com/w-sodalite/satex.git"
 #
 # satex dependencies
 #
-satex = { path = ".", version = "0.5.0-rc.1" }
-satex-core = { path = "crates/core", version = "0.5.0-rc.1" }
-satex-layer = { path = "crates/layer", version = "0.5.0-rc.1" }
-satex-macro = { path = "crates/macro", version = "0.5.0-rc.1" }
-satex-matcher = { path = "crates/matcher", version = "0.5.0-rc.1" }
-satex-server = { path = "crates/server", version = "0.5.0-rc.1" }
-satex-service = { path = "crates/service", version = "0.5.0-rc.1" }
-satex-load-balancer = { path = "crates/load-balancer", version = "0.5.0-rc.1" }
+satex = { path = ".", version = "0.5.0-rc.2" }
+satex-core = { path = "crates/core", version = "0.5.0-rc.2" }
+satex-layer = { path = "crates/layer", version = "0.5.0-rc.2" }
+satex-macro = { path = "crates/macro", version = "0.5.0-rc.2" }
+satex-matcher = { path = "crates/matcher", version = "0.5.0-rc.2" }
+satex-server = { path = "crates/server", version = "0.5.0-rc.2" }
+satex-service = { path = "crates/service", version = "0.5.0-rc.2" }
+satex-load-balancer = { path = "crates/load-balancer", version = "0.5.0-rc.2" }
 
 #
 # third-party dependencies
@@ -74,7 +74,7 @@ tower-http = { version = "0.5" }
 tracing = { version = "0.1" }
 tracing-subscriber = { version = "0.3" }
 pingora-ketama = { version = "0.4.0" }
-url = { version = "*" }
+url = { version = "2.5.4" }
 
 [workspace.metadata.release]
 registry = "crates-io"
