@@ -1596,7 +1596,7 @@ dependencies = [
 
 [[package]]
 name = "satex"
-version = "0.5.0-rc.1"
+version = "0.5.0-rc.2"
 dependencies = [
  "async-stream",
  "bytes",
@@ -1619,7 +1619,7 @@ dependencies = [
 
 [[package]]
 name = "satex-core"
-version = "0.5.0-rc.1"
+version = "0.5.0-rc.2"
 dependencies = [
  "async-trait",
  "bytes",
@@ -1644,7 +1644,7 @@ dependencies = [
 
 [[package]]
 name = "satex-layer"
-version = "0.5.0-rc.1"
+version = "0.5.0-rc.2"
 dependencies = [
  "bytes",
  "futures",
@@ -1664,7 +1664,7 @@ dependencies = [
 
 [[package]]
 name = "satex-load-balancer"
-version = "0.5.0-rc.1"
+version = "0.5.0-rc.2"
 dependencies = [
  "arc-swap",
  "async-trait",
@@ -1683,7 +1683,7 @@ dependencies = [
 
 [[package]]
 name = "satex-macro"
-version = "0.5.0-rc.1"
+version = "0.5.0-rc.2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1692,7 +1692,7 @@ dependencies = [
 
 [[package]]
 name = "satex-matcher"
-version = "0.5.0-rc.1"
+version = "0.5.0-rc.2"
 dependencies = [
  "async-trait",
  "chrono",
@@ -1709,7 +1709,7 @@ dependencies = [
 
 [[package]]
 name = "satex-server"
-version = "0.5.0-rc.1"
+version = "0.5.0-rc.2"
 dependencies = [
  "actix-server",
  "actix-service",
@@ -1735,7 +1735,7 @@ dependencies = [
 
 [[package]]
 name = "satex-service"
-version = "0.5.0-rc.1"
+version = "0.5.0-rc.2"
 dependencies = [
  "async-trait",
  "bytes",
