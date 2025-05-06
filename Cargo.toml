@@ -82,7 +82,7 @@ consolidate-commits = true
 pre-release-commit-message = "Release {{version}}"
 tag-name = "v{{version}}"
 allow-branch = ["release"]
-dependent-version = "fix"
+dependent-version = "upgrade"
 
 [package]
 name = "satex"
