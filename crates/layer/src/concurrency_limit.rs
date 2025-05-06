@@ -1,3 +1,5 @@
+#![doc = include_str!("../docs/concurrency_limit.md")]
+
 use crate::make::MakeRouteLayer;
 use satex_core::component::{Args, Configurable};
 use satex_core::Error;

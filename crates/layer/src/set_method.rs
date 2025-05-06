@@ -1,3 +1,5 @@
+#![doc = include_str!("../docs/set_method.md")]
+
 use crate::make::MakeRouteLayer;
 use http::{Method, Request};
 use satex_core::component::{Args, Configurable};

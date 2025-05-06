@@ -1,3 +1,5 @@
+#![doc = include_str!("../README.md")]
+
 use bytes::Bytes;
 use http::{Request, Response};
 use satex_core::body::Body;
@@ -15,7 +17,7 @@ pub mod remove_header;
 pub mod set_header;
 pub mod set_method;
 pub mod set_prefix;
-pub mod set_status_code;
+pub mod set_status;
 pub mod strip_prefix;
 pub mod timeout;
 pub mod trace;

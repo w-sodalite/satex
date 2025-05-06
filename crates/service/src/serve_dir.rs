@@ -1,7 +1,9 @@
+#![doc = include_str!("../docs/serve_dir.md")]
+
 use crate::make::MakeRouteService;
 use http::Extensions;
-use satex_core::Error;
 use satex_core::component::{Args, Configurable};
+use satex_core::Error;
 use satex_macro::make;
 
 pub use tower_http::services::ServeDir;

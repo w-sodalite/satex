@@ -1,10 +1,12 @@
+#![doc = include_str!("../docs/echo.md")]
+
 use crate::make::MakeRouteService;
 use http::{Extensions, Request, Response};
-use satex_core::Error;
 use satex_core::body::Body;
 use satex_core::component::{Args, Configurable};
+use satex_core::Error;
 use satex_macro::make;
-use std::future::{Ready, ready};
+use std::future::{ready, Ready};
 use std::task::{Context, Poll};
 use tower::Service;
 

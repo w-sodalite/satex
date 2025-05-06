@@ -1,3 +1,5 @@
+#![doc = include_str!("../docs/timeout.md")]
+
 use crate::make::MakeRouteLayer;
 use satex_core::component::{Args, Configurable};
 use satex_core::Error;

@@ -1,3 +1,5 @@
+#![doc = include_str!("../docs/method.md")]
+
 use crate::RouteMatcher;
 use async_trait::async_trait;
 use http::request::Parts;

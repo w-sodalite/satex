@@ -1,6 +1,6 @@
 # SetPrefix
 
-SetPrefix 是一个路径前缀剥离中间件，用于自动移除请求路径中的指定层级前缀，简化下游服务的路由处理逻辑。
+路径前缀设置中间件，用于设置请求路径的起始部分。
 
 ## 功能概述
 
@@ -24,7 +24,7 @@ SetPrefix 是一个路径前缀剥离中间件，用于自动移除请求路径�
 ```yaml
 router:
   routes:
-    - id: set-prefix
+    - id: set-prefix-full
       layers:
         - kind: SetPrefix
           args:
@@ -36,7 +36,7 @@ router:
 ```yaml
 router:
   routes:
-    - id: set-prefix
+    - id: set-prefix-shortcut
       layers:
         - SetPrefix=1
 ```

@@ -1,3 +1,5 @@
+#![doc = include_str!("../../docs/set_prefix.md")]
+
 use crate::set_prefix::SetPrefix;
 use satex_core::util::canonicalize;
 use std::sync::Arc;

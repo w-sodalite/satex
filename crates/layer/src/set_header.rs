@@ -1,3 +1,6 @@
+#![doc = include_str!("../docs/set_request_header.md")]
+#![doc = include_str!("../docs/set_response_header.md")]
+
 pub use request::MakeSetRequestHeaderRouteLayer;
 pub use response::MakeSetResponseHeaderRouteLayer;
 
