@@ -10,6 +10,4 @@ router:
     - id: serve-dir
       matchers:
         - Method=GET
-      layers:
-        - StripPrefix=1
       service: ServeDir=./
