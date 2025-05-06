@@ -3,11 +3,11 @@
 use crate::config::Config;
 use crate::registry::Registry;
 use http::Extensions;
-use satex_core::Error;
 use satex_core::util::With;
+use satex_core::Error;
 use satex_layer::make::MakeRouteLayer;
 use satex_load_balancer::resolver::{
-    ArcLoadBalancerResolver, ArcMakeLoadBalancerResolver, CompositeLoadBalancerResolver,
+    ArcLoadBalancerResolver, CompositeLoadBalancerResolver,
     MakeLoadBalancerResolver,
 };
 use satex_matcher::make::MakeRouteMatcher;
@@ -43,7 +43,7 @@ impl MakeRouter {
 
     fn make_resolver(&self, config: &Config) -> Result<ArcLoadBalancerResolver, Error> {
         config
-            .discoveries
+            .resolvers
             .iter()
             .try_fold(
                 CompositeLoadBalancerResolver::default(),
