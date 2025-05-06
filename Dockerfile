@@ -23,33 +23,29 @@ RUN ln -s $HOME/.cargo/bin/rustup /usr/local/bin/rustup
 RUN ln -s $HOME/.cargo/bin/cargo /usr/local/bin/cargo
 
 # 导入cargo配置
-COPY proxy_config $HOME/.cargo/config
+COPY cargo.config $HOME/.cargo/config.toml
 
 WORKDIR /satex
 
 # 复制文件
-COPY src ./src
-COPY crates ./crates
-COPY Cargo.toml .
-COPY Cargo.lock .
+COPY . .
 
 # 编译
 RUN cargo build --release
 
 FROM alpine:latest
 
-WORKDIR /satex
+WORKDIR /app
 
 # 复制构建文件
-COPY --from=build-env /satex/target/release/satex ./bin/
+COPY --from=build-env /satex/target/release/satex .
 
 # 复制配置文件
-COPY examples/docker/satex.yaml ./conf/
-COPY examples/docker/static.yaml ./conf/
-COPY examples/resources ./static/
+COPY ./satex.yaml .
+
 
 # 暴露端口
 EXPOSE 80
 
 # 启动
-ENTRYPOINT ["/satex/bin/satex", "-c", "/satex/conf/satex.yaml"]
+ENTRYPOINT ["/app/satex", "-c", "/app/satex.yaml"]
