@@ -1,8 +1,8 @@
-mod fixed;
+mod r#static;
 mod make;
 
-pub use fixed::*;
 pub use make::*;
+pub use r#static::*;
 
 use crate::LoadBalancer;
 use std::sync::Arc;
