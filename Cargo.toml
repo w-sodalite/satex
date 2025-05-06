@@ -12,7 +12,7 @@ members = [
 
 [workspace.package]
 edition = "2024"
-version = "0.5.0-rc.3"
+version = "0.5.0-rc.4"
 license = "MIT"
 license-file = "LICENSE"
 authors = ["w-sodalite@hotmail.com"]
