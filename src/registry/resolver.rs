@@ -1,5 +1,5 @@
 use crate::registry::push;
-use satex_load_balancer::resolver::MakeFixedLoadBalancerResolver;
+use satex_load_balancer::resolver::MakeStaticLoadBalancerResolver;
 use satex_load_balancer::resolver::{ArcMakeLoadBalancerResolver, MakeLoadBalancerResolver};
 use std::collections::HashMap;
 
@@ -15,7 +15,7 @@ impl MakeLoadBalancerResolverRegistry {
         let mut registry = Self::without_default();
         push! {
             registry,
-            MakeFixedLoadBalancerResolver
+            MakeStaticLoadBalancerResolver
         }
         registry
     }

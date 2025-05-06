@@ -1,8 +1,8 @@
 use crate::config::router::Router;
 use crate::config::server::Server;
 use crate::config::tracing::Tracing;
-use satex_core::Error;
 use satex_core::component::Component;
+use satex_core::Error;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 
@@ -28,9 +28,10 @@ pub struct Config {
     pub router: Router,
 
     ///
-    /// 服务发现配置
+    /// 服务解析配置
     ///
-    pub discoveries: Vec<Component>,
+    #[serde(default)]
+    pub resolvers: Vec<Component>,
 
     ///
     /// 日志配置

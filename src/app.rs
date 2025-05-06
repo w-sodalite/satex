@@ -12,14 +12,14 @@ use tracing::Level;
 
 type Unit = Empty<Event>;
 
-pub struct App<S> {
+pub struct App<S = Unit> {
     name: String,
     config: Config,
     registry: Registry,
     events: Option<S>,
 }
 
-impl App<Unit> {
+impl App {
     pub fn new(name: impl Into<String>, config: Config, registry: Registry) -> Self {
         Self {
             name: name.into(),
