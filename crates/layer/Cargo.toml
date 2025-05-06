@@ -1,5 +1,6 @@
 [package]
 name = "satex-layer"
+description = "Satex Layer Library"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

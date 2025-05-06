@@ -1,5 +1,6 @@
 [package]
 name = "satex-server"
+description = "Satex Server Library"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

@@ -86,6 +86,7 @@ allow-branch = ["main"]
 
 [package]
 name = "satex"
+description = "Satex Application"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

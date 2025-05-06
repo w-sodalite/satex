@@ -1,5 +1,6 @@
 [package]
 name = "satex-matcher"
+description = "Satex Matcher Library"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

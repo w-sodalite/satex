@@ -1,5 +1,6 @@
 [package]
 name = "satex-core"
+description = "Satex Core Library"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

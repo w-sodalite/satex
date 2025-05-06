@@ -1,5 +1,6 @@
 [package]
 name = "satex-service"
+description = "Satex Service Library"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
