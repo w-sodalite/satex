@@ -23,14 +23,13 @@ repository = "https://github.com/w-sodalite/satex.git"
 #
 # satex dependencies
 #
-satex = { path = ".", version = "0.5.0-rc.3" }
-satex-core = { path = "crates/core", version = "0.5.0-rc.3" }
-satex-layer = { path = "crates/layer", version = "0.5.0-rc.3" }
-satex-macro = { path = "crates/macro", version = "0.5.0-rc.3" }
-satex-matcher = { path = "crates/matcher", version = "0.5.0-rc.3" }
-satex-server = { path = "crates/server", version = "0.5.0-rc.3" }
-satex-service = { path = "crates/service", version = "0.5.0-rc.3" }
-satex-load-balancer = { path = "crates/load-balancer", version = "0.5.0-rc.3" }
+satex-core = { path = "crates/core", version = "0.5.0-rc.4" }
+satex-layer = { path = "crates/layer", version = "0.5.0-rc.4" }
+satex-macro = { path = "crates/macro", version = "0.5.0-rc.4" }
+satex-matcher = { path = "crates/matcher", version = "0.5.0-rc.4" }
+satex-server = { path = "crates/server", version = "0.5.0-rc.4" }
+satex-service = { path = "crates/service", version = "0.5.0-rc.4" }
+satex-load-balancer = { path = "crates/load-balancer", version = "0.5.0-rc.4" }
 
 #
 # third-party dependencies
