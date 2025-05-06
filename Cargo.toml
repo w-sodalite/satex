@@ -82,7 +82,7 @@ shared-version = true
 consolidate-commits = true
 pre-release-commit-message = "Release {{version}}"
 tag-name = "v{{version}}"
-allow-branch = ["main"]
+allow-branch = ["release"]
 
 [package]
 name = "satex"
