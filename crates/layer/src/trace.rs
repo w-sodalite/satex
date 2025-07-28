@@ -4,7 +4,7 @@ use satex_core::Error;
 use satex_macro::make;
 use tower_http::trace::{HttpMakeClassifier, TraceLayer};
 
-#[make(kind = "Trace")]
+#[make(kind = Trace)]
 pub struct MakeTraceRouteLayer;
 
 impl MakeRouteLayer for MakeTraceRouteLayer {

@@ -11,7 +11,7 @@ use satex_macro::make;
 use std::time::Duration;
 use tower_http::cors::CorsLayer;
 
-#[make(kind = "Cors", shortcut_mode = "Unsupported")]
+#[make(kind = Cors, shortcut_mode = Unsupported)]
 struct MakeCorsRouteLayer {
     max_age_secs: Option<u64>,
     allow_credentials: Option<bool>,
