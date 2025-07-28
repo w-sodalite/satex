@@ -86,7 +86,7 @@ fn in_addrs(client_addr: &ClientAddr, addrs: &[(IpAddr, u16)]) -> bool {
     false
 }
 
-#[make(kind = TailingSequence, shortcut_mode = "TailingSequence")]
+#[make(kind = RemoteAddr, shortcut_mode = TailingSequence)]
 struct MakeRemoteAddrRouteMatcher {
     policy: Policy,
     addrs: Vec<String>,
