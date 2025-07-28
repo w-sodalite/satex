@@ -1,5 +1,5 @@
-mod r#static;
 mod make;
+mod r#static;
 
 pub use make::*;
 pub use r#static::*;

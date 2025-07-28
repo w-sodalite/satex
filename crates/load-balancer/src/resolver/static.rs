@@ -53,7 +53,7 @@ impl Default for HealthCheck {
     }
 }
 
-#[make(kind = "Static", shortcut_mode = Sequence)]
+#[make(kind = Static, shortcut_mode = Sequence)]
 pub struct MakeStaticLoadBalancerResolver {
     upstreams: Vec<Upstream>,
 }
